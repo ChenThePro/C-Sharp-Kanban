@@ -10,11 +10,12 @@ namespace Backend.BuisnessLayer
     internal class UserFacade
     {
         private Dictionary<string, UserBL> _users;
-        internal UserSL Login(string username, string password)
+        private Dictionary<string, UserBL> _emails;
+        internal UserSL Login(string email, string password)
         {
-            if (_users.ContainsKey(username))
+            if (_emails.ContainsKey(email))
             {
-                return _users[username].Login(password);
+                return Login( email , password);
             }
             else
             {
@@ -27,16 +28,18 @@ namespace Backend.BuisnessLayer
             throw new NotImplementedException();
         }
 
-        internal UserSL Register(string username, string password, string email)
+        internal UserSL Register( string password, string email)
         {
-            if (_users.ContainsKey(username))
+            if (_emails.ContainsKey(email))
             {
                 throw new InvalidOperationException("user name is not valid");
             }
+            
             else
             {
-                return Register(username, password, email);
+                return Register(password, email);
             }
+
         }
     }
 }

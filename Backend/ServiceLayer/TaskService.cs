@@ -29,11 +29,11 @@ namespace Backend.ServiceLayer
         /// <exception cref="ArgumentNullException">If any required parameter is null or empty.</exception>
         /// <precondition>The board must exist and the ID must be unique.</precondition>
         /// <postcondition>The new task is added to the board's backlog.</postcondition>
-        public Response<TaskSL> AddTask(string boardName, string title, string description, string due, int id, string email)
+        public Response<TaskSL> AddTask(string boardName, string title, string description, string due, int id, string creatinTime, string email)
         {
             if (string.IsNullOrWhiteSpace(boardName) || string.IsNullOrWhiteSpace(title) || string.IsNullOrWhiteSpace(email))
                 throw new ArgumentNullException("Board name, title, or email cannot be null or empty.");
-            TaskSL task = _boardFacade.AddTask(boardName, title, description, due, id, email);
+            TaskSL task = _boardFacade.AddTask(boardName, title, description, due, id, creatinTime , email);
             return new Response<TaskSL>("", task);
         }
 
