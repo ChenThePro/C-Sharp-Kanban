@@ -21,7 +21,7 @@ namespace Backend.BuisnessLayer
         /// </summary>
         /// <param name="boardName"></param>
         /// <returns></returns>
-        public bool BoardExists(string boardName)
+        private bool BoardExists(string boardName)
         {
             return boards.ContainsKey(boardName);
         }
@@ -32,7 +32,7 @@ namespace Backend.BuisnessLayer
         /// <param name="boardName"></param>
         /// <returns></returns>
         /// <exception cref="KeyNotFoundException"></exception>
-        public BoardSL GetBoardByName(string boardName)
+        private BoardSL GetBoardByName(string boardName)
         {
             if (!BoardExists(boardName))
             {
@@ -51,7 +51,7 @@ namespace Backend.BuisnessLayer
         /// <param name="taskTitle"></param>
         /// <param name="boards"></param>
         /// <returns></returns>
-        bool TaskExists(string boardName, string taskTitle, Dictionary<string, BoardSL> boards)
+       private bool TaskExists(string boardName, string taskTitle)
         {
             if (!boards.ContainsKey(boardName)) 
                 return false; 
@@ -105,7 +105,7 @@ namespace Backend.BuisnessLayer
             {
                 throw new KeyNotFoundException("Board not found.");
             }
-            if (TaskExists(boardName, title, boards))
+            if (TaskExists(boardName, title))
             {
                 throw new Exception("task name is already taken in this board");
             }
