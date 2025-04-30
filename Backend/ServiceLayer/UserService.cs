@@ -30,11 +30,11 @@ namespace Backend.ServiceLayer
             try
             {
                 UserSL user = _userFacade.Login(username, password);
-                return new Response<UserSL>("", user);
+                return new Response<UserSL>("logged in :)", user);
             }
             catch (UnauthorizedAccessException)
             {
-                throw;
+                return new Response<UserSL>("username or password incorrect", null);
             }
         }
 
@@ -70,7 +70,7 @@ namespace Backend.ServiceLayer
         public Response<object> Logout()
         {
             _userFacade.Logout();
-            return new Response<object>("", null);
+            return new Response<object>("logout succusfully", null);
         }
     }
 }
