@@ -125,6 +125,8 @@ namespace Backend.BuisnessLayer
         /// <exception cref="KeyNotFoundException">Thrown when the board or task does not exist.</exception>
         internal void UpdateTask(string boardName, string title, string due, string description, int id, string email, int column)
         {
+            if (column >= 2 || column < 0)
+                throw new InvalidOperationException("invalid column");
             if (string.IsNullOrWhiteSpace(title))
                 throw new ArgumentNullException("title cannot be null or empty");
             if (GetTaskByIdAndColumn(boardName, id, 0) != null || GetTaskByIdAndColumn(boardName, id, 1) != null || GetTaskByIdAndColumn(boardName, id, 2) != null)
