@@ -24,12 +24,10 @@ namespace Backend.BuisnessLayer
 
         internal UserBL Login(string password)
         {
-            if (this.password == password)
-            {
-                loggedIn = true;
-                return this;
-            }
-            throw new UnauthorizedAccessException("password incorrect");
+            if (this.password != password)
+                throw new UnauthorizedAccessException("password incorrect");
+            loggedIn = true;
+            return this;
         }
 
         internal void Logout()
