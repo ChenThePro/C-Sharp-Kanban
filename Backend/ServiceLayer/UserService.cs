@@ -1,4 +1,4 @@
-﻿ using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -19,45 +19,46 @@ namespace Backend.ServiceLayer
         /// <summary>
         /// Attempts to log in a user with the provided credentials.
         /// </summary>
-        /// <param name="username">User's username.</param>
         /// <param name="password">User's password.</param>
         /// <returns>Response containing the logged-in UserSL object.</returns>
         /// <exception cref="UnauthorizedAccessException">If the login fails.</exception>
-        /// <precondition>The username and password are registered.</precondition>
+        /// <exception cref="KeyNotFoundException">If the email doesn't exist.</exception>
+        /// <precondition>The email and password are registered.</precondition>
         /// <postcondition>The user is marked as logged in.</postcondition>
-        public Response<UserSL> Login(string username, string password)
+        public Response<UserSL> Login(string email, string password)
         {
             try
             {
-                UserSL user = _userFacade.Login(username, password);
-                return new Response<UserSL>("", user);
+                UserBL user = _userFacade.Login(email, password);
+                return new Response<UserSL>("logged in :)", new UserSL(user));
             }
-            catch (UnauthorizedAccessException)
+            catch (Exception ex)
             {
-                throw;
+                return new Response<UserSL>(ex.Message, null);
             }
         }
 
         /// <summary>
         /// Registers a new user with the given credentials and email.
         /// </summary>
-        /// <param name="username">Desired username.</param>
         /// <param name="password">Desired password.</param>
         /// <param name="email">Email address.</param>
         /// <returns>Response containing the created UserSL object.</returns>
-        /// <exception cref="ArgumentException">If the username is already taken.</exception>
-        /// <precondition>The username must be unique and email must be valid.</precondition>
+        /// <exception cref="InvalidOperationException">If the email is already taken.</exception>
+        /// <exception cref="FormatException">If the email is not valid.</exception>
+        /// <exception cref="ArgumentException">If the password does not meet it's requirements.</exception>
+        /// <precondition>The email must be unique and valid.</precondition>
         /// <postcondition>A new user is added to the system.</postcondition>
-        public Response<UserSL> Register(string username, string password, string email)
+        public Response<UserSL> Register(string email, string password)
         {
             try
             {
-                UserSL user = _userFacade.Register(username, password, email);
-                return new Response<UserSL>("", user);
+                UserBL user = _userFacade.Register(email, password);
+                return new Response<UserSL>("Registerd successfuly", new UserSL(user));
             }
-            catch (ArgumentException)
+            catch (Exception ex)
             {
-                throw;
+                return new Response<UserSL>(ex.Message, null);
             }
         }
 
@@ -67,10 +68,10 @@ namespace Backend.ServiceLayer
         /// <returns>An empty Response indicating logout status.</returns>
         /// <precondition>A user must be currently logged in.</precondition>
         /// <postcondition>The user's session is invalidated.</postcondition>
-        public Response<object> Logout()
+        public Response<object> Logout(string email)
         {
-            _userFacade.Logout();
-            return new Response<object>("", null);
+            _userFacade.Logout(email);
+            return new Response<object>("logout succusfully", null);
         }
     }
 }
