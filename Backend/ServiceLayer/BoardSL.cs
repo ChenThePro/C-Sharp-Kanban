@@ -3,22 +3,22 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Backend.BuisnessLayer;
 
 namespace Backend.ServiceLayer
 {
     public class BoardSL
     {
         public string Name { get; set; }
-        public List<TaskSL> Backlog { get; set; }
+        public List<TaskSL> BackLog { get; set; }
         public List<TaskSL> InProgress { get; set; }
         public List<TaskSL> Done { get; set; }
-
-        public BoardSL(string name, List<TaskSL> backlog, List<TaskSL> inProgress, List<TaskSL> done)
+        internal BoardSL(BoardBL board)
         {
-            Name = name;
-            Backlog = backlog;
-            InProgress = inProgress;
-            Done = done;
+            Name = board.name;
+            BackLog = new List<TaskSL>();
+            InProgress = new List<TaskSL>();
+            Done = new List<TaskSL>();
         }
     }
 }

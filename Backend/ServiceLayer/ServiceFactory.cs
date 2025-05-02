@@ -9,26 +9,35 @@ namespace Backend.ServiceLayer
 {
     public class ServiceFactory
     {
-        public UserService Us { get; private set; }
-        public BoardService Bs { get; private set; }
-        public TaskService Ts { get; private set; }
+        private readonly BoardFacade _boardFacade;
+        private readonly UserFacade _userFacade;
+        private TaskService? _taskService;
+        private BoardService? _boardService;
+        private UserService? _userService;
 
         /// <summary>
         /// Initializes all services and their dependencies.
         /// </summary>
         /// <exception cref="InvalidOperationException">If service dependencies cannot be initialized.</exception>
-        public ServiceFactory()
+        internal ServiceFactory(BoardFacade boardFacade, UserFacade userFacade)
         {
-            try
-            {
-                Us = new UserService(new UserFacade());
-                Bs = new BoardService(new BoardFacade());
-                Ts = new TaskService(new BoardFacade());
-            }
-            catch (Exception ex)
-            {
-                throw new InvalidOperationException("Failed to initialize services.", ex);
-            }
+            _boardFacade = boardFacade ?? throw new InvalidOperationException("boardfacade can't be null");
+            _userFacade = userFacade ?? throw new InvalidOperationException("userfacade can't be null");
+        }
+
+        public TaskService GetTaskService()
+        {
+            return _taskService ??= new TaskService(_boardFacade);
+        }
+
+        public BoardService GetBoardService()
+        {
+            return _boardService ??= new BoardService(_boardFacade);
+        }
+
+        public UserService GetUserService()
+        {
+            return _userService ??= new UserService(_userFacade);
         }
     }
 }

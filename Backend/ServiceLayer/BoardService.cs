@@ -68,5 +68,29 @@ namespace Backend.ServiceLayer
             _boardFacade.LimitColumn(boardName, column, limit, email);
             return new Response<object>("", null);
         }
+
+        /// <summary>
+        /// The AddTask function validates input, adds the task to the board via _boardFacade, and returns a success response
+        /// </summary>
+        /// <param name="boardName"></param>
+        /// <param name="title"></param>
+        /// <param name="description"></param>
+        /// <param name="due"></param>
+        /// <param name="id"></param>
+        /// <param name="creatinTime"></param>
+        /// <param name="email"></param>
+        /// <returns></returns>
+        /// <exception cref="ArgumentNullException"></exception>
+        public Response<object> AddTask(string boardName, string title, string description, string due, int id, string creatinTime, string email)
+        {
+
+            if (string.IsNullOrEmpty(boardName) || string.IsNullOrEmpty(title))
+                throw new ArgumentNullException("Board name and task title cannot be null or empty.");
+
+
+            _boardFacade.AddTask(boardName, title, description, due, id, creatinTime, email);
+
+            return new Response<object>("Task added successfully.", null);
+        }
     }
 }
