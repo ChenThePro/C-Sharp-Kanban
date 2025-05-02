@@ -2,6 +2,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Runtime.CompilerServices;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -9,13 +10,13 @@ namespace Backend.BuisnessLayer
 {
     internal class BoardFacade
     {
-       
-        private Dictionary<string, BoardSL> boards;
+        private readonly Dictionary<string, BoardBL> boards;
       
-        public BoardFacade()
+        internal BoardFacade()
         {
-            boards = new Dictionary<string, BoardSL>();
+            boards = new Dictionary<string, BoardBL>();
         }
+
         /// <summary>
         /// helper function to check if board exist
         /// </summary>
@@ -32,52 +33,25 @@ namespace Backend.BuisnessLayer
         /// <param name="boardName"></param>
         /// <returns></returns>
         /// <exception cref="KeyNotFoundException"></exception>
-        private BoardSL GetBoardByName(string boardName)
+        private BoardBL GetBoardByName(string boardName)
         {
             if (!BoardExists(boardName))
-            {
-                throw new KeyNotFoundException("Board not found.");
-            }
-
+                throw new KeyNotFoundException("Board not found");
             return boards[boardName];
         }
-
-
 
         /// <summary>
         /// helper function to check if task name already exists in this board;
         /// </summary>
         /// <param name="boardName"></param>
-        /// <param name="taskTitle"></param>
-        /// <param name="boards"></param>
+        /// <param name="id"></param>
+        /// <param name="column"></param>
         /// <returns></returns>
-       private bool TaskExists(string boardName, string taskTitle)
-        {
-            if (!boards.ContainsKey(boardName)) 
-                return false; 
-
-            BoardSL board = boards[boardName]; 
-
-            foreach (TaskSL task in board.Backlog) 
-            {
-                if (task.Title == taskTitle) 
-                    return true; 
-            }
-
-            foreach (TaskSL task in board.InProgress)
-            {
-                if (task.Title == taskTitle) 
-                    return true;
-            }
-
-            foreach (TaskSL task in board.Done)
-            {
-                if (task.Title == taskTitle) 
-                    return true;
-            }
-
-            return false; 
-        }
+       private TaskBL? GetTaskByIdAndColumn(string boardName, int id, int column)
+       {
+            BoardBL board = GetBoardByName(boardName);
+            return board.GetTaskByIdAndColumn(id, column);
+       }
 
         /// <summary>
         /// The AddTask function adds a task to a board after validating input, 
@@ -95,27 +69,13 @@ namespace Backend.BuisnessLayer
         /// <exception cref="ArgumentNullException"></exception>
         /// <exception cref="KeyNotFoundException"></exception>
         /// <exception cref="Exception"></exception>
-        internal TaskSL AddTask(string boardName, string title, string description, string due, int id, string creatinTime, string email)
+        internal TaskBL AddTask(string boardName, string title, string due, string description, string creatinTime, int id, string email)
         {
-            if (boardName == null || title == null)
-            {
-                throw new ArgumentNullException("boardname and title can't be null or empty");
-            }
-            if (!boards.ContainsKey(boardName))
-            {
-                throw new KeyNotFoundException("Board not found.");
-            }
-            if (TaskExists(boardName, title))
-            {
-                throw new Exception("task name is already taken in this board");
-            }
-            else
-            {
-                TaskSL newTask = new TaskSL(title, due, description,creatinTime, id);
-                boards[boardName].Backlog.Add(newTask);
-                return newTask;
-            }
-           
+            if (string.IsNullOrWhiteSpace(title))
+                throw new ArgumentNullException("title cannot be null or empty");
+            if (GetTaskByIdAndColumn(boardName, id, 0) != null || GetTaskByIdAndColumn(boardName, id, 1) != null || GetTaskByIdAndColumn(boardName, id, 2) != null)
+                throw new InvalidOperationException("task id is already taken in this board");
+            return boards[boardName].AddTask(title, due, description, creatinTime, id, email, 0);
         }
 
         internal BoardSL CreateBoard(string boardName, string email)
@@ -133,16 +93,44 @@ namespace Backend.BuisnessLayer
             throw new NotImplementedException();
         }
 
-        internal void MoveTask(string boardName, string column, int id, string email)
+        /// <summary>
+        /// Moves a task from its current column to the next column in the workflow.
+        /// </summary>
+        /// <param name="boardName">The name of the board containing the task.</param>
+        /// <param name="column">The current column of the task (0=Backlog, 1=In Progress).</param>
+        /// <param name="id">The unique identifier of the task to move.</param>
+        /// <param name="email">The email of the user attempting to move the task.</param>
+        /// <exception cref="InvalidOperationException">Thrown when the column is invalid or exceeds limit.</exception>
+        /// <exception cref="KeyNotFoundException">Thrown when the board or task does not exist.</exception>
+        internal void MoveTask(string boardName, int column, int id, string email)
         {
-            throw new NotImplementedException();
+            if (column >= 2 || column < 0)
+                throw new InvalidOperationException("invalid column");
+            BoardBL board = GetBoardByName(boardName);
+            board.MoveTask(column, id, email);
         }
 
-        internal void UpdateTask(string boardName, string title, string description, string due, int id, string email, string column)
+        /// <summary>
+        /// Updates the details of an existing task.
+        /// </summary>
+        /// <param name="boardName">The name of the board containing the task.</param>
+        /// <param name="title">The new title for the task.</param>
+        /// <param name="due">The new due date for the task.</param>
+        /// <param name="description">The new description for the task.</param>
+        /// <param name="id">The unique identifier of the task to update.</param>
+        /// <param name="email">The email of the user attempting to update the task.</param>
+        /// <param name="column">The column where the task is located (0=Backlog, 1=In Progress, 2=Done).</param>
+        /// <exception cref="ArgumentNullException">Thrown when the title is null or empty.</exception>
+        /// <exception cref="InvalidOperationException">Thrown when the task ID is already taken.</exception>
+        /// <exception cref="KeyNotFoundException">Thrown when the board or task does not exist.</exception>
+        internal void UpdateTask(string boardName, string title, string due, string description, int id, string email, int column)
         {
-         
-            
-            throw new NotImplementedException();
+            if (string.IsNullOrWhiteSpace(title))
+                throw new ArgumentNullException("title cannot be null or empty");
+            if (GetTaskByIdAndColumn(boardName, id, 0) != null || GetTaskByIdAndColumn(boardName, id, 1) != null || GetTaskByIdAndColumn(boardName, id, 2) != null)
+                throw new InvalidOperationException("task id is already taken in this board");
+            BoardBL board = GetBoardByName(boardName);
+            board.UpdateTask(title, due, description, id, email, column);
         }
     }
 }
