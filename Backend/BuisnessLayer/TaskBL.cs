@@ -8,5 +8,27 @@ namespace Backend.BuisnessLayer
 {
     internal class TaskBL
     {
+        internal string title;
+        internal string due;
+        internal string description;
+        internal string creationTime;
+        internal int id;
+
+        internal TaskBL(string title, string due, string description, string creationTime, int id)
+        {
+            this.title = title;
+            this.due = due;
+            this.description = description;
+            this.creationTime = creationTime;
+            this.id = id;
+        }
+
+        internal void Update(string title, string due, string description, int id, string email)
+        {
+            this.title = title;
+            this.description = description;
+            this.due = due;
+            this.id = id;
+        }
     }
 }

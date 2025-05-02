@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Backend.BuisnessLayer;
 
 namespace Backend.ServiceLayer
 {
@@ -11,16 +12,15 @@ namespace Backend.ServiceLayer
         public string Title { get; set; }
         public string Due { get; set; }
         public string Description { get; set; }
-        public string CreationTime { get; set; }
+        public string CreationTime { get; init; }
         public int Id { get; set; }
-
-        public TaskSL(string title, string due, string description, string creatinTime, int id)
+        internal TaskSL(TaskBL task)
         {
-            Title = title;
-            Due = due;
-            Description = description;
-            CreationTime = creatinTime;
-            Id = id;
+            Title = task.title;
+            Due = task.due;
+            Description = task.description;
+            CreationTime = task.creationTime;
+            Id = task.id;
         }
     }
 }

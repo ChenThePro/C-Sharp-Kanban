@@ -26,15 +26,22 @@ namespace Backend.ServiceLayer
         /// <param name="id">Unique task identifier.</param>
         /// <param name="email">Owner's email.</param>
         /// <returns>Response containing the created TaskSL.</returns>
-        /// <exception cref="ArgumentNullException">If any required parameter is null or empty.</exception>
+        /// <exception cref="ArgumentNullException">If title is null or empty.</exception>
+        /// <exception cref="InvalidOperationException">If trying illegal operations.</exception>
+        /// <exception cref="KeyNotFoundException">If board does not exist.</exception>
         /// <precondition>The board must exist and the ID must be unique.</precondition>
         /// <postcondition>The new task is added to the board's backlog.</postcondition>
-        public Response<TaskSL> AddTask(string boardName, string title, string description, string due, int id, string creatinTime, string email)
+        public Response<TaskSL> AddTask(string boardName, string title, string due, string description, string creationTime, int id, string email)
         {
-            if (string.IsNullOrWhiteSpace(boardName) || string.IsNullOrWhiteSpace(title) || string.IsNullOrWhiteSpace(email))
-                throw new ArgumentNullException("Board name, title, or email cannot be null or empty.");
-            TaskSL task = _boardFacade.AddTask(boardName, title, description, due, id, creatinTime , email);
-            return new Response<TaskSL>("", task);
+            try
+            {
+                TaskBL task = _boardFacade.AddTask(boardName, title, due, description, creationTime, id, email);
+                return new Response<TaskSL>("Task created successfuly", new TaskSL(task));
+            }
+            catch (Exception ex)
+            {
+                return new Response<TaskSL>(ex.Message, null);
+            }
         }
 
         /// <summary>
@@ -45,19 +52,20 @@ namespace Backend.ServiceLayer
         /// <param name="id">Task ID.</param>
         /// <param name="email">Owner's email.</param>
         /// <returns>An empty Response.</returns>
-        /// <exception cref="InvalidOperationException">If task cannot be moved (e.g. already in Done).</exception>
+        /// <exception cref="InvalidOperationException">If trying illegal opertaions.</exception>
+        /// <exception cref="KeyNotFoundException">If boardname or task doesn't exist.</exception>
         /// <precondition>The task must exist in the specified column.</precondition>
         /// <postcondition>The task is moved to the next column.</postcondition>
-        public Response<object> MoveTask(string boardName, string column, int id, string email)
+        public Response<object> MoveTask(string boardName, int column, int id, string email)
         {
             try
             {
                 _boardFacade.MoveTask(boardName, column, id, email);
-                return new Response<object>("", null);
+                return new Response<object>("Task moved successfuly", null);
             }
-            catch (InvalidOperationException)
+            catch (Exception ex)
             {
-                throw;
+                return new Response<object>(ex.Message, null);
             }
         }
 
@@ -72,19 +80,19 @@ namespace Backend.ServiceLayer
         /// <param name="email">Owner's email.</param>
         /// <param name="column">Column containing the task.</param>
         /// <returns>An empty Response.</returns>
-        /// <exception cref="KeyNotFoundException">If the task ID does not exist.</exception>
+        /// <exception cref="KeyNotFoundException">If the task ID or boardname does not exist.</exception>
         /// <precondition>The task must exist in the given column.</precondition>
         /// <postcondition>The task fields are updated with the new values.</postcondition>
-        public Response<object> UpdateTask(string boardName, string title, string description, string due, int id, string email, string column)
+        public Response<object> UpdateTask(string boardName, string title, string description, string due, int id, string email, int column)
         {
             try
             {
-                _boardFacade.UpdateTask(boardName, title, description, due, id, email, column);
-                return new Response<object>("", null);
+                _boardFacade.UpdateTask(boardName, title, due, description, id, email, column);
+                return new Response<object>("task updated", null);
             }
             catch (KeyNotFoundException)
             {
-                throw;
+                return new Response<object>("couldn't find key", null);
             }
         }
     }
