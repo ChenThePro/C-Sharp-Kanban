@@ -80,11 +80,20 @@ namespace Backend.BuisnessLayer
 
         internal BoardSL CreateBoard(string boardName, string email)
         {
+            if (boards.ContainsKey(boardName))
+                throw new InvalidOperationException("Board already exists");
+
+            boards.Add(boardName, new BoardBL(boardName));
+
             throw new NotImplementedException();
         }
 
         internal void DeleteBoard(string boardName, string email)
         {
+            if (boards.ContainsKey(boardName))
+            {
+                boards.Remove(boardName);
+            }
             throw new NotImplementedException();
         }
 
