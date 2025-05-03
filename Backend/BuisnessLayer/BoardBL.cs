@@ -48,5 +48,10 @@ namespace Backend.BuisnessLayer
         {
             return columns[column].GetTaskByIdAndColumn(id);
         }
+
+        internal void LimitColumn(int column, int limit, string email)
+        {
+            columns[column].LimitColumn(limit, email);
+        }
     }
 }
