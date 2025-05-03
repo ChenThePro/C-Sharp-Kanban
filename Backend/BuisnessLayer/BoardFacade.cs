@@ -78,28 +78,35 @@ namespace Backend.BuisnessLayer
             return boards[boardName].AddTask(title, due, description, creatinTime, id, email, 0);
         }
 
-        internal BoardSL CreateBoard(string boardName, string email)
+        internal BoardBL CreateBoard(string boardName, string email)
         {
             if (boards.ContainsKey(boardName))
                 throw new InvalidOperationException("Board already exists");
 
             boards.Add(boardName, new BoardBL(boardName));
 
-            throw new NotImplementedException();
+            return boards[boardName];
         }
 
         internal void DeleteBoard(string boardName, string email)
         {
+            if (!boards.ContainsKey(boardName))
+                throw new KeyNotFoundException("Board not found");
+
             if (boards.ContainsKey(boardName))
             {
                 boards.Remove(boardName);
-            }
-            throw new NotImplementedException();
+            }           
         }
 
         internal void LimitColumn(string boardName, int column, int limit, string email)
         {
-            throw new NotImplementedException();
+            if (column >= 2 || column < 0)
+                throw new InvalidOperationException("invalid column");
+            if (limit < 0)
+                throw new ArgumentOutOfRangeException("limit cannot be negative");
+            BoardBL board = GetBoardByName(boardName);
+            board.LimitColumn(column, limit, email);
         }
 
         /// <summary>
