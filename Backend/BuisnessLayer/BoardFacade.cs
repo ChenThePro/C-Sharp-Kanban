@@ -96,7 +96,7 @@ namespace Backend.BuisnessLayer
             if (boards.ContainsKey(boardName))
             {
                 boards.Remove(boardName);
-            }           
+            }
         }
 
         internal void LimitColumn(string boardName, int column, int limit, string email)

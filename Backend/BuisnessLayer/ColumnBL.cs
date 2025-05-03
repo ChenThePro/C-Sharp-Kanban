@@ -47,5 +47,14 @@ namespace Backend.BuisnessLayer
                     return task;
             return null;
         }
+
+        internal void LimitColumn(int limit, string email)
+        {
+            if (limit < 0)
+                throw new ArgumentOutOfRangeException("limit cannot be negative");
+            if (limit < tasks.Count)
+                throw new InvalidOperationException("limit too low");
+            this.limit = limit;
+        }
     }
 }
