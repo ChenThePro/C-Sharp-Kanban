@@ -1,9 +1,13 @@
-﻿using System;
+﻿using log4net;
+using log4net.Config;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Backend.BuisnessLayer;
+using System.Reflection;
+
 
 namespace Backend.ServiceLayer
 {
@@ -23,6 +27,8 @@ namespace Backend.ServiceLayer
         {
             _boardFacade = boardFacade ?? throw new InvalidOperationException("boardfacade can't be null");
             _userFacade = userFacade ?? throw new InvalidOperationException("userfacade can't be null");
+            var logRepository = LogManager.GetRepository(Assembly.GetEntryAssembly());
+            XmlConfigurator.Configure(logRepository, new FileInfo("log4net.config"));
         }
 
         public TaskService GetTaskService()

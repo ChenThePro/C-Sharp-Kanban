@@ -1,4 +1,5 @@
 ﻿using Backend.ServiceLayer;
+using log4net;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -11,7 +12,9 @@ namespace Backend.BuisnessLayer
     internal class BoardFacade
     {
         private readonly Dictionary<string, BoardBL> boards;
-      
+        private static readonly ILog Log = LogManager.GetLogger(System.Reflection.MethodBase.GetCurrentMethod().DeclaringType);
+
+
         internal BoardFacade()
         {
             boards = new Dictionary<string, BoardBL>();

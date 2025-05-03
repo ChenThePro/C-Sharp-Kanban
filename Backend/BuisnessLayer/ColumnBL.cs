@@ -11,6 +11,7 @@ namespace Backend.BuisnessLayer
     {
         private int limit = -1;
         internal List<TaskBL> tasks;
+        private static readonly ILog Log = LogManager.GetLogger(System.Reflection.MethodBase.GetCurrentMethod().DeclaringType);
 
         internal ColumnBL()
         {
