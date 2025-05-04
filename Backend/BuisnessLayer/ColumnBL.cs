@@ -1,4 +1,6 @@
-﻿using System;
+﻿using log4net;
+using log4net.Config;
+using System;
 using System.Collections.Generic;
 using System.Data.Common;
 using System.Linq;
@@ -22,6 +24,7 @@ namespace Backend.BuisnessLayer
         {
             if (limit == -1 || limit > tasks.Count)
                 tasks.Add(newTask);
+            Log.Info("task added succesfully");
             throw new InvalidOperationException("exceeds column's limit");
         }
 

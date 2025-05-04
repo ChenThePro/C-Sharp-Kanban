@@ -1,4 +1,6 @@
-﻿using Backend.ServiceLayer;
+﻿using log4net;
+using log4net.Config;
+using Backend.ServiceLayer;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -13,6 +15,7 @@ namespace Backend.BuisnessLayer
         internal string email;
         internal string password;
         internal List<BoardBL> boards;
+        private static readonly ILog Log = LogManager.GetLogger(System.Reflection.MethodBase.GetCurrentMethod().DeclaringType);
 
         internal UserBL(string email, string password)
         {
@@ -27,12 +30,15 @@ namespace Backend.BuisnessLayer
             if (this.password != password)
                 throw new UnauthorizedAccessException("password incorrect");
             loggedIn = true;
+            Log.Info("user logged in successfully");
             return this;
         }
 
         internal void Logout()
         {
             loggedIn = false;
+            Log.Info("user logged out");
+
         }
     }
 }
