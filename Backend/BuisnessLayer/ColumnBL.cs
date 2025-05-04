@@ -6,6 +6,7 @@ using System.Data.Common;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using log4net;
 
 namespace Backend.BuisnessLayer
 {
@@ -54,8 +55,6 @@ namespace Backend.BuisnessLayer
 
         internal void LimitColumn(int limit, string email)
         {
-            if (limit < 0)
-                throw new ArgumentOutOfRangeException("limit cannot be negative");
             if (limit < tasks.Count)
                 throw new InvalidOperationException("limit too low");
             this.limit = limit;

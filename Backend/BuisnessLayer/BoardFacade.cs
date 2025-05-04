@@ -1,4 +1,3 @@
-﻿using log4net;
 using log4net.Config;
 using Backend.ServiceLayer;
 using log4net;
@@ -86,9 +85,10 @@ namespace Backend.BuisnessLayer
 
         internal BoardBL CreateBoard(string boardName, string email)
         {
-            if (boards.ContainsKey(boardName))
+            if (string.IsNullOrWhiteSpace(boardName) || string.IsNullOrWhiteSpace(email))
+                throw new ArgumentNullException("Board name or email cannot be null or empty.");
+            if (BoardExists(boardName))
                 throw new InvalidOperationException("Board already exists");
-
             boards.Add(boardName, new BoardBL(boardName));
             Log.Info("new board created - " + boardName);
             return boards[boardName];
@@ -97,23 +97,20 @@ namespace Backend.BuisnessLayer
 
         internal void DeleteBoard(string boardName, string email)
         {
-            if (!boards.ContainsKey(boardName))
+            if (string.IsNullOrWhiteSpace(boardName) || string.IsNullOrWhiteSpace(email))
+                throw new ArgumentNullException("Board name or email cannot be null or empty.");
+            if (!BoardExists(boardName))
                 throw new KeyNotFoundException("Board not found");
-
-            if (boards.ContainsKey(boardName))
-            {
-                boards.Remove(boardName);
-                Log.Info(boardName + "deleted");
-            }
-            
+            boards.Remove(boardName);
+            Log.Info(boardName + "deleted");
         }
 
         internal void LimitColumn(string boardName, int column, int limit, string email)
         {
-            if (column >= 2 || column < 0)
+            if (column >= 3 || column < 0)
                 throw new InvalidOperationException("invalid column");
             if (limit < 0)
-                throw new ArgumentOutOfRangeException("limit cannot be negative");
+                throw new ArgumentException("limit cannot be negative");
             BoardBL board = GetBoardByName(boardName);
             board.LimitColumn(column, limit, email);
         }
