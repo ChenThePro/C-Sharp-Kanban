@@ -7,6 +7,7 @@ using System.Linq.Expressions;
 using System.Text;
 using System.Threading.Tasks;
 using Backend.BuisnessLayer;
+using System.Text.Json;
 
 namespace Backend.ServiceLayer
 {
@@ -29,15 +30,15 @@ namespace Backend.ServiceLayer
         /// <exception cref="InvalidOperationException">If boardName exists.</exception>
         /// <precondition>boardName and email must be non-empty strings.</precondition>
         /// <postcondition>A new board is created and associated with the user.</postcondition>
-        public Response<BoardSL> CreateBoard(string boardName, string email)
+        public string CreateBoard(string boardName, string email)
         {
             try
             {
                 BoardBL board = _boardFacade.CreateBoard(boardName, email);
-                return new Response<BoardSL>("Board Created", new BoardSL(board));
+                return JsonSerializer.Serialize(new Response<BoardSL>("Board Created", new BoardSL(board)));
             }
             catch (Exception ex) {
-                return new Response<BoardSL>(ex.Message, null);
+                return JsonSerializer.Serialize(new Response<BoardSL>(ex.Message, null));
             }
         }
 
