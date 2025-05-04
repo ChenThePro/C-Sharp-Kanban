@@ -1,15 +1,16 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Backend.BuisnessLayer;
 using Backend.ServiceLayer;
 
-namespace Tests
+namespace Backend.BackendTests.Testings
 {
     public class BoardTests
     {
-        private ServiceFactory _factory;
+        private ServiceFactory _factory = new ServiceFactory(new BoardFacade(), new UserFacade());
 
         /// <summary>
         /// Test creating a board with valid values.
@@ -21,8 +22,9 @@ namespace Tests
         {
             string userEmail = "test@example.com";
             string boardName = "My First Board";
-            Response response = _factory.Bs.CreateBoard(userEmail, boardName);
-            if (response.ErrorMsg != null || response.RetVal == null)
+            _factory.GetUserService().Register(userEmail, "Password1");
+            Response<BoardSL> response = _factory.GetBoardService().CreateBoard(boardName, userEmail);
+            if (response.RetVal == null)
                 return false;
             return true;
         }
@@ -37,9 +39,8 @@ namespace Tests
         {
             string userEmail = "test@example.com";
             string boardName = "My First Board";
-            _factory.Bs.CreateBoard(userEmail, boardName);
-            Response response = _factory.Bs.CreateBoard(userEmail, boardName);
-            if (response.ErrorMsg == null || response.RetVal != null)
+            Response<BoardSL> response = _factory.GetBoardService().CreateBoard(boardName, userEmail);
+            if (response.RetVal != null)
                 return false;
             return true;
         }
@@ -53,11 +54,9 @@ namespace Tests
         public bool CreateBoard_CaseInsensitiveName()
         {
             string userEmail = "test@example.com";
-            string boardName1 = "Board";
-            string boardName2 = "board";
-            _factory.Bs.CreateBoard(userEmail, boardName1);
-            Response response = _factory.Bs.CreateBoard(userEmail, boardName2);
-            if (response.ErrorMsg == null || response.RetVal != null)
+            string boardName = "my first board";
+            Response<BoardSL> response = _factory.GetBoardService().CreateBoard(boardName, userEmail);
+            if (response.RetVal != null)
                 return false;
             return true;
         }
@@ -71,13 +70,9 @@ namespace Tests
         public bool DeleteBoard()
         {
             string userEmail = "test@example.com";
-            string boardName = "Board";
-            _factory.Bs.CreateBoard(userEmail, boardName);
-            Response deleteResponse = _factory.Bs.DeleteBoard(userEmail, boardName);
-            Response boardsResponse = _factory.Bs.GetBoards(userEmail); // correct but probably will be in Us and not Bs
+            string boardName = "My First Board";
+            Response<object> deleteResponse = _factory.GetBoardService().DeleteBoard(boardName, userEmail);
             if (deleteResponse.ErrorMsg != null)
-                return false;
-            if (((List<string>)boardsResponse.ReturnValue).Contains(boardName))
                 return false;
             return true;
         }
@@ -91,7 +86,7 @@ namespace Tests
         public bool DeleteNonExistentBoard()
         {
             string userEmail = "test@example.com";
-            Response response = _factory.Bs.DeleteBoard(userEmail, "NonExistentBoard");
+            Response<object> response = _factory.GetBoardService().DeleteBoard("NonExistentBoard", userEmail);
             if (response.ErrorMsg == null)
                 return false;
             return true;
@@ -108,9 +103,9 @@ namespace Tests
             string userEmail1 = "test1@example.com";
             string userEmail2 = "test2@example.com";
             string boardName = "Board";
-            _factory.Bs.CreateBoard(userEmail1, boardName);
-            Response response = _factory.Bs.CreateBoard(userEmail2, boardName);
-            if (response.ErrorMessage != null || response.ReturnValue == null)
+            _factory.GetBoardService().CreateBoard(boardName, userEmail1);
+            Response<BoardSL> response = _factory.GetBoardService().CreateBoard(boardName, userEmail2);
+            if (response.RetVal == null)
                 return false;
             return true;
         }

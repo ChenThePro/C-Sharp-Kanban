@@ -1,4 +1,6 @@
-﻿using System;
+﻿using log4net;
+using log4net.Config;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -13,6 +15,7 @@ namespace Backend.BuisnessLayer
         internal string description;
         internal string creationTime;
         internal int id;
+        private static readonly ILog Log = LogManager.GetLogger(System.Reflection.MethodBase.GetCurrentMethod().DeclaringType);
 
         internal TaskBL(string title, string due, string description, string creationTime, int id)
         {
@@ -29,6 +32,7 @@ namespace Backend.BuisnessLayer
             this.description = description;
             this.due = due;
             this.id = id;
+            Log.Info("task updated");
         }
     }
 }

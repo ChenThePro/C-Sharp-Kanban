@@ -1,4 +1,5 @@
-﻿using Backend.ServiceLayer;
+using log4net.Config;
+using Backend.ServiceLayer;
 using log4net;
 using System;
 using System.Collections.Generic;
@@ -79,6 +80,7 @@ namespace Backend.BuisnessLayer
             if (GetTaskByIdAndColumn(boardName, id, 0) != null || GetTaskByIdAndColumn(boardName, id, 1) != null || GetTaskByIdAndColumn(boardName, id, 2) != null)
                 throw new InvalidOperationException("task id is already taken in this board");
             return boards[boardName].AddTask(title, due, description, creatinTime, id, email, 0);
+           
         }
 
         internal BoardBL CreateBoard(string boardName, string email)
@@ -88,7 +90,9 @@ namespace Backend.BuisnessLayer
             if (BoardExists(boardName))
                 throw new InvalidOperationException("Board already exists");
             boards.Add(boardName, new BoardBL(boardName));
+            Log.Info("new board created - " + boardName);
             return boards[boardName];
+            
         }
 
         internal void DeleteBoard(string boardName, string email)
@@ -98,6 +102,7 @@ namespace Backend.BuisnessLayer
             if (!BoardExists(boardName))
                 throw new KeyNotFoundException("Board not found");
             boards.Remove(boardName);
+            Log.Info(boardName + "deleted");
         }
 
         internal void LimitColumn(string boardName, int column, int limit, string email)

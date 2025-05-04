@@ -1,4 +1,6 @@
-﻿using Backend.ServiceLayer;
+﻿using log4net;
+using log4net.Config;
+using Backend.ServiceLayer;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -11,6 +13,7 @@ namespace Backend.BuisnessLayer
     {
         internal string name;
         internal List<ColumnBL> columns;
+        private static readonly ILog Log = LogManager.GetLogger(System.Reflection.MethodBase.GetCurrentMethod().DeclaringType);
 
         internal BoardBL(string name)
         {
@@ -33,7 +36,9 @@ namespace Backend.BuisnessLayer
                 {
                     columns[column + 1].Add(task, email);
                     columns[column].Delete(task, email);
+                    Log.Info("task moved from" +  task.id + "to" + column);
                     return;
+                    
                 }
             }
             throw new KeyNotFoundException("task doesn't exist");
