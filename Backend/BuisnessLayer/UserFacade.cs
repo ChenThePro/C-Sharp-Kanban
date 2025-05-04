@@ -1,3 +1,5 @@
+using log4net;
+using log4net.Config;
 using Backend.ServiceLayer;
 using System;
 using System.Collections.Generic;
@@ -11,6 +13,7 @@ namespace Backend.BuisnessLayer
     internal class UserFacade
     {
         private Dictionary<string, UserBL> _emails;
+        private static readonly ILog Log = LogManager.GetLogger(System.Reflection.MethodBase.GetCurrentMethod().DeclaringType);
 
         internal UserFacade()
         {
@@ -27,7 +30,9 @@ namespace Backend.BuisnessLayer
         internal UserBL Login(string email, string password)
         {
             if (_emails.ContainsKey(email))
+            {
                 return _emails[email].Login(password);
+            }
             throw new KeyNotFoundException("email doesn't exist");
         }
 
@@ -65,6 +70,7 @@ namespace Backend.BuisnessLayer
                 throw new ArgumentException("Password must contain at least one number");
             UserBL newUser = new UserBL(email, password);
             _emails[email] = newUser;
+            Log.Info("new user" + email + "created");
             return newUser;
         }
     }

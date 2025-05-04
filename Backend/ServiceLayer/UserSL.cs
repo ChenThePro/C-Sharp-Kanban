@@ -1,4 +1,6 @@
-﻿using Backend.BuisnessLayer;
+﻿using log4net;
+using log4net.Config;
+using Backend.BuisnessLayer;
 using System;
 using System.Collections.Generic;
 using System.Linq;

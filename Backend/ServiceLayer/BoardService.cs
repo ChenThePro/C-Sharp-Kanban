@@ -1,4 +1,6 @@
-﻿using System;
+﻿using log4net;
+using log4net.Config;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -81,14 +83,14 @@ namespace Backend.ServiceLayer
         /// <param name="email"></param>
         /// <returns></returns>
         /// <exception cref="ArgumentNullException"></exception>
-        public Response<object> AddTask(string boardName, string title, string description, string due, int id, string creatinTime, string email)
+        public Response<object> AddTask(string boardName, string title, string description, string due,string creatinTime , int id, string email)
         {
 
             if (string.IsNullOrEmpty(boardName) || string.IsNullOrEmpty(title))
                 throw new ArgumentNullException("Board name and task title cannot be null or empty.");
 
 
-            _boardFacade.AddTask(boardName, title, description, due, id, creatinTime, email);
+            _boardFacade.AddTask(boardName, title, description, due, creatinTime, id, email);
 
             return new Response<object>("Task added successfully.", null);
         }
