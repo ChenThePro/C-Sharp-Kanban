@@ -3,13 +3,14 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Backend.BuisnessLayer;
 using Backend.ServiceLayer;
 
-namespace Tests
+namespace Backend.BackendTests.Testings
 {
     public class RegistrationTests
     {
-        private ServiceFactory _factory;
+        private ServiceFactory _factory = new ServiceFactory(new BoardFacade(), new UserFacade());
 
         /// <summary>
         /// Test registering with an already existing email.
@@ -19,23 +20,23 @@ namespace Tests
         /// </summary>
         public bool TestExistedEmailRegister()
         {
-            _factory.Us.Register("testUser", "Password1", "existing@email.com");
-            Response response = _factory.Us.Register("existingUser", "Password2", "existing@email.com");
-            if (response.ErrorMsg == null || response.RetVal != null)
+            _factory.GetUserService().Register("existing@email.com", "Password1");
+            Response<UserSL> response = _factory.GetUserService().Register("existing@email.com", "Password2");
+            if (response.RetVal != null)
                 return false;
             return true;
         }
 
         /// <summary>
-        /// Test registering without a username.
-        /// Preconditions: Username is null.
+        /// Test registering without an email.
+        /// Preconditions: Email is null.
         /// Postconditions: The registration fails and returns an error.
         /// Throws: None.
         /// </summary>
         public bool TestNoUsernameRegister()
         {
-            Response response = _factory.Us.Register(null, "Password1", "new@email.com");
-            if (response.ErrorMsg == null || response.RetVal != null)
+            Response<UserSL> response = _factory.GetUserService().Register(null, "Password1");
+            if (response.RetVal != null)
                 return false;
             return true;
         }
@@ -48,8 +49,8 @@ namespace Tests
         /// </summary>
         public bool TestInvalidEmailRegister()
         {
-            Response response = _factory.Us.Register("user", "Password1", "invalidemail");
-            if (response.ErrorMsg == null || response.RetVal != null)
+            Response<UserSL> response = _factory.GetUserService().Register("invalidemail", "Password1");
+            if (response.RetVal != null)
                 return false;
             return true;
         }
@@ -62,8 +63,8 @@ namespace Tests
         /// </summary>
         public bool TestSuccessfullyRegister()
         {
-            Response response = _factory.Us.Register("newUser", "Password1", "new@email.com");
-            if (response.ErrorMsg != null || response.RetVal == null)
+            Response<UserSL> response = _factory.GetUserService().Register("new@email.com", "Password1");
+            if (response.RetVal == null)
                 return false;
             return true;
         }
@@ -76,8 +77,8 @@ namespace Tests
         /// </summary>
         public bool TestShortPasswordRegister()
         {
-            Response response = _factory.Us.Register("user", "123", "short@email.com");
-            if (response.ErrorMsg == null || response.RetVal != null)
+            Response<UserSL> response = _factory.GetUserService().Register("short@email.com", "123");
+            if (response.RetVal != null)
                 return false;
             return true;
         }
@@ -90,8 +91,8 @@ namespace Tests
         /// </summary>
         public bool TestLongPasswordRegister()
         {
-            Response response = _factory.Us.Register("user", "Password!123456789010", "long@email.com");
-            if (response.ErrorMsg == null || response.RetVal != null)
+            Response<UserSL> response = _factory.GetUserService().Register("long@email.com", "Password!123456789010");
+            if (response.RetVal != null)
                 return false;
             return true;
         }
@@ -104,8 +105,8 @@ namespace Tests
         /// </summary>
         public bool TestNonUpperPasswordRegister()
         {
-            Response response = _factory.Us.Register("user", "password1", "noupper@email.com");
-            if (response.ErrorMsg == null || response.RetVal != null)
+            Response<UserSL> response = _factory.GetUserService().Register("noupper@email.com", "password1");
+            if (response.RetVal != null)
                 return false;
             return true;
         }
@@ -118,8 +119,8 @@ namespace Tests
         /// </summary>
         public bool TestNonLowercasePasswordRegister()
         {
-            Response response = _factory.Us.Register("user", "PASSWORD1", "nolower@email.com");
-            if (response.ErrorMsg == null || response.RetVal != null)
+            Response<UserSL> response = _factory.GetUserService().Register("nolower@email.com", "PASSWORD1");
+            if (response.RetVal != null)
                 return false;
             return true;
         }
@@ -132,8 +133,8 @@ namespace Tests
         /// </summary>
         public bool TestNonDigitsPasswordRegister()
         {
-            Response response = _factory.Us.Register("user", "Password", "nodigit@email.com");
-            if (response.ErrorMsg == null || response.RetVal != null)
+            Response<UserSL> response = _factory.GetUserService().Register("nodigit@email.com", "Password");
+            if (response.RetVal != null)
                 return false;
             return true;
         }

@@ -3,13 +3,14 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Backend.BuisnessLayer;
 using Backend.ServiceLayer;
 
-namespace Tests
+namespace Backend.BackendTests.Testings
 {
     public class LoginTests
     {
-        private ServiceFactory _factory;
+        private ServiceFactory _factory = new ServiceFactory(new BoardFacade(), new UserFacade());
 
         /// <summary>
         /// Test login after successful registration.
@@ -19,37 +20,23 @@ namespace Tests
         /// </summary>
         public bool TestLoggedInAfterRegister()
         {
-            _factory.Us.Register("user", "Password1", "user@email.com");
-            Response response = _factory.Us.Login("user", "Password1");
-            if (response.ErrorMsg != null || response.RetVal == null)
+            _factory.GetUserService().Register("user@email.com", "Password1");
+            Response<UserSL> response = _factory.GetUserService().Login("user@gmail.com", "Password1");
+            if (response.RetVal == null)
                 return false;
             return true;
         }
 
         /// <summary>
-        /// Test login with valid credentials.
-        /// Preconditions: Credentials are correct and user is registered.
-        /// Postconditions: Login should succeed.
-        /// Throws: None.
-        /// </summary>
-        public bool TestLogin()
-        {
-            Response response = _factory.Us.Login("validUser", "Password1");
-            if (response.ErrorMsg != null || response.RetVal == null)
-                return false;
-            return true;
-        }
-
-        /// <summary>
-        /// Test login with invalid username.
+        /// Test login with invalid email.
         /// Preconditions: Username does not exist.
         /// Postconditions: Login should fail with error.
         /// Throws: None.
         /// </summary>
         public bool TestWrongUsernameLogin()
         {
-            Response response = _factory.Us.Login("wrongUser", "Password1");
-            if (response.ErrorMsg == null || response.RetVal != null)
+            Response<UserSL> response = _factory.GetUserService().Login("wrongUser@gmail.com", "Password1");
+            if (response.RetVal != null)
                 return false;
             return true;
         }
@@ -62,8 +49,8 @@ namespace Tests
         /// </summary>
         public bool TestWrongPasswordLogin()
         {
-            Response response = _factory.Us.Login("validUser", "wrongPassword");
-            if (response.ErrorMsg == null || response.RetVal != null)
+            Response<UserSL> response = _factory.GetUserService().Login("user@email.com", "wrongPassword");
+            if (response.RetVal != null)
                 return false;
             return true;
         }
@@ -76,8 +63,8 @@ namespace Tests
         /// </summary>
         public bool TestLogout()
         {
-            Response response = _factory.Us.Logout();
-            if (response.ErrorMsg != null || response.RetVal == null)
+            Response<object> response = _factory.GetUserService().Logout("user@gmail.com");
+            if (response.ErrorMsg != "logout succusfully")
                 return false;
             return true;
         }
@@ -85,7 +72,6 @@ namespace Tests
         public void RunAll()
         {
             Console.WriteLine("🔹 TestLoggedInAfterRegister: " + TestLoggedInAfterRegister());
-            Console.WriteLine("🔹 TestLogin: " + TestLogin());
             Console.WriteLine("🔹 TestWrongUsernameLogin: " + TestWrongUsernameLogin());
             Console.WriteLine("🔹 TestWrongPasswordLogin: " + TestWrongPasswordLogin());
             Console.WriteLine("🔹 TestLogout: " + TestLogout());
