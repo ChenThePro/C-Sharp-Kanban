@@ -50,7 +50,7 @@ namespace Backend.ServiceLayer
             try
             {
                 UserBL user = _userFacade.Register(email, password);
-                return JsonSerializer.Serialize(new Response<UserSL>("Registerd successfuly", new UserSL(user)));
+                return JsonSerializer.Serialize(new Response<UserSL>(null, new UserSL(user)));
             }
             catch (Exception ex)
             {

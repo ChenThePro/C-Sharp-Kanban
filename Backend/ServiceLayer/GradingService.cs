@@ -71,11 +71,7 @@ namespace IntroSE.Kanban.Backend.ServiceLayer
         {
             string json = _serviceFactory.GetUserService().Register(email, password);
             Response<UserSL> response = JsonSerializer.Deserialize<Response<UserSL>>(json);
-            if (response.RetVal != null)
-            {
-                response.ErrorMsg = null;
-                response.RetVal = null;
-            }
+            response.RetVal = null;
             return JsonSerializer.Serialize(response);
         }
 
