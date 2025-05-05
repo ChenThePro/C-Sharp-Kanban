@@ -1,10 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace Backend.ServiceLayer
+﻿namespace Backend.ServiceLayer
 {
     /// <summary>
     /// Generic response wrapper class used for service methods.
@@ -13,7 +7,7 @@ namespace Backend.ServiceLayer
     public class Response<T>
     {
         public string ErrorMsg { get; set; }
-        public T RetVal { get; set; }
+        public T? RetVal { get; set; }
 
         public Response(string errorMsg, T retVal) {
             ErrorMsg = errorMsg;

@@ -1,14 +1,6 @@
-using log4net.Config;
-using Backend.ServiceLayer;
 using log4net;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Runtime.CompilerServices;
-using System.Text;
-using System.Threading.Tasks;
 
-namespace Backend.BuisnessLayer
+namespace Backend.BuisnessLayer.BoardPackage
 {
     internal class BoardFacade
     {
@@ -83,6 +75,14 @@ namespace Backend.BuisnessLayer
            
         }
 
+        /// <summary>
+        /// Creates a new board with the specified name and owner email.
+        /// </summary>
+        /// <param name="boardName">The name of the board to create.</param>
+        /// <param name="email">The email of the board's creator.</param>
+        /// <returns>The created BoardBL object.</returns>
+        /// <exception cref="ArgumentNullException">Thrown when the board name or email is null or empty.</exception>
+        /// <exception cref="InvalidOperationException">Thrown when a board with the given name already exists.</exception>
         internal BoardBL CreateBoard(string boardName, string email)
         {
             if (string.IsNullOrWhiteSpace(boardName) || string.IsNullOrWhiteSpace(email))
@@ -95,6 +95,13 @@ namespace Backend.BuisnessLayer
             
         }
 
+        /// <summary>
+        /// Deletes an existing board with the specified name.
+        /// </summary>
+        /// <param name="boardName">The name of the board to delete.</param>
+        /// <param name="email">The email of the user attempting to delete the board.</param>
+        /// <exception cref="ArgumentNullException">Thrown when the board name or email is null or empty.</exception>
+        /// <exception cref="KeyNotFoundException">Thrown when the specified board does not exist.</exception>
         internal void DeleteBoard(string boardName, string email)
         {
             if (string.IsNullOrWhiteSpace(boardName) || string.IsNullOrWhiteSpace(email))
@@ -105,6 +112,16 @@ namespace Backend.BuisnessLayer
             Log.Info(boardName + "deleted");
         }
 
+        /// <summary>
+        /// Sets a task limit for a specific column in a board.
+        /// </summary>
+        /// <param name="boardName">The name of the board containing the column.</param>
+        /// <param name="column">The column index (0 = Backlog, 1 = In Progress, 2 = Done).</param>
+        /// <param name="limit">The maximum number of tasks allowed in the column.</param>
+        /// <param name="email">The email of the user applying the limit.</param>
+        /// <exception cref="InvalidOperationException">Thrown when the column index is out of range.</exception>
+        /// <exception cref="ArgumentException">Thrown when the limit is negative.</exception>
+        /// <exception cref="KeyNotFoundException">Thrown when the specified board does not exist.</exception>
         internal void LimitColumn(string boardName, int column, int limit, string email)
         {
             if (column >= 3 || column < 0)
