@@ -52,16 +52,16 @@ namespace Backend.ServiceLayer
         /// <exception cref="KeyNotFoundException">If boardName doesn't exist.</exception>
         /// <precondition>The board must exist and be owned by the user.</precondition>
         /// <postcondition>The board is removed from the system.</postcondition>
-        public Response<object> DeleteBoard(string boardName, string email)
+        public String DeleteBoard(string boardName, string email)
         {
             try
             {
                 _boardFacade.DeleteBoard(boardName, email);
-                return new Response<object>("Board Deleted", null);
+                return JsonSerializer.Serialize(new Response<object>("Board Deleted", null));
             }
             catch (Exception ex)
             {
-                return new Response<object>(ex.Message, null);
+                return JsonSerializer.Serialize(new Response<object>(ex.Message, null));
             }
         }
 
@@ -78,16 +78,16 @@ namespace Backend.ServiceLayer
         /// <exception cref="KeyNotFoundException">If boardname doexn't exist.</exception>
         /// <precondition>Board and column must exist and belong to the user.</precondition>
         /// <postcondition>The column's task limit is updated.</postcondition>
-        public Response<object> LimitColumn(string boardName, int column, int limit, string email)
+        public string LimitColumn(string boardName, int column, int limit, string email)
         {
             try
             {
                 _boardFacade.LimitColumn(boardName, column, limit, email);
-                return new Response<object>("Column Limited", null);
+                return JsonSerializer.Serialize(new Response<object>("Column Limited", null));
             }
             catch (Exception ex)
             {
-                return new Response<object>(ex.Message, null);
+                return JsonSerializer.Serialize(new Response<object>(ex.Message, null));
             }
         }
     }
