@@ -26,7 +26,7 @@ namespace Backend.ServiceLayer
             try
             {
                 UserBL user = _userFacade.Login(email, password);
-                return JsonSerializer.Serialize(new Response<UserSL>("Logged in", new UserSL(user)));
+                return JsonSerializer.Serialize(new Response<UserSL>(null, new UserSL(user)));
             }
             catch (Exception ex)
             {
@@ -50,7 +50,7 @@ namespace Backend.ServiceLayer
             try
             {
                 UserBL user = _userFacade.Register(email, password);
-                return JsonSerializer.Serialize(new Response<UserSL>("Registerd successfuly", new UserSL(user)));
+                return JsonSerializer.Serialize(new Response<UserSL>(null, new UserSL(user)));
             }
             catch (Exception ex)
             {
@@ -68,6 +68,11 @@ namespace Backend.ServiceLayer
         {
             _userFacade.Logout(email);
             return JsonSerializer.Serialize(new Response<object>("Logged out", null));
+        }
+
+        internal string InProgressTasks(string email)
+        {
+            throw new NotImplementedException();
         }
     }
 }

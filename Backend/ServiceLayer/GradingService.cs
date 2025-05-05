@@ -1,5 +1,8 @@
 ﻿using Backend.ServiceLayer;
-using System;
+using Microsoft.VisualBasic;
+using System.Collections.Generic;
+using System.Text.Json;
+using System.Xml.Linq;
 
 
 namespace IntroSE.Kanban.Backend.ServiceLayer
@@ -54,7 +57,7 @@ namespace IntroSE.Kanban.Backend.ServiceLayer
 
         public GradingService()
         {
-            _serviceFactory = new ServiceFactory(new Backend.BuisnessLayer.BoardPackage.BoardFacade(), new Backend.BuisnessLayer.UserPackage.UserFacade());
+            _serviceFactory = new ServiceFactory();
         }
 
 
@@ -66,7 +69,10 @@ namespace IntroSE.Kanban.Backend.ServiceLayer
         /// <returns>An empty response, unless an error occurs (see <see cref="GradingService"/>)</returns>
         public string Register(string email, string password)
         {
-            throw new NotImplementedException();
+            string json = _serviceFactory.GetUserService().Register(email, password);
+            Response<UserSL> response = JsonSerializer.Deserialize<Response<UserSL>>(json);
+            response.RetVal = null;
+            return JsonSerializer.Serialize(response);
         }
 
 
@@ -78,7 +84,11 @@ namespace IntroSE.Kanban.Backend.ServiceLayer
         /// <returns>A response with the user's email, unless an error occurs (see <see cref="GradingService"/>)</returns>
         public string Login(string email, string password)
         {
-            throw new NotImplementedException();
+            string json = _serviceFactory.GetUserService().Login(email, password);
+            Response<object> response = JsonSerializer.Deserialize<Response<object>>(json);
+            if (response.RetVal != null)
+                response.RetVal = email;
+            return JsonSerializer.Serialize(response);
         }
 
 
@@ -89,7 +99,11 @@ namespace IntroSE.Kanban.Backend.ServiceLayer
         /// <returns>An empty response, unless an error occurs (see <see cref="GradingService"/>)</returns>
         public string Logout(string email)
         {
-            throw new NotImplementedException();
+            string json = _serviceFactory.GetUserService().Logout(email);
+            Response<object> response = JsonSerializer.Deserialize<Response<object>>(json);
+            if (response.ErrorMsg == "Logged out")
+                response.ErrorMsg = null;
+            return JsonSerializer.Serialize(response);
         }
 
         /// <summary>
@@ -102,7 +116,9 @@ namespace IntroSE.Kanban.Backend.ServiceLayer
         /// <returns>An empty response, unless an error occurs (see <see cref="GradingService"/>)</returns>
         public string LimitColumn(string email, string boardName, int columnOrdinal, int limit)
         {
-            throw new NotImplementedException();
+            string json = _serviceFactory.GetBoardService().LimitColumn(boardName, columnOrdinal, limit, email);
+            Response<object> response = JsonSerializer.Deserialize<Response<object>>(json);
+            return JsonSerializer.Serialize(response);
         }
 
         /// <summary>
@@ -114,7 +130,11 @@ namespace IntroSE.Kanban.Backend.ServiceLayer
         /// <returns>A response with the column's limit, unless an error occurs (see <see cref="GradingService"/>)</returns>
         public string GetColumnLimit(string email, string boardName, int columnOrdinal)
         {
-            throw new NotImplementedException();
+            string json = _serviceFactory.GetBoardService().GetColumnLimit(email, boardName, columnOrdinal);
+            Response<object> response = JsonSerializer.Deserialize<Response<object>>(json);
+            if (int.TryParse(response.ErrorMsg, out _))
+                response.ErrorMsg = null;
+            return JsonSerializer.Serialize(response);
         }
 
 
@@ -127,7 +147,10 @@ namespace IntroSE.Kanban.Backend.ServiceLayer
         /// <returns>A response with the column's name, unless an error occurs (see <see cref="GradingService"/>)</returns>
         public string GetColumnName(string email, string boardName, int columnOrdinal)
         {
-            throw new NotImplementedException();
+            string json = _serviceFactory.GetBoardService().GetColumnName(email, boardName, columnOrdinal);
+            Response<object> response = JsonSerializer.Deserialize<Response<object>>(json);
+            response.RetVal = null;
+            return JsonSerializer.Serialize(response);
         }
 
 
@@ -142,7 +165,14 @@ namespace IntroSE.Kanban.Backend.ServiceLayer
         /// <returns>An empty response, unless an error occurs (see <see cref="GradingService"/>)</returns>
         public string AddTask(string email, string boardName, string title, string description, DateTime dueDate)
         {
-            throw new NotImplementedException();
+            string json = _serviceFactory.GetTaskService().AddTask(boardName, title, dueDate.ToString(), description, DateTime.Today.ToString(), 1, email);
+            Response<object> response = JsonSerializer.Deserialize<Response<object>>(json);
+            if (response.RetVal != null)
+            {
+                response.ErrorMsg = null;
+                response.RetVal = null;
+            }
+            return JsonSerializer.Serialize(response);
         }
 
 
@@ -157,7 +187,11 @@ namespace IntroSE.Kanban.Backend.ServiceLayer
         /// <returns>An empty response, unless an error occurs (see <see cref="GradingService"/>)</returns>
         public string UpdateTaskDueDate(string email, string boardName, int columnOrdinal, int taskId, DateTime dueDate)
         {
-            throw new NotImplementedException();
+            string json = _serviceFactory.GetTaskService().UpdateTask(boardName, null, null, dueDate.ToString(), taskId, email, columnOrdinal);
+            Response<object> response = JsonSerializer.Deserialize<Response<object>>(json);
+            if (response.ErrorMsg == "task updated")
+                response.ErrorMsg = null;
+            return JsonSerializer.Serialize(response);
         }
 
 
@@ -172,7 +206,11 @@ namespace IntroSE.Kanban.Backend.ServiceLayer
         /// <returns>An empty response, unless an error occurs (see <see cref="GradingService"/>)</returns>
         public string UpdateTaskTitle(string email, string boardName, int columnOrdinal, int taskId, string title)
         {
-            throw new NotImplementedException();
+            string json = _serviceFactory.GetTaskService().UpdateTask(boardName, title, null, null, taskId, email, columnOrdinal);
+            Response<object> response = JsonSerializer.Deserialize<Response<object>>(json);
+            if (response.ErrorMsg == "task updated")
+                response.ErrorMsg = null;
+            return JsonSerializer.Serialize(response);
         }
 
 
@@ -187,7 +225,11 @@ namespace IntroSE.Kanban.Backend.ServiceLayer
         /// <returns>An empty response, unless an error occurs (see <see cref="GradingService"/>)</returns>
         public string UpdateTaskDescription(string email, string boardName, int columnOrdinal, int taskId, string description)
         {
-            throw new NotImplementedException();
+            string json = _serviceFactory.GetTaskService().UpdateTask(boardName, null, description, null, taskId, email, columnOrdinal);
+            Response<object> response = JsonSerializer.Deserialize<Response<object>>(json);
+            if (response.ErrorMsg == "task updated")
+                response.ErrorMsg = null;
+            return JsonSerializer.Serialize(response);
         }
 
 
@@ -201,7 +243,11 @@ namespace IntroSE.Kanban.Backend.ServiceLayer
         /// <returns>An empty response, unless an error occurs (see <see cref="GradingService"/>)</returns>
         public string AdvanceTask(string email, string boardName, int columnOrdinal, int taskId)
         {
-            throw new NotImplementedException();
+            string json = _serviceFactory.GetTaskService().MoveTask(boardName, columnOrdinal, taskId, email);
+            Response<object> response = JsonSerializer.Deserialize<Response<object>>(json);
+            if (response.ErrorMsg == "Task moved successfuly")
+                response.ErrorMsg = null;
+            return JsonSerializer.Serialize(response);
         }
 
 
@@ -214,7 +260,10 @@ namespace IntroSE.Kanban.Backend.ServiceLayer
         /// <returns>A response with a list of the column's tasks, unless an error occurs (see <see cref="GradingService"/>)</returns>
         public string GetColumn(string email, string boardName, int columnOrdinal)
         {
-            throw new NotImplementedException();
+            string json = _serviceFactory.GetBoardService().GetColumn(email, boardName, columnOrdinal);
+            Response<object> response = JsonSerializer.Deserialize<Response<object>>(json);
+            return JsonSerializer.Serialize(response);
+
         }
 
 
@@ -226,7 +275,14 @@ namespace IntroSE.Kanban.Backend.ServiceLayer
         /// <returns>An empty response, unless an error occurs (see <see cref="GradingService"/>)</returns>
         public string CreateBoard(string email, string name)
         {
-            throw new NotImplementedException();
+            string json = _serviceFactory.GetBoardService().CreateBoard(name, email);
+            Response<object> response = JsonSerializer.Deserialize<Response<object>>(json);
+            if (response.RetVal != null)
+            {
+                response.RetVal = null;
+                response.ErrorMsg = null;
+            }
+            return JsonSerializer.Serialize(response);
         }
 
 
@@ -238,7 +294,14 @@ namespace IntroSE.Kanban.Backend.ServiceLayer
         /// <returns>An empty response, unless an error occurs (see <see cref="GradingService"/>)</returns>
         public string DeleteBoard(string email, string name)
         {
-            throw new NotImplementedException();
+            string json = _serviceFactory.GetBoardService().DeleteBoard(name, email);
+            Response<object> response = JsonSerializer.Deserialize<Response<object>>(json);
+            if (response.ErrorMsg == "Board Deleted")
+            {
+                response.RetVal = null;
+                response.ErrorMsg = null;
+            }
+            return JsonSerializer.Serialize(response);
         }
 
 
@@ -249,7 +312,9 @@ namespace IntroSE.Kanban.Backend.ServiceLayer
         /// <returns>A response with a list of the in-progress tasks of the user, unless an error occurs (see <see cref="GradingService"/>)</returns>
         public string InProgressTasks(string email)
         {
-            throw new NotImplementedException();
+            string json = _serviceFactory.GetUserService().InProgressTasks(email);
+            Response<object> response = JsonSerializer.Deserialize<Response<object>>(json);
+            return JsonSerializer.Serialize(response);
         }
     }
 }
