@@ -118,8 +118,6 @@ namespace IntroSE.Kanban.Backend.ServiceLayer
         {
             string json = _serviceFactory.GetBoardService().LimitColumn(boardName, columnOrdinal, limit, email);
             Response<object> response = JsonSerializer.Deserialize<Response<object>>(json);
-            if (response.ErrorMsg == "Column Limited")
-                response.ErrorMsg = null;
             return JsonSerializer.Serialize(response);
         }
 

@@ -29,7 +29,8 @@ namespace Backend.ServiceLayer
                 BoardBL board = _boardFacade.CreateBoard(boardName, email);
                 return JsonSerializer.Serialize(new Response<BoardSL>("Board Created", new BoardSL(board)));
             }
-            catch (Exception ex) {
+            catch (Exception ex)
+            {
                 return JsonSerializer.Serialize(new Response<BoardSL>(ex.Message, null));
             }
         }
@@ -75,7 +76,7 @@ namespace Backend.ServiceLayer
             try
             {
                 _boardFacade.LimitColumn(boardName, column, limit, email);
-                return JsonSerializer.Serialize(new Response<object>("Column Limited", null));
+                return JsonSerializer.Serialize(new Response<object>(null, null));
             }
             catch (Exception ex)
             {
