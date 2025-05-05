@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Backend.ServiceLayer;
+using System;
 
 
 namespace IntroSE.Kanban.Backend.ServiceLayer
@@ -49,10 +50,11 @@ namespace IntroSE.Kanban.Backend.ServiceLayer
     /// </summary>
     public class GradingService
     {
+        private readonly ServiceFactory _serviceFactory;
 
         public GradingService()
         {
-            throw new NotImplementedException();
+            _serviceFactory = new ServiceFactory(new Backend.BuisnessLayer.BoardPackage.BoardFacade(), new Backend.BuisnessLayer.UserPackage.UserFacade());
         }
 
 
