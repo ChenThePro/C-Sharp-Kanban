@@ -9,7 +9,7 @@
         public string ErrorMsg { get; set; }
         public T? RetVal { get; set; }
 
-        public Response(string errorMsg, T retVal) {
+        public Response(string errorMsg, T? retVal) {
             ErrorMsg = errorMsg;
             RetVal = retVal;
         }

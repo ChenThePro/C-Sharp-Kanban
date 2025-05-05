@@ -26,7 +26,7 @@ namespace Backend.ServiceLayer
             try
             {
                 UserBL user = _userFacade.Login(email, password);
-                return JsonSerializer.Serialize(new Response<UserSL>("logged in :)", new UserSL(user)));
+                return JsonSerializer.Serialize(new Response<UserSL>("Logged in", new UserSL(user)));
             }
             catch (Exception ex)
             {
@@ -67,7 +67,7 @@ namespace Backend.ServiceLayer
         public string Logout(string email)
         {
             _userFacade.Logout(email);
-            return JsonSerializer.Serialize(new Response<object>("logout succusfully", null));
+            return JsonSerializer.Serialize(new Response<object>("Logged out", null));
         }
     }
 }
