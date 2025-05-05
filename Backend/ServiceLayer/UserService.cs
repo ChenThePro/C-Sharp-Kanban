@@ -6,6 +6,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Backend.BuisnessLayer;
+using System.Text.Json;
 
 namespace Backend.ServiceLayer
 {
@@ -27,16 +28,16 @@ namespace Backend.ServiceLayer
         /// <exception cref="KeyNotFoundException">If the email doesn't exist.</exception>
         /// <precondition>The email and password are registered.</precondition>
         /// <postcondition>The user is marked as logged in.</postcondition>
-        public Response<UserSL> Login(string email, string password)
+        public string Login(string email, string password)
         {
             try
             {
                 UserBL user = _userFacade.Login(email, password);
-                return new Response<UserSL>("logged in :)", new UserSL(user));
+                return JsonSerializer.Serialize(new Response<UserSL>("logged in :)", new UserSL(user)));
             }
             catch (Exception ex)
             {
-                return new Response<UserSL>(ex.Message, null);
+                return JsonSerializer.Serialize(new Response<UserSL>(ex.Message, null));
             }
         }
 
@@ -51,16 +52,16 @@ namespace Backend.ServiceLayer
         /// <exception cref="ArgumentException">If the password does not meet it's requirements.</exception>
         /// <precondition>The email must be unique and valid.</precondition>
         /// <postcondition>A new user is added to the system.</postcondition>
-        public Response<UserSL> Register(string email, string password)
+        public string Register(string email, string password)
         {
             try
             {
                 UserBL user = _userFacade.Register(email, password);
-                return new Response<UserSL>("Registerd successfuly", new UserSL(user));
+                return JsonSerializer.Serialize(new Response<UserSL>("Registerd successfuly", new UserSL(user)));
             }
             catch (Exception ex)
             {
-                return new Response<UserSL>(ex.Message, null);
+                return JsonSerializer.Serialize(new Response<UserSL>(ex.Message, null));
             }
         }
 
@@ -70,10 +71,10 @@ namespace Backend.ServiceLayer
         /// <returns>An empty Response indicating logout status.</returns>
         /// <precondition>A user must be currently logged in.</precondition>
         /// <postcondition>The user's session is invalidated.</postcondition>
-        public Response<object> Logout(string email)
+        public string Logout(string email)
         {
             _userFacade.Logout(email);
-            return new Response<object>("logout succusfully", null);
+            return JsonSerializer.Serialize(new Response<object>("logout succusfully", null));
         }
     }
 }

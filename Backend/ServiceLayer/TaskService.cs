@@ -6,6 +6,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Backend.BuisnessLayer;
+using System.Text.Json;
 
 namespace Backend.ServiceLayer
 {
@@ -33,16 +34,16 @@ namespace Backend.ServiceLayer
         /// <exception cref="KeyNotFoundException">If board does not exist.</exception>
         /// <precondition>The board must exist and the ID must be unique.</precondition>
         /// <postcondition>The new task is added to the board's backlog.</postcondition>
-        public Response<TaskSL> AddTask(string boardName, string title, string due, string description, string creationTime, int id, string email)
+        public string AddTask(string boardName, string title, string due, string description, string creationTime, int id, string email)
         {
             try
             {
                 TaskBL task = _boardFacade.AddTask(boardName, title, due, description, creationTime, id, email);
-                return new Response<TaskSL>("Task created successfuly", new TaskSL(task));
+                return JsonSerializer.Serialize(new Response<TaskSL>("Task created successfuly", new TaskSL(task)));
             }
             catch (Exception ex)
             {
-                return new Response<TaskSL>(ex.Message, null);
+                return JsonSerializer.Serialize(new Response<TaskSL>(ex.Message, null));
             }
         }
 
@@ -58,16 +59,16 @@ namespace Backend.ServiceLayer
         /// <exception cref="KeyNotFoundException">If boardname or task doesn't exist.</exception>
         /// <precondition>The task must exist in the specified column.</precondition>
         /// <postcondition>The task is moved to the next column.</postcondition>
-        public Response<object> MoveTask(string boardName, int column, int id, string email)
+        public string MoveTask(string boardName, int column, int id, string email)
         {
             try
             {
                 _boardFacade.MoveTask(boardName, column, id, email);
-                return new Response<object>("Task moved successfuly", null);
+                return JsonSerializer.Serialize(new Response<object>("Task moved successfuly", null));
             }
             catch (Exception ex)
             {
-                return new Response<object>(ex.Message, null);
+                return JsonSerializer.Serialize(new Response<object>(ex.Message, null));
             }
         }
 
@@ -85,16 +86,16 @@ namespace Backend.ServiceLayer
         /// <exception cref="KeyNotFoundException">If the task ID or boardname does not exist.</exception>
         /// <precondition>The task must exist in the given column.</precondition>
         /// <postcondition>The task fields are updated with the new values.</postcondition>
-        public Response<object> UpdateTask(string boardName, string title, string description, string due, int id, string email, int column)
+        public string UpdateTask(string boardName, string title, string description, string due, int id, string email, int column)
         {
             try
             {
                 _boardFacade.UpdateTask(boardName, title, due, description, id, email, column);
-                return new Response<object>("task updated", null);
+                return JsonSerializer.Serialize(new Response<object>("task updated", null));
             }
             catch (KeyNotFoundException)
             {
-                return new Response<object>("couldn't find key", null);
+                return JsonSerializer.Serialize(new Response<object>("couldn't find key", null));
             }
         }
     }
