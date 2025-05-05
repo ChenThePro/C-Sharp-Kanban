@@ -1,14 +1,7 @@
 using log4net;
-using log4net.Config;
-using Backend.ServiceLayer;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using System.Text.RegularExpressions;
-using System.Threading.Tasks;
 
-namespace Backend.BuisnessLayer
+namespace Backend.BuisnessLayer.UserPackage
 {
     internal class UserFacade
     {
@@ -30,9 +23,7 @@ namespace Backend.BuisnessLayer
         internal UserBL Login(string email, string password)
         {
             if (_emails.ContainsKey(email))
-            {
                 return _emails[email].Login(password);
-            }
             throw new KeyNotFoundException("email doesn't exist");
         }
 
