@@ -82,5 +82,20 @@ namespace Backend.ServiceLayer
                 return JsonSerializer.Serialize(new Response<object>(ex.Message, null));
             }
         }
+
+        internal string GetColumn(string email, string boardName, int columnOrdinal)
+        {
+            throw new NotImplementedException();
+        }
+
+        internal string GetColumnLimit(string email, string boardName, int columnOrdinal)
+        {
+            throw new NotImplementedException();
+        }
+
+        internal string GetColumnName(string email, string boardName, int columnOrdinal)
+        {
+            throw new NotImplementedException();
+        }
     }
 }
