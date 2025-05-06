@@ -4,13 +4,13 @@ namespace Backend.ServiceLayer
 {
     public class UserSL
     {
-        private readonly string _password;
+        public string Password { get; set; }
         public string Email { get; init; }
 
-         internal UserSL(UserBL user)
+         public UserSL(string password, string email)
          {
-            _password = user.password;
-            Email = user.email;
+            Password = password;
+            Email = email;
          }
     }
 }

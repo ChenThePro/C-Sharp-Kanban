@@ -31,11 +31,11 @@ namespace Backend.ServiceLayer
             try
             {
                 UserBL user = _userFacade.Login(email, password);
-                return JsonSerializer.Serialize(new Response<UserSL>(null, new UserSL(user)));
+                return JsonSerializer.Serialize(new Response(null, new UserSL(user.password, user.email)));
             }
             catch (Exception ex)
             {
-                return JsonSerializer.Serialize(new Response<UserSL>(ex.Message, null));
+                return JsonSerializer.Serialize(new Response(ex.Message, null));
             }
         }
 
@@ -55,11 +55,11 @@ namespace Backend.ServiceLayer
             try
             {
                 UserBL user = _userFacade.Register(email, password);
-                return JsonSerializer.Serialize(new Response<UserSL>(null, new UserSL(user)));
+                return JsonSerializer.Serialize(new Response(null, new UserSL(user.password, user.email)));
             }
             catch (Exception ex)
             {
-                return JsonSerializer.Serialize(new Response<UserSL>(ex.Message, null));
+                return JsonSerializer.Serialize(new Response(ex.Message, null));
             }
         }
 
@@ -77,11 +77,11 @@ namespace Backend.ServiceLayer
             try
             {
                 _userFacade.Logout(email);
-                return JsonSerializer.Serialize(new Response<object>(null, null));
+                return JsonSerializer.Serialize(new Response(null, null));
             }
             catch (Exception ex)
             {
-                return JsonSerializer.Serialize(new Response<object>(ex.Message, null));
+                return JsonSerializer.Serialize(new Response(ex.Message, null));
             }
         }
     }

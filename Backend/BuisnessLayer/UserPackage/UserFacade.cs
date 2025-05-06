@@ -6,7 +6,7 @@ namespace Backend.BuisnessLayer.UserPackage
     internal class UserFacade
     {
         internal Dictionary<string, UserBL> _emails;
-        private static readonly ILog Log = LogManager.GetLogger(System.Reflection.MethodBase.GetCurrentMethod().DeclaringType);
+        private static readonly ILog Log = LogManager.GetLogger(typeof(UserFacade));
 
         /// <summary>
         /// Initializes a new instance of the <see cref="UserFacade"/> class.
@@ -43,9 +43,9 @@ namespace Backend.BuisnessLayer.UserPackage
         /// <postcondition>User is marked as logged out.</postcondition>
         internal void Logout(string email)
         {
-            if (_emails.ContainsKey(email))
-                _emails[email].Logout();
-            throw new KeyNotFoundException("email doesn't exist");
+            if (!_emails.ContainsKey(email))
+                throw new KeyNotFoundException("email doesn't exist");
+            _emails[email].Logout();
         }
 
         /// <summary>

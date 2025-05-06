@@ -4,7 +4,7 @@ namespace BackendTests
 {
     public class MainTest
     {
-        public static void main(String[] args)
+        public static void Main(String[] args)
         {
             Console.WriteLine("🚀 Running all tests!\n");
             Console.WriteLine("👤 Running user-related tests...");

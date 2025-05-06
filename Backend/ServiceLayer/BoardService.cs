@@ -27,11 +27,11 @@ namespace Backend.ServiceLayer
             try
             {
                 BoardBL board = _boardFacade.CreateBoard(boardName, email);
-                return JsonSerializer.Serialize(new Response<BoardSL>(null, new BoardSL(board)));
+                return JsonSerializer.Serialize(new Response(null, new BoardSL(board.name)));
             }
             catch (Exception ex)
             {
-                return JsonSerializer.Serialize(new Response<BoardSL>(ex.Message, null));
+                return JsonSerializer.Serialize(new Response(ex.Message, null));
             }
         }
 
@@ -50,11 +50,11 @@ namespace Backend.ServiceLayer
             try
             {
                 _boardFacade.DeleteBoard(boardName, email);
-                return JsonSerializer.Serialize(new Response<object>(null, null));
+                return JsonSerializer.Serialize(new Response(null, null));
             }
             catch (Exception ex)
             {
-                return JsonSerializer.Serialize(new Response<object>(ex.Message, null));
+                return JsonSerializer.Serialize(new Response(ex.Message, null));
             }
         }
 
@@ -76,11 +76,11 @@ namespace Backend.ServiceLayer
             try
             {
                 _boardFacade.LimitColumn(boardName, column, limit, email);
-                return JsonSerializer.Serialize(new Response<object>(null, null));
+                return JsonSerializer.Serialize(new Response(null, null));
             }
             catch (Exception ex)
             {
-                return JsonSerializer.Serialize(new Response<object>(ex.Message, null));
+                return JsonSerializer.Serialize(new Response(ex.Message, null));
             }
         }
 
@@ -100,14 +100,15 @@ namespace Backend.ServiceLayer
         {
             try
             {
-                List<TaskSL> lst = (List<TaskSL>) _boardFacade.GetColumn(email, boardName, columnOrdinal).Select(task => new TaskSL(task));
-                return JsonSerializer.Serialize(new Response<List<TaskSL>>(null, lst));
+                List<TaskSL> lst = (List<TaskSL>) _boardFacade.GetColumn(email, boardName, columnOrdinal).Select(task => new TaskSL(task.title, task.due, task.description, task.creationTime, task.id));
+                return JsonSerializer.Serialize(new Response(null, lst));
             }
             catch (Exception ex)
             {
-                return JsonSerializer.Serialize(new Response<List<TaskSL>>(ex.Message, null));
+                return JsonSerializer.Serialize(new Response(ex.Message, null));
             }
         }
+
 
         /// <summary>
         /// Retrieves the task limit of a specific column in a board.
@@ -126,11 +127,11 @@ namespace Backend.ServiceLayer
             try
             {
                 int limit = _boardFacade.GetColumnLimit(email, boardName, columnOrdinal);
-                return JsonSerializer.Serialize(new Response<int>(null, limit));
+                return JsonSerializer.Serialize(new Response(null, limit));
             }
             catch (Exception ex)
             {
-                return JsonSerializer.Serialize(new Response<object>(ex.Message, null));
+                return JsonSerializer.Serialize(new Response(ex.Message, null));
             }
         }
 
@@ -151,11 +152,11 @@ namespace Backend.ServiceLayer
             try
             {
                 string name = _boardFacade.GetColumnName(email, boardName, columnOrdinal);
-                return JsonSerializer.Serialize(new Response<string>(null, name));
+                return JsonSerializer.Serialize(new Response(null, name));
             }
             catch (Exception ex)
             {
-                return JsonSerializer.Serialize(new Response<string>(ex.Message, null));
+                return JsonSerializer.Serialize(new Response(ex.Message, null));
             }
         }
 
@@ -172,12 +173,12 @@ namespace Backend.ServiceLayer
         {
             try
             {
-                List<TaskSL> lst = (List<TaskSL>) _boardFacade.InProgressTasks(email).Select(task => new TaskSL(task));
-                return JsonSerializer.Serialize(new Response<List<TaskSL>>(null, lst));
+                List<TaskSL> lst = (List<TaskSL>) _boardFacade.InProgressTasks(email).Select(task => new TaskSL(task.title, task.due, task.description, task.creationTime, task.id));
+                return JsonSerializer.Serialize(new Response(null, lst));
             }
             catch (Exception ex)
             {
-                return JsonSerializer.Serialize(new Response<List<TaskSL>>(ex.Message, null));
+                return JsonSerializer.Serialize(new Response(ex.Message, null));
             }
         }
     }

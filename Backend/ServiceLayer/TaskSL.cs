@@ -1,4 +1,5 @@
 ﻿using Backend.BuisnessLayer.BoardPackage;
+using Microsoft.VisualBasic;
 
 namespace Backend.ServiceLayer
 {
@@ -9,13 +10,13 @@ namespace Backend.ServiceLayer
         public string Description { get; set; }
         public DateTime CreationTime { get; init; }
         public int Id { get; set; }
-        internal TaskSL(TaskBL task)
+        public TaskSL(string title, DateTime due, string description, DateTime creationTime, int id)
         {
-            Title = task.title;
-            Due = task.due;
-            Description = task.description;
-            CreationTime = task.creationTime;
-            Id = task.id;
+            Title = title;
+            Due = due;
+            Description = description;
+            CreationTime = creationTime;
+            Id = id;
         }
     }
 }

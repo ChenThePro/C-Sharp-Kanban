@@ -8,7 +8,7 @@ namespace Backend.BuisnessLayer.BoardPackage
     {
         private readonly UserFacade _userfacade;
         private readonly Dictionary<string, BoardBL> boards;
-        private static readonly ILog Log = LogManager.GetLogger(System.Reflection.MethodBase.GetCurrentMethod().DeclaringType);
+        private static readonly ILog Log = LogManager.GetLogger(typeof(BoardFacade));
 
         /// <summary>
         /// Initializes a new instance of the <see cref="BoardFacade"/> class.
@@ -16,7 +16,7 @@ namespace Backend.BuisnessLayer.BoardPackage
         internal BoardFacade(UserFacade userfacade)
         {
             _userfacade = userfacade;
-            boards = new Dictionary<string, BoardBL>();
+            boards = new Dictionary<string, BoardBL>(StringComparer.OrdinalIgnoreCase);
         }
 
         /// <summary>
@@ -83,6 +83,10 @@ namespace Backend.BuisnessLayer.BoardPackage
         /// <exception cref="InvalidOperationException">Thrown when email does not exist or not logged in.</exception>
         internal TaskBL AddTask(string boardName, string title, DateTime due, string description, DateTime creationTime, int id, string email)
         {
+            if (title.Length > 50 || description.Length > 300)
+                throw new InvalidOperationException("exceeds limit");
+            if (id < 0)
+                throw new InvalidOperationException("id can't be negative");
             if (due.CompareTo(creationTime) < 0)
                 throw new InvalidOperationException("due can't be before creation");
             if (!UserExistsAndLoggedIn(email))
@@ -186,8 +190,14 @@ namespace Backend.BuisnessLayer.BoardPackage
         /// <exception cref="KeyNotFoundException">Thrown if the board or task does not exist.</exception>
         /// <exception cref="ArgumentNullException">Thrown if the title is null or empty.</exception>
         /// <exception cref="InvalidOperationException">Thrown if the user doesn't exist or is not logged in ot task id is taken or invalid column.</exception>
-        internal void UpdateTask(string boardName, string title, DateTime? due, string description, int id, string email, int column)
+        internal void UpdateTask(string boardName, string? title, DateTime? due, string? description, int id, string email, int column)
         {
+            if (title != null)
+                if (title.Length > 50)
+                    throw new InvalidOperationException("exceeds limit");
+            if (description != null)
+                if (description.Length > 50)
+                    throw new InvalidOperationException("exceeds limit");
             if (!UserExistsAndLoggedIn(email))
                 throw new InvalidOperationException("user is not logged in or doesn't exist");
             if (column >= 2 || column < 0)

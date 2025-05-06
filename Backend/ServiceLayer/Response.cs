@@ -1,15 +1,17 @@
-﻿namespace Backend.ServiceLayer
+﻿using System.Text.Json.Serialization;
+
+namespace Backend.ServiceLayer
 {
     /// <summary>
     /// Generic response wrapper class used for service methods.
     /// </summary>
     /// <typeparam name="T">The return type of the service method.</typeparam>
-    public class Response<T>
+    public class Response
     {
         public string? ErrorMsg { get; init; }
-        public T? RetVal { get; set; }
+        public object? RetVal { get; set; }
 
-        public Response(string? errorMsg, T? retVal) {
+        public Response(string? errorMsg, object? retVal) {
             ErrorMsg = errorMsg;
             RetVal = retVal;
         }

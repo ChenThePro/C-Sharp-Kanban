@@ -19,7 +19,7 @@ namespace Backend.ServiceLayer
         {
             _userFacade = new UserFacade();
             _boardFacade = new BoardFacade(_userFacade);
-            var logRepository = LogManager.GetRepository(Assembly.GetEntryAssembly());
+            var logRepository = LogManager.GetRepository(Assembly.GetExecutingAssembly());
             XmlConfigurator.Configure(logRepository, new FileInfo("log4net.config"));
         }
 

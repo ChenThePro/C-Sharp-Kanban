@@ -7,7 +7,7 @@ namespace Backend.BuisnessLayer.UserPackage
         internal bool loggedIn;
         internal string email;
         internal string password;
-        private static readonly ILog Log = LogManager.GetLogger(System.Reflection.MethodBase.GetCurrentMethod().DeclaringType);
+        private static readonly ILog Log = LogManager.GetLogger(typeof(UserBL));
 
         internal UserBL(string email, string password)
         {
@@ -31,7 +31,6 @@ namespace Backend.BuisnessLayer.UserPackage
                 throw new InvalidOperationException("user not logged in");
             loggedIn = false;
             Log.Info("user logged out");
-
         }
     }
 }

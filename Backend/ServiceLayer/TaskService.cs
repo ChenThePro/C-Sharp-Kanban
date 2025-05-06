@@ -33,11 +33,11 @@ namespace Backend.ServiceLayer
             try
             {
                 TaskBL task = _boardFacade.AddTask(boardName, title, due, description, creationTime, id, email);
-                return JsonSerializer.Serialize(new Response<TaskSL>(null, new TaskSL(task)));
+                return JsonSerializer.Serialize(new Response(null, new TaskSL(task.title, task.due, task.description, task.creationTime, task.id)));
             }
             catch (Exception ex)
             {
-                return JsonSerializer.Serialize(new Response<TaskSL>(ex.Message, null));
+                return JsonSerializer.Serialize(new Response(ex.Message, null));
             }
         }
 
@@ -58,11 +58,11 @@ namespace Backend.ServiceLayer
             try
             {
                 _boardFacade.MoveTask(boardName, column, id, email);
-                return JsonSerializer.Serialize(new Response<object>(null, null));
+                return JsonSerializer.Serialize(new Response(null, null));
             }
             catch (Exception ex)
             {
-                return JsonSerializer.Serialize(new Response<object>(ex.Message, null));
+                return JsonSerializer.Serialize(new Response(ex.Message, null));
             }
         }
 
@@ -82,16 +82,16 @@ namespace Backend.ServiceLayer
         /// <exception cref="ArgumentNullException">Thrown if the title is null or empty.</exception>
         /// <precondition>The task must exist in the given column and belong to the user.</precondition>
         /// <postcondition>The task's title, description, and due date are updated.</postcondition>
-        public string UpdateTask(string boardName, string title, string description, DateTime? due, int id, string email, int column)
+        public string UpdateTask(string boardName, string? title, string? description, DateTime? due, int id, string email, int column)
         {
             try
             {
                 _boardFacade.UpdateTask(boardName, title, due, description, id, email, column);
-                return JsonSerializer.Serialize(new Response<object>(null, null));
+                return JsonSerializer.Serialize(new Response(null, null));
             }
             catch (Exception ex)
             {
-                return JsonSerializer.Serialize(new Response<object>(ex.Message, null));
+                return JsonSerializer.Serialize(new Response(ex.Message, null));
             }
         }
     }

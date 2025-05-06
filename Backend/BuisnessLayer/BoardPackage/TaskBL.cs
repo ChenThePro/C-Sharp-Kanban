@@ -1,4 +1,5 @@
-﻿using log4net;
+﻿using Backend.BuisnessLayer.UserPackage;
+using log4net;
 
 namespace Backend.BuisnessLayer.BoardPackage
 {
@@ -9,7 +10,7 @@ namespace Backend.BuisnessLayer.BoardPackage
         internal string description;
         internal readonly DateTime creationTime;
         internal int id;
-        private static readonly ILog Log = LogManager.GetLogger(System.Reflection.MethodBase.GetCurrentMethod().DeclaringType);
+        private static readonly ILog Log = LogManager.GetLogger(typeof(TaskBL));
 
         internal TaskBL(string title, DateTime due, string description, DateTime creationTime, int id)
         {
@@ -20,7 +21,7 @@ namespace Backend.BuisnessLayer.BoardPackage
             this.id = id;
         }
 
-        internal void Update(string title, DateTime? due, string description, int? id, string email)
+        internal void Update(string? title, DateTime? due, string? description, int? id, string email)
         {
             this.title = title ??= this.title;
             this.description = description ??= this.description;

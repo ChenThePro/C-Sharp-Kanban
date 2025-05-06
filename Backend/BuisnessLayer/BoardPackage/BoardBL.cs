@@ -1,4 +1,5 @@
-﻿using log4net;
+﻿using Backend.BuisnessLayer.UserPackage;
+using log4net;
 
 namespace Backend.BuisnessLayer.BoardPackage
 {
@@ -7,7 +8,7 @@ namespace Backend.BuisnessLayer.BoardPackage
         internal readonly string owner;
         internal string name;
         internal List<ColumnBL> columns;
-        private static readonly ILog Log = LogManager.GetLogger(System.Reflection.MethodBase.GetCurrentMethod().DeclaringType);
+        private static readonly ILog Log = LogManager.GetLogger(typeof(BoardBL));
 
         internal BoardBL(string name, string owner)
         {
@@ -41,7 +42,7 @@ namespace Backend.BuisnessLayer.BoardPackage
             throw new KeyNotFoundException("task doesn't exist");
         }
 
-        internal void UpdateTask(string title, DateTime? due, string description, int id, string email, int column)
+        internal void UpdateTask(string? title, DateTime? due, string? description, int id, string email, int column)
         {
             columns[column].UpdateTask(title, due, description, id, email);
         }
