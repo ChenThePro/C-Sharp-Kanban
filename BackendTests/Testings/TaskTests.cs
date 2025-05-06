@@ -78,32 +78,42 @@ namespace Backend.BackendTests.Testings
         {
             string email = "user@gmail.com";
             string boardName = "board";
-            var response = JsonSerializer.Deserialize<Response>(
-                _factory.GetTaskService().AddTask(boardName, "Title", DateTime.MaxValue, "Desc", DateTime.Today, 9, email));
-            if (response?.ErrorMsg != null) return false;
-            if (response == null) return false;
-            if (response.RetVal == null) return false;
-            int taskId = ((TaskSL)response.RetVal).Id;
-            var moveResp = JsonSerializer.Deserialize<Response>(
-                _factory.GetTaskService().MoveTask(boardName, 0, taskId, email));
-            return moveResp?.ErrorMsg == null;
+            string rawJson = _factory.GetTaskService().AddTask(boardName, "Title", DateTime.MaxValue, "Desc", DateTime.Today, 9, email);
+            Response? response = JsonSerializer.Deserialize<Response>(rawJson);
+            if (response == null || response.ErrorMsg != null)
+                return false;
+            if (response.RetVal is not JsonElement jsonElement)
+                return false;
+            TaskSL? task = jsonElement.Deserialize<TaskSL>(new JsonSerializerOptions { PropertyNameCaseInsensitive = true });
+            if (task == null)
+                return false;
+            int taskId = task.Id;
+            string moveJson = _factory.GetTaskService().MoveTask(boardName, 0, taskId, email);
+            Response? moveResp = JsonSerializer.Deserialize<Response>(moveJson);
+            return moveResp != null && moveResp.ErrorMsg == null;
         }
+
 
         public bool MoveTask_FromLastColumn()
         {
             string email = "user@gmail.com";
             string boardName = "Board";
-            var resp = JsonSerializer.Deserialize<Response>(
-                _factory.GetTaskService().AddTask(boardName, "Title", DateTime.MaxValue, "Desc", DateTime.Today, 10, email));
-            if (resp == null) return false;
-            if (resp.RetVal == null) return false;
-            int taskId = ((TaskSL)resp.RetVal).Id;
+            string rawJson = _factory.GetTaskService().AddTask(boardName, "Title", DateTime.MaxValue, "Desc", DateTime.Today, 10, email);
+            Response? resp = JsonSerializer.Deserialize<Response>(rawJson);
+            if (resp == null || resp.RetVal is not JsonElement jsonElement)
+                return false;
+            TaskSL? task = jsonElement.Deserialize<TaskSL>(new JsonSerializerOptions { PropertyNameCaseInsensitive = true });
+            if (task == null)
+                return false;
+            int taskId = task.Id;
             _factory.GetTaskService().MoveTask(boardName, 0, taskId, email);
             _factory.GetTaskService().MoveTask(boardName, 1, taskId, email);
-            var result = JsonSerializer.Deserialize<Response>(
-                _factory.GetTaskService().MoveTask(boardName, 2, taskId, email));
-            return result?.ErrorMsg != null;
+            string finalJson = _factory.GetTaskService().MoveTask(boardName, 2, taskId, email);
+            Response? result = JsonSerializer.Deserialize<Response>(finalJson);
+            return result != null && result.ErrorMsg != null;
         }
+
+
 
         public bool MoveTask_InvalidBoard()
         {
