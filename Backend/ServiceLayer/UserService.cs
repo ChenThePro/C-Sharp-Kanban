@@ -70,9 +70,6 @@ namespace Backend.ServiceLayer
             return JsonSerializer.Serialize(new Response<object>(null, null));
         }
 
-        internal string InProgressTasks(string email)
-        {
-            throw new NotImplementedException();
-        }
+       
     }
 }

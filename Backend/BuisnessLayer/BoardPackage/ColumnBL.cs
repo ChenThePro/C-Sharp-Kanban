@@ -7,10 +7,23 @@ namespace Backend.BuisnessLayer.BoardPackage
         private int limit = -1;
         internal List<TaskBL> tasks;
         private static readonly ILog Log = LogManager.GetLogger(System.Reflection.MethodBase.GetCurrentMethod().DeclaringType);
+        private string name;
 
-        internal ColumnBL()
+        internal ColumnBL(int num)
         {
             tasks = new List<TaskBL>();
+            switch (num)
+            {
+                case 0:
+                    name = "backlog";
+                    break;
+                case 1:
+                    name = "in progress";
+                    break;
+                case 2:
+                    name = "done";
+                    break;
+            }
         }
 
         internal void Add(TaskBL newTask, string email)
@@ -51,5 +64,21 @@ namespace Backend.BuisnessLayer.BoardPackage
                 throw new InvalidOperationException("limit too low");
             this.limit = limit;
         }
+
+        internal List<TaskBL> GetColumn()
+        {
+            return tasks;
+        }
+
+        internal int GetColumnLimit()
+        {
+            return limit;
+        }
+
+        internal string GetColumnName()
+        {
+            return name;
+        }
+      
     }
 }
