@@ -5,7 +5,7 @@ namespace Backend.ServiceLayer
     public class UserSL
     {
         private readonly string _password;
-        public string Email { get; set; }
+        public string Email { get; init; }
 
          internal UserSL(UserBL user)
          {

@@ -207,15 +207,14 @@ namespace Backend.BuisnessLayer.BoardPackage
         /// <param name="boardName">The board's name.</param>
         /// <param name="columnOrdinal">The column index.</param>
         /// <returns>A list of <see cref="TaskBL"/>.</returns>
-        internal List<TaskSL> GetColumn(string email, string boardName, int columnOrdinal)
+        internal List<TaskBL> GetColumn(string email, string boardName, int columnOrdinal)
         {
             if (!UserExistsAndLoggedIn(email))
                 throw new InvalidOperationException("user is not logged in or doesn't exist");
             if (columnOrdinal >= 2 || columnOrdinal < 0)
                 throw new InvalidOperationException("invalid column");
             BoardBL board = GetBoardByName(boardName);
-            return (List<TaskSL>) board.GetColumn(columnOrdinal).Select(task => new TaskSL(task)));
-
+            return board.GetColumn(columnOrdinal);
         }
 
         /// <summary>
@@ -257,17 +256,14 @@ namespace Backend.BuisnessLayer.BoardPackage
         /// </summary>
         /// <param name="email">The email of the requesting user.</param>
         /// <returns>A list of in-progress <see cref="TaskSL"/> objects.</returns>
-        internal List<TaskSL> InProgressTasks(string email)
+        internal List<TaskBL> InProgressTasks(string email)
         {
             if (!UserExistsAndLoggedIn(email))
                 throw new InvalidOperationException("user is not logged in or doesn't exist");
-            List<TaskSL> lst = new List<TaskSL>(); List<TaskBL> inProgress;
+            List<TaskBL> lst = new List<TaskBL>();
             foreach (BoardBL board in boards.Values)
                 if (board.owner == email)
-                {
-                    inProgress = board.InProgressTask();
-                    lst.AddRange(inProgress.Select(task => new TaskSL(task)));
-                }
+                    lst.AddRange(board.GetColumn(0));
             return lst;
         }
     }
