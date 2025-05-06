@@ -1,6 +1,4 @@
-﻿using Backend.BuisnessLayer.BoardPackage;
-using Backend.ServiceLayer;
-using System.Text.Json;
+﻿using Backend.ServiceLayer;
 
 
 namespace IntroSE.Kanban.Backend.ServiceLayer
@@ -67,11 +65,7 @@ namespace IntroSE.Kanban.Backend.ServiceLayer
         /// <returns>An empty response, unless an error occurs (see <see cref="GradingService"/>)</returns>
         public string Register(string email, string password)
         {
-            var json = _serviceFactory.GetUserService().Register(email, password);
-            var response = JsonSerializer.Deserialize<Response>(json);
-            if (response != null)
-                response.RetVal = null;
-            return JsonSerializer.Serialize(response);
+            return _serviceFactory.GetUserService().Register(email, password);
         }
 
         /// <summary>
@@ -82,11 +76,7 @@ namespace IntroSE.Kanban.Backend.ServiceLayer
         /// <returns>A response with the user's email, unless an error occurs (see <see cref="GradingService"/>)</returns>
         public string Login(string email, string password)
         {
-            var json = _serviceFactory.GetUserService().Login(email, password);
-            var response = JsonSerializer.Deserialize<Response>(json);
-            if (response != null && response.RetVal != null)
-                response.RetVal = email;
-            return JsonSerializer.Serialize(response);
+            return _serviceFactory.GetUserService().Login(email, password);
         }
 
         /// <summary>
@@ -96,9 +86,7 @@ namespace IntroSE.Kanban.Backend.ServiceLayer
         /// <returns>An empty response, unless an error occurs (see <see cref="GradingService"/>)</returns>
         public string Logout(string email)
         {
-            var json = _serviceFactory.GetUserService().Logout(email);
-            var response = JsonSerializer.Deserialize<Response>(json);
-            return JsonSerializer.Serialize(response);
+            return _serviceFactory.GetUserService().Logout(email);
         }
 
         /// <summary>
@@ -111,9 +99,7 @@ namespace IntroSE.Kanban.Backend.ServiceLayer
         /// <returns>An empty response, unless an error occurs (see <see cref="GradingService"/>)</returns>
         public string LimitColumn(string email, string boardName, int columnOrdinal, int limit)
         {
-            var json = _serviceFactory.GetBoardService().LimitColumn(boardName, columnOrdinal, limit, email);
-            var response = JsonSerializer.Deserialize<Response>(json);
-            return JsonSerializer.Serialize(response);
+            return _serviceFactory.GetBoardService().LimitColumn(boardName, columnOrdinal, limit, email);
         }
 
         /// <summary>
@@ -125,9 +111,7 @@ namespace IntroSE.Kanban.Backend.ServiceLayer
         /// <returns>A response with the column's limit, unless an error occurs (see <see cref="GradingService"/>)</returns>
         public string GetColumnLimit(string email, string boardName, int columnOrdinal)
         {
-            var json = _serviceFactory.GetBoardService().GetColumnLimit(email, boardName, columnOrdinal);
-            var response = JsonSerializer.Deserialize<Response>(json);
-            return JsonSerializer.Serialize(response);
+            return _serviceFactory.GetBoardService().GetColumnLimit(email, boardName, columnOrdinal);
         }
 
         /// <summary>
@@ -139,9 +123,7 @@ namespace IntroSE.Kanban.Backend.ServiceLayer
         /// <returns>A response with the column's name, unless an error occurs (see <see cref="GradingService"/>)</returns>
         public string GetColumnName(string email, string boardName, int columnOrdinal)
         {
-            var json = _serviceFactory.GetBoardService().GetColumnName(email, boardName, columnOrdinal);
-            var response = JsonSerializer.Deserialize<Response>(json);
-            return JsonSerializer.Serialize(response);
+            return _serviceFactory.GetBoardService().GetColumnName(email, boardName, columnOrdinal);
         }
 
         /// <summary>
@@ -155,11 +137,7 @@ namespace IntroSE.Kanban.Backend.ServiceLayer
         /// <returns>An empty response, unless an error occurs (see <see cref="GradingService"/>)</returns>
         public string AddTask(string email, string boardName, string title, string description, DateTime dueDate)
         {
-            var json = _serviceFactory.GetTaskService().AddTask(boardName, title, dueDate, description, DateTime.Today, 1, email);
-            var response = JsonSerializer.Deserialize<Response>(json);
-            if (response != null)
-                response.RetVal = null;
-            return JsonSerializer.Serialize(response);
+            return _serviceFactory.GetTaskService().AddTask(boardName, title, dueDate, description, DateTime.Today, 1, email);
         }
 
         /// <summary>
@@ -173,9 +151,7 @@ namespace IntroSE.Kanban.Backend.ServiceLayer
         /// <returns>An empty response, unless an error occurs (see <see cref="GradingService"/>)</returns>
         public string UpdateTaskDueDate(string email, string boardName, int columnOrdinal, int taskId, DateTime dueDate)
         {
-            var json = _serviceFactory.GetTaskService().UpdateTask(boardName, null, null, dueDate, taskId, email, columnOrdinal);
-            var response = JsonSerializer.Deserialize<Response>(json);
-            return JsonSerializer.Serialize(response);
+            return _serviceFactory.GetTaskService().UpdateTask(boardName, null, null, dueDate, taskId, email, columnOrdinal);
         }
 
         /// <summary>
@@ -189,9 +165,7 @@ namespace IntroSE.Kanban.Backend.ServiceLayer
         /// <returns>An empty response, unless an error occurs (see <see cref="GradingService"/>)</returns>
         public string UpdateTaskTitle(string email, string boardName, int columnOrdinal, int taskId, string title)
         {
-            var json = _serviceFactory.GetTaskService().UpdateTask(boardName, title, null, null, taskId, email, columnOrdinal);
-            var response = JsonSerializer.Deserialize<Response>(json);
-            return JsonSerializer.Serialize(response);
+            return _serviceFactory.GetTaskService().UpdateTask(boardName, title, null, null, taskId, email, columnOrdinal);
         }
 
         /// <summary>
@@ -205,9 +179,7 @@ namespace IntroSE.Kanban.Backend.ServiceLayer
         /// <returns>An empty response, unless an error occurs (see <see cref="GradingService"/>)</returns>
         public string UpdateTaskDescription(string email, string boardName, int columnOrdinal, int taskId, string description)
         {
-            var json = _serviceFactory.GetTaskService().UpdateTask(boardName, null, description, null, taskId, email, columnOrdinal);
-            var response = JsonSerializer.Deserialize<Response>(json);
-            return JsonSerializer.Serialize(response);
+            return _serviceFactory.GetTaskService().UpdateTask(boardName, null, description, null, taskId, email, columnOrdinal);
         }
 
         /// <summary>
@@ -220,9 +192,7 @@ namespace IntroSE.Kanban.Backend.ServiceLayer
         /// <returns>An empty response, unless an error occurs (see <see cref="GradingService"/>)</returns>
         public string AdvanceTask(string email, string boardName, int columnOrdinal, int taskId)
         {
-            var json = _serviceFactory.GetTaskService().MoveTask(boardName, columnOrdinal, taskId, email);
-            var response = JsonSerializer.Deserialize<Response>(json);
-            return JsonSerializer.Serialize(response);
+            return _serviceFactory.GetTaskService().MoveTask(boardName, columnOrdinal, taskId, email);
         }
 
         /// <summary>
@@ -233,11 +203,7 @@ namespace IntroSE.Kanban.Backend.ServiceLayer
         /// <returns>An empty response, unless an error occurs (see <see cref="GradingService"/>)</returns>
         public string CreateBoard(string email, string name)
         {
-            var json = _serviceFactory.GetBoardService().CreateBoard(name, email);
-            var response = JsonSerializer.Deserialize<Response>(json);
-            if (response != null)
-                response.RetVal = null;
-            return JsonSerializer.Serialize(response);
+            return _serviceFactory.GetBoardService().CreateBoard(name, email);
         }
 
         /// <summary>
@@ -248,9 +214,7 @@ namespace IntroSE.Kanban.Backend.ServiceLayer
         /// <returns>An empty response, unless an error occurs (see <see cref="GradingService"/>)</returns>
         public string DeleteBoard(string email, string name)
         {
-            var json = _serviceFactory.GetBoardService().DeleteBoard(name, email);
-            var response = JsonSerializer.Deserialize<Response>(json);
-            return JsonSerializer.Serialize(response);
+            return _serviceFactory.GetBoardService().DeleteBoard(name, email);
         }
 
         /// <summary>
@@ -260,9 +224,7 @@ namespace IntroSE.Kanban.Backend.ServiceLayer
         /// <returns>A response with a list of the in-progress tasks of the user, unless an error occurs (see <see cref="GradingService"/>)</returns>
         public string InProgressTasks(string email)
         {
-            var json = _serviceFactory.GetBoardService().InProgressTasks(email);
-            var response = JsonSerializer.Deserialize<Response>(json);
-            return JsonSerializer.Serialize(response);
+            return _serviceFactory.GetBoardService().InProgressTasks(email);
         }
 
         /// <summary>
@@ -274,9 +236,7 @@ namespace IntroSE.Kanban.Backend.ServiceLayer
         /// <returns>A response with a list of the column's tasks, unless an error occurs (see <see cref="GradingService"/>)</returns>
         public string GetColumn(string email, string boardName, int columnOrdinal)
         {
-            var json = _serviceFactory.GetBoardService().GetColumn(email, boardName, columnOrdinal);
-            var response = JsonSerializer.Deserialize<Response>(json);
-            return JsonSerializer.Serialize(response);
+            return _serviceFactory.GetBoardService().GetColumn(email, boardName, columnOrdinal);
         }
     }
 }

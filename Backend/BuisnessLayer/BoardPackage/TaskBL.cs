@@ -1,5 +1,5 @@
-﻿using Backend.BuisnessLayer.UserPackage;
-using log4net;
+﻿using log4net;
+using System.Reflection;
 
 namespace Backend.BuisnessLayer.BoardPackage
 {
@@ -10,7 +10,7 @@ namespace Backend.BuisnessLayer.BoardPackage
         internal string description;
         internal readonly DateTime creationTime;
         internal int id;
-        private static readonly ILog Log = LogManager.GetLogger(typeof(TaskBL));
+        private static readonly ILog Log = LogManager.GetLogger(MethodBase.GetCurrentMethod()!.DeclaringType!);
 
         internal TaskBL(string title, DateTime due, string description, DateTime creationTime, int id)
         {

@@ -6,34 +6,36 @@ namespace Backend.BackendTests.Testings
     public class LoginTests
     {
         private readonly ServiceFactory _factory = new ServiceFactory();
+        private string _userEmail = "user@email.com";
+        private string _password = "Password1";
 
         public bool TestLoggedInAfterRegister()
         {
-            _factory.GetUserService().Register("user@email.com", "Password1");
-            var json = _factory.GetUserService().Login("user@email.com", "Password1");
-            var response = JsonSerializer.Deserialize<Response>(json);
-            return response?.ErrorMsg == null;
+            _factory.GetUserService().Register(_userEmail, _password);
+            string json = _factory.GetUserService().Login(_userEmail, _password);
+            Response response = JsonSerializer.Deserialize<Response>(json)!;
+            return response.ErrorMsg != null;
         }
 
         public bool TestWrongUsernameLogin()
         {
-            var json = _factory.GetUserService().Login("wrongUser@gmail.com", "Password1");
-            var response = JsonSerializer.Deserialize<Response>(json);
-            return response?.ErrorMsg != null;
+            string json = _factory.GetUserService().Login("wrongUser@gmail.com", _password);
+            Response response = JsonSerializer.Deserialize<Response>(json)!;
+            return response.ErrorMsg != null;
         }
 
         public bool TestWrongPasswordLogin()
         {
-            var json = _factory.GetUserService().Login("user@email.com", "wrongPassword");
-            var response = JsonSerializer.Deserialize<Response>(json);
-            return response?.ErrorMsg != null;
+            string json = _factory.GetUserService().Login(_userEmail, "wrongPassword");
+            Response response = JsonSerializer.Deserialize<Response>(json)!;
+            return response.ErrorMsg != null;
         }
 
         public bool TestLogout()
         {
-            var json = _factory.GetUserService().Logout("user@email.com");
-            var response = JsonSerializer.Deserialize<Response>(json);
-            return response?.ErrorMsg == null;
+            string json = _factory.GetUserService().Logout(_userEmail);
+            Response response = JsonSerializer.Deserialize<Response>(json)!;
+            return response.ErrorMsg == null;
         }
 
         public void RunAll()

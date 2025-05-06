@@ -1,6 +1,7 @@
 using Backend.BuisnessLayer.UserPackage;
 using Backend.ServiceLayer;
 using log4net;
+using System.Reflection;
 
 namespace Backend.BuisnessLayer.BoardPackage
 {
@@ -8,7 +9,7 @@ namespace Backend.BuisnessLayer.BoardPackage
     {
         private readonly UserFacade _userfacade;
         private readonly Dictionary<string, BoardBL> boards;
-        private static readonly ILog Log = LogManager.GetLogger(typeof(BoardFacade));
+        private static readonly ILog Log = LogManager.GetLogger(MethodBase.GetCurrentMethod()!.DeclaringType!);
 
         /// <summary>
         /// Initializes a new instance of the <see cref="BoardFacade"/> class.
@@ -60,10 +61,10 @@ namespace Backend.BuisnessLayer.BoardPackage
         /// <param name="column">The column index.</param>
         /// <returns>The corresponding <see cref="TaskBL"/> instance, or null if not found.</returns>
         private TaskBL? GetTaskByIdAndColumn(string boardName, int id, int column)
-       {
+        {
             BoardBL board = GetBoardByName(boardName);
             return board.GetTaskByIdAndColumn(id, column);
-       }
+        }
 
         /// <summary>
         /// The AddTask function adds a task to a board after validating input, 
@@ -96,7 +97,7 @@ namespace Backend.BuisnessLayer.BoardPackage
             if (GetTaskByIdAndColumn(boardName, id, 0) != null || GetTaskByIdAndColumn(boardName, id, 1) != null || GetTaskByIdAndColumn(boardName, id, 2) != null)
                 throw new InvalidOperationException("task id is already taken in this board");
             return boards[boardName].AddTask(title, due, description, creationTime, id, email, 0);
-           
+
         }
 
         /// <summary>
@@ -116,7 +117,7 @@ namespace Backend.BuisnessLayer.BoardPackage
             boards.Add(boardName, new BoardBL(boardName, email));
             Log.Info("new board created - " + boardName);
             return boards[boardName];
-            
+
         }
 
         /// <summary>

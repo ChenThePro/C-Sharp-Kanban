@@ -1,6 +1,4 @@
-﻿using Backend.BuisnessLayer.UserPackage;
-
-namespace Backend.ServiceLayer
+﻿namespace Backend.ServiceLayer
 {
     public class UserSL
     {

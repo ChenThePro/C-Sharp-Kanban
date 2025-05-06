@@ -6,199 +6,185 @@ namespace Backend.BackendTests.Testings
     public class TaskTests
     {
         private readonly ServiceFactory _factory = new ServiceFactory();
+        private string _userEmail = "user@gmail.com";
+        private string _password = "Password1";
+        private string _boardName = "board";
 
         public bool TestAddTaskSuccessfully()
         {
-            _factory.GetUserService().Register("user@gmail.com", "Password1");
-            _factory.GetBoardService().CreateBoard("board", "user@gmail.com");
-            var json = _factory.GetTaskService().AddTask("board", "Task Title", DateTime.MaxValue, "Some description", DateTime.Today, 1, "user@gmail.com");
-            var response = JsonSerializer.Deserialize<Response>(json);
-            return response?.ErrorMsg == null;
+            _factory.GetUserService().Register(_userEmail, _password);
+            _factory.GetBoardService().CreateBoard(_boardName, _userEmail);
+            string json = _factory.GetTaskService().AddTask(_boardName, "Task Title", DateTime.MaxValue, "Some description", DateTime.Today, 1, _userEmail);
+            Response response = JsonSerializer.Deserialize<Response>(json)!;
+            return response.ErrorMsg == null;
         }
 
         public bool TestAddTaskWithUnexistedBoard()
         {
-            var response = JsonSerializer.Deserialize<Response>(
-                _factory.GetTaskService().AddTask("unknownBoard", "Task Title", DateTime.MaxValue, "Description", DateTime.Today, 2, "user@gmail.com"));
-            return response?.ErrorMsg != null;
+            Response response = JsonSerializer.Deserialize<Response>(
+                _factory.GetTaskService().AddTask("unknownBoard", "Task Title", DateTime.MaxValue, "Description", DateTime.Today, 2, _userEmail))!;
+            return response.ErrorMsg != null;
         }
 
         public bool TestAddTaskWithDueBeforeCreation()
         {
-            var response = JsonSerializer.Deserialize<Response>(
-                _factory.GetTaskService().AddTask("board", "Task", DateTime.MinValue, "Desc", DateTime.MaxValue, 3, "user@gmail.com"));
-            return response?.ErrorMsg != null;
+            Response response = JsonSerializer.Deserialize<Response>(
+                _factory.GetTaskService().AddTask(_boardName, "Task", DateTime.MinValue, "Desc", DateTime.MaxValue, 3, _userEmail))!;
+            return response.ErrorMsg != null;
         }
 
         public bool TestAddTaskWithWrongId()
         {
-            var response = JsonSerializer.Deserialize<Response>(
-                _factory.GetTaskService().AddTask("board", "Task", DateTime.MaxValue, "Description", DateTime.Today, -5, "user@gmail.com"));
-            return response?.ErrorMsg != null;
+            Response response = JsonSerializer.Deserialize<Response>(
+                _factory.GetTaskService().AddTask(_boardName, "Task", DateTime.MaxValue, "Description", DateTime.Today, -5, _userEmail))!;
+            return response.ErrorMsg != null;
         }
 
         public bool TestAddTaskWithWrongEmail()
         {
-            var response = JsonSerializer.Deserialize<Response>(
-                _factory.GetTaskService().AddTask("board", "Task", DateTime.MaxValue, "Description", DateTime.Today, 4, "badEmail"));
-            return response?.ErrorMsg != null;
+            Response response = JsonSerializer.Deserialize<Response>(
+                _factory.GetTaskService().AddTask(_boardName, "Task", DateTime.MaxValue, "Description", DateTime.Today, 4, "badEmail"))!;
+            return response.ErrorMsg != null;
         }
 
         public bool TestAddTaskWithNoTitle()
         {
-            var response = JsonSerializer.Deserialize<Response>(
-                _factory.GetTaskService().AddTask("board", "", DateTime.MaxValue, "Description", DateTime.Today, 5, "user@gmail.com"));
-            return response?.ErrorMsg != null;
+            Response response = JsonSerializer.Deserialize<Response>(
+                _factory.GetTaskService().AddTask(_boardName, "", DateTime.MaxValue, "Description", DateTime.Today, 5, _userEmail))!;
+            return response.ErrorMsg != null;
         }
 
         public bool TestAddTaskLongTitle()
         {
             string longTitle = new string('A', 51);
-            var response = JsonSerializer.Deserialize<Response>(
-                _factory.GetTaskService().AddTask("board", longTitle, DateTime.MaxValue, "Desc", DateTime.Today, 6, "user@gmail.com"));
-            return response?.ErrorMsg != null;
+            Response response = JsonSerializer.Deserialize<Response>(
+                _factory.GetTaskService().AddTask(_boardName, longTitle, DateTime.MaxValue, "Desc", DateTime.Today, 6, _userEmail))!;
+            return response.ErrorMsg != null;
         }
 
         public bool TestAddTaskLongDescription()
         {
             string longDesc = new string('B', 301);
-            var response = JsonSerializer.Deserialize<Response>(
-                _factory.GetTaskService().AddTask("board", "Title", DateTime.MaxValue, longDesc, DateTime.Today, 7, "user@gmail.com"));
-            return response?.ErrorMsg != null;
+            Response response = JsonSerializer.Deserialize<Response>(
+                _factory.GetTaskService().AddTask(_boardName, "Title", DateTime.MaxValue, longDesc, DateTime.Today, 7, _userEmail))!;
+            return response.ErrorMsg != null;
         }
 
         public bool TestAddTaskCreationDate()
         {
-            var response = JsonSerializer.Deserialize<Response>(
-                _factory.GetTaskService().AddTask("board", "Task", DateTime.MaxValue, "Description", DateTime.Today, 8, "user@gmail.com"));
-            return response?.ErrorMsg == null;
+            Response response = JsonSerializer.Deserialize<Response>(
+                _factory.GetTaskService().AddTask(_boardName, "Task", DateTime.MaxValue, "Description", DateTime.Today, 8, _userEmail))!;
+            return response.ErrorMsg == null;
         }
 
         public bool MoveTask_Valid()
         {
-            string email = "user@gmail.com";
-            string boardName = "board";
-            string rawJson = _factory.GetTaskService().AddTask(boardName, "Title", DateTime.MaxValue, "Desc", DateTime.Today, 9, email);
-            Response? response = JsonSerializer.Deserialize<Response>(rawJson);
-            if (response == null || response.ErrorMsg != null)
+            string rawJson = _factory.GetTaskService().AddTask(_boardName, "Title", DateTime.MaxValue, "Desc", DateTime.Today, 9, _userEmail);
+            Response response = JsonSerializer.Deserialize<Response>(rawJson)!;
+            if (response.ErrorMsg != null)
                 return false;
-            if (response.RetVal is not JsonElement jsonElement)
-                return false;
-            TaskSL? task = jsonElement.Deserialize<TaskSL>(new JsonSerializerOptions { PropertyNameCaseInsensitive = true });
-            if (task == null)
-                return false;
-            int taskId = task.Id;
-            string moveJson = _factory.GetTaskService().MoveTask(boardName, 0, taskId, email);
-            Response? moveResp = JsonSerializer.Deserialize<Response>(moveJson);
-            return moveResp != null && moveResp.ErrorMsg == null;
+            string moveJson = _factory.GetTaskService().MoveTask(_boardName, 0, 9, _userEmail);
+            Response moveResp = JsonSerializer.Deserialize<Response>(moveJson)!;
+            return moveResp.ErrorMsg == null;
         }
-
 
         public bool MoveTask_FromLastColumn()
         {
-            string email = "user@gmail.com";
-            string boardName = "Board";
-            string rawJson = _factory.GetTaskService().AddTask(boardName, "Title", DateTime.MaxValue, "Desc", DateTime.Today, 10, email);
-            Response? resp = JsonSerializer.Deserialize<Response>(rawJson);
-            if (resp == null || resp.RetVal is not JsonElement jsonElement)
+            string rawJson = _factory.GetTaskService().AddTask(_boardName, "Title", DateTime.MaxValue, "Desc", DateTime.Today, 10, _userEmail);
+            Response resp = JsonSerializer.Deserialize<Response>(rawJson)!;
+            if (resp.ErrorMsg != null)
                 return false;
-            TaskSL? task = jsonElement.Deserialize<TaskSL>(new JsonSerializerOptions { PropertyNameCaseInsensitive = true });
-            if (task == null)
-                return false;
-            int taskId = task.Id;
-            _factory.GetTaskService().MoveTask(boardName, 0, taskId, email);
-            _factory.GetTaskService().MoveTask(boardName, 1, taskId, email);
-            string finalJson = _factory.GetTaskService().MoveTask(boardName, 2, taskId, email);
-            Response? result = JsonSerializer.Deserialize<Response>(finalJson);
-            return result != null && result.ErrorMsg != null;
+            _factory.GetTaskService().MoveTask(_boardName, 0, 10, _userEmail);
+            _factory.GetTaskService().MoveTask(_boardName, 1, 10, _userEmail);
+            string finalJson = _factory.GetTaskService().MoveTask(_boardName, 2, 10, _userEmail);
+            Response result = JsonSerializer.Deserialize<Response>(finalJson)!;
+            return result.ErrorMsg != null;
         }
-
-
 
         public bool MoveTask_InvalidBoard()
         {
-            var resp = JsonSerializer.Deserialize<Response>(
-                _factory.GetTaskService().MoveTask("Board", 0, 1, "test@example.com"));
-            return resp?.ErrorMsg != null;
+            Response resp = JsonSerializer.Deserialize<Response>(
+                _factory.GetTaskService().MoveTask("kuku", 0, 1, _userEmail))!;
+            return resp.ErrorMsg != null;
         }
 
         public bool MoveTask_InvalidEmail()
         {
-            var resp = JsonSerializer.Deserialize<Response>(
-                _factory.GetTaskService().MoveTask("board", 0, 1, "wrong@example.com"));
-            return resp?.ErrorMsg != null;
+            Response resp = JsonSerializer.Deserialize<Response>(
+                _factory.GetTaskService().MoveTask(_boardName, 0, 1, "wrong@example.com"))!;
+            return resp.ErrorMsg != null;
         }
 
         public bool MoveTask_InvalidTaskId()
         {
-            var resp = JsonSerializer.Deserialize<Response>(
-                _factory.GetTaskService().MoveTask("Board", 0, 999, "user@gmail.com"));
-            return resp?.ErrorMsg != null;
+            Response resp = JsonSerializer.Deserialize<Response>(
+                _factory.GetTaskService().MoveTask(_boardName, 0, 999, _userEmail))!;
+            return resp.ErrorMsg != null;
         }
 
         public bool MoveTask_InvalidColumn()
         {
-            var resp = JsonSerializer.Deserialize<Response>(
-                _factory.GetTaskService().MoveTask("board", 99, 1, "user@gmail.com"));
-            return resp?.ErrorMsg != null;
+            Response resp = JsonSerializer.Deserialize<Response>(
+                _factory.GetTaskService().MoveTask(_boardName, 99, 1, _userEmail))!;
+            return resp.ErrorMsg != null;
         }
 
         public bool UpdateTask_InvalidBoard()
         {
-            var resp = JsonSerializer.Deserialize<Response>(
-                _factory.GetTaskService().UpdateTask("FakeBoard", "T", "D", DateTime.MaxValue, 70, "user@gmail.com", 0));
-            return resp?.ErrorMsg != null;
+            Response resp = JsonSerializer.Deserialize<Response>(
+                _factory.GetTaskService().UpdateTask("FakeBoard", "T", "D", DateTime.MaxValue, 70, _userEmail, 0))!;
+            return resp.ErrorMsg != null;
         }
 
         public bool UpdateTask_InvalidEmail()
         {
-            var resp = JsonSerializer.Deserialize<Response>(
-                _factory.GetTaskService().UpdateTask("Board", "T", "D", DateTime.MaxValue, 70, "wrong@example.com", 0));
-            return resp?.ErrorMsg != null;
+            Response resp = JsonSerializer.Deserialize<Response>(
+                _factory.GetTaskService().UpdateTask(_boardName, "T", "D", DateTime.MaxValue, 70, "wrong@example.com", 0))!;
+            return resp.ErrorMsg != null;
         }
 
         public bool UpdateTask_InvalidId()
         {
-            var resp = JsonSerializer.Deserialize<Response>(
-                _factory.GetTaskService().UpdateTask("board", "T", "D", DateTime.MaxValue, 999, "user@gmail.com", 0));
-            return resp?.ErrorMsg != null;
+            Response resp = JsonSerializer.Deserialize<Response>(
+                _factory.GetTaskService().UpdateTask(_boardName, "T", "D", DateTime.MaxValue, 999, _userEmail, 0))!;
+            return resp.ErrorMsg != null;
         }
 
         public bool UpdateTask_InvalidColumn()
         {
-            var resp = JsonSerializer.Deserialize<Response>(
-                _factory.GetTaskService().UpdateTask("board", "T", "D", DateTime.MaxValue, 70, "user@gmail.com", 999));
-            return resp?.ErrorMsg != null;
+            Response resp = JsonSerializer.Deserialize<Response>(
+                _factory.GetTaskService().UpdateTask(_boardName, "T", "D", DateTime.MaxValue, 70, _userEmail, 999))!;
+            return resp.ErrorMsg != null;
         }
 
         public bool UpdateTask_EmptyTitle()
         {
-            var resp = JsonSerializer.Deserialize<Response>(
-                _factory.GetTaskService().UpdateTask("board", "", "Desc", DateTime.MaxValue, 70, "user@gmail.com", 0));
-            return resp?.ErrorMsg != null;
+            Response resp = JsonSerializer.Deserialize<Response>(
+                _factory.GetTaskService().UpdateTask(_boardName, "", "Desc", DateTime.MaxValue, 70, _userEmail, 0))!;
+            return resp.ErrorMsg != null;
         }
 
         public bool UpdateTask_TitleTooLong()
         {
             string longTitle = new string('A', 51);
-            var resp = JsonSerializer.Deserialize<Response>(
-                _factory.GetTaskService().UpdateTask("board", longTitle, "Desc", DateTime.MaxValue, 70, "user@gmail.com", 0));
-            return resp?.ErrorMsg != null;
+            Response resp = JsonSerializer.Deserialize<Response>(
+                _factory.GetTaskService().UpdateTask(_boardName, longTitle, "Desc", DateTime.MaxValue, 70, _userEmail, 0))!;
+            return resp.ErrorMsg != null;
         }
 
         public bool UpdateTask_DescriptionTooLong()
         {
             string longDesc = new string('D', 301);
-            var resp = JsonSerializer.Deserialize<Response>(
-                _factory.GetTaskService().UpdateTask("board", "Title", longDesc, DateTime.MaxValue, 70, "user@gmail.com", 0));
-            return resp?.ErrorMsg != null;
+            Response resp = JsonSerializer.Deserialize<Response>(
+                _factory.GetTaskService().UpdateTask(_boardName, "Title", longDesc, DateTime.MaxValue, 70, _userEmail, 0))!;
+            return resp.ErrorMsg != null;
         }
 
         public bool UpdateTask_PastDueDate()
         {
-            var resp = JsonSerializer.Deserialize<Response>(
-                _factory.GetTaskService().UpdateTask("board", "Title", "Desc", DateTime.MinValue, 70, "user@gmail.com", 0));
-            return resp?.ErrorMsg != null;
+            Response resp = JsonSerializer.Deserialize<Response>(
+                _factory.GetTaskService().UpdateTask(_boardName, "Title", "Desc", DateTime.MinValue, 70, _userEmail, 0))!;
+            return resp.ErrorMsg != null;
         }
 
         public void RunAll()

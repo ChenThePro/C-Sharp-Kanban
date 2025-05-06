@@ -1,4 +1,5 @@
 ﻿using log4net;
+using System.Reflection;
 
 namespace Backend.BuisnessLayer.UserPackage
 {
@@ -7,7 +8,7 @@ namespace Backend.BuisnessLayer.UserPackage
         internal bool loggedIn;
         internal string email;
         internal string password;
-        private static readonly ILog Log = LogManager.GetLogger(typeof(UserBL));
+        private static readonly ILog Log = LogManager.GetLogger(MethodBase.GetCurrentMethod()!.DeclaringType!);
 
         internal UserBL(string email, string password)
         {
