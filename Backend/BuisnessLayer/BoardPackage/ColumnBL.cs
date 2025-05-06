@@ -74,6 +74,5 @@ namespace Backend.BuisnessLayer.BoardPackage
         {
             return name;
         }
-      
     }
 }

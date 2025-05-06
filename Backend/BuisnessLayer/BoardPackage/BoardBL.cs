@@ -70,11 +70,5 @@ namespace Backend.BuisnessLayer.BoardPackage
         {
             return columns[columnOrdinal].GetColumnName();
         }
-
-        internal List<TaskBL> InProgressTask()
-        {
-            return columns[0].GetColumn();
-
-        }
     }
 }

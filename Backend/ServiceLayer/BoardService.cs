@@ -100,7 +100,7 @@ namespace Backend.ServiceLayer
         {
             try
             {
-                List<TaskSL> lst = _boardFacade.GetColumn(email, boardName, columnOrdinal);
+                List<TaskSL> lst = (List<TaskSL>) _boardFacade.GetColumn(email, boardName, columnOrdinal).Select(task => new TaskSL(task));
                 return JsonSerializer.Serialize(new Response<List<TaskSL>>(null, lst));
             }
             catch (Exception ex)
@@ -172,7 +172,7 @@ namespace Backend.ServiceLayer
         {
             try
             {
-                List<TaskSL> lst = _boardFacade.InProgressTasks(email);
+                List<TaskSL> lst = (List<TaskSL>) _boardFacade.InProgressTasks(email).Select(task => new TaskSL(task));
                 return JsonSerializer.Serialize(new Response<List<TaskSL>>(null, lst));
             }
             catch (Exception ex)
