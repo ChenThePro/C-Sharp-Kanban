@@ -5,13 +5,13 @@ namespace Backend.BuisnessLayer.BoardPackage
     internal class TaskBL
     {
         internal string title;
-        internal string due;
+        internal DateTime due;
         internal string description;
-        internal string creationTime;
+        internal readonly DateTime creationTime;
         internal int id;
         private static readonly ILog Log = LogManager.GetLogger(System.Reflection.MethodBase.GetCurrentMethod().DeclaringType);
 
-        internal TaskBL(string title, string due, string description, string creationTime, int id)
+        internal TaskBL(string title, DateTime due, string description, DateTime creationTime, int id)
         {
             this.title = title;
             this.due = due;
@@ -20,12 +20,12 @@ namespace Backend.BuisnessLayer.BoardPackage
             this.id = id;
         }
 
-        internal void Update(string title, string due, string description, int id, string email)
+        internal void Update(string title, DateTime? due, string description, int? id, string email)
         {
-            this.title = title;
-            this.description = description;
-            this.due = due;
-            this.id = id;
+            this.title = title ??= this.title;
+            this.description = description ??= this.description;
+            this.due = due ??= this.due;
+            this.id = id ??= this.id;
             Log.Info("task updated");
         }
     }

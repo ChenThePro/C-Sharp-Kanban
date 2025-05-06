@@ -7,6 +7,10 @@ namespace Backend.ServiceLayer
     {
         private readonly UserFacade _userFacade;
 
+        /// <summary>
+        /// Constructs a new UserService with the given UserFacade.
+        /// </summary>
+        /// <param name="userFacade">The facade to handle user-related operations.</param>
         internal UserService(UserFacade userFacade)
         {
             _userFacade = userFacade;
@@ -15,12 +19,13 @@ namespace Backend.ServiceLayer
         /// <summary>
         /// Attempts to log in a user with the provided credentials.
         /// </summary>
+        /// <param name="email">User's email address.</param>
         /// <param name="password">User's password.</param>
-        /// <returns>Response containing the logged-in UserSL object.</returns>
-        /// <exception cref="UnauthorizedAccessException">If the login fails.</exception>
-        /// <exception cref="KeyNotFoundException">If the email doesn't exist.</exception>
-        /// <precondition>The email and password are registered.</precondition>
-        /// <postcondition>The user is marked as logged in.</postcondition>
+        /// <returns>JSON-serialized Response containing the logged-in UserSL object or an error message.</returns>
+        /// <exception cref="UnauthorizedAccessException">If the password is incorrect.</exception>
+        /// <exception cref="KeyNotFoundException">If the email does not exist.</exception>
+        /// <precondition>The email must exist, and the password must match the stored credentials.</precondition>
+        /// <postcondition>The user is marked as logged in if credentials are valid.</postcondition>
         public string Login(string email, string password)
         {
             try
@@ -35,16 +40,16 @@ namespace Backend.ServiceLayer
         }
 
         /// <summary>
-        /// Registers a new user with the given credentials and email.
+        /// Registers a new user with the given credentials.
         /// </summary>
+        /// <param name="email">Desired email address.</param>
         /// <param name="password">Desired password.</param>
-        /// <param name="email">Email address.</param>
-        /// <returns>Response containing the created UserSL object.</returns>
-        /// <exception cref="InvalidOperationException">If the email is already taken.</exception>
-        /// <exception cref="FormatException">If the email is not valid.</exception>
-        /// <exception cref="ArgumentException">If the password does not meet it's requirements.</exception>
-        /// <precondition>The email must be unique and valid.</precondition>
-        /// <postcondition>A new user is added to the system.</postcondition>
+        /// <returns>JSON-serialized Response containing the newly created UserSL object or an error message.</returns>
+        /// <exception cref="InvalidOperationException">If the email is already in use.</exception>
+        /// <exception cref="FormatException">If the email format is invalid.</exception>
+        /// <exception cref="ArgumentException">If the password does not meet requirements.</exception>
+        /// <precondition>Email must be unique and properly formatted; password must meet complexity rules.</precondition>
+        /// <postcondition>The new user is added to the system and marked as logged in.</postcondition>
         public string Register(string email, string password)
         {
             try
@@ -59,13 +64,14 @@ namespace Backend.ServiceLayer
         }
 
         /// <summary>
-        /// Logs out the current user.
+        /// Logs out the user with the specified email.
         /// </summary>
-        /// <returns>An empty Response indicating logout status.</returns>
-        /// <exception cref="InvalidOperationException">If the user is not logged in.</exception>
-        /// <exception cref="KeyNotFoundException">If the email does not exists.</exception>
-        /// <precondition>A user must be currently logged in.</precondition>
-        /// <postcondition>The user's session is invalidated.</postcondition>
+        /// <param name="email">User's email address.</param>
+        /// <returns>JSON-serialized empty Response object or an error message.</returns>
+        /// <exception cref="InvalidOperationException">If the user is not currently logged in.</exception>
+        /// <exception cref="KeyNotFoundException">If the email does not exist.</exception>
+        /// <precondition>The user must exist and be currently logged in.</precondition>
+        /// <postcondition>The user is marked as logged out.</postcondition>
         public string Logout(string email)
         {
             try
@@ -78,7 +84,5 @@ namespace Backend.ServiceLayer
                 return JsonSerializer.Serialize(new Response<object>(ex.Message, null));
             }
         }
-
-       
     }
 }

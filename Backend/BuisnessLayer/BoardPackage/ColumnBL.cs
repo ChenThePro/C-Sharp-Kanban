@@ -1,5 +1,4 @@
 ﻿using log4net;
-using System;
 
 namespace Backend.BuisnessLayer.BoardPackage
 {
@@ -22,12 +21,12 @@ namespace Backend.BuisnessLayer.BoardPackage
             name = Enum.GetName(typeof(Names), num);
         }
 
-        internal void Add(TaskBL newTask, string email)
+        internal void Add(TaskBL task, string email)
         {
             if (limit != -1 && limit <= tasks.Count)
                 throw new InvalidOperationException("exceeds column's limit");
             Log.Info("task added succesfully");
-            tasks.Add(newTask);
+            tasks.Add(task);
         }
 
         internal void Delete(TaskBL task, string email)
@@ -35,7 +34,7 @@ namespace Backend.BuisnessLayer.BoardPackage
             tasks.Remove(task);
         }
 
-        internal void UpdateTask(string title, string due, string description, int id, string email)
+        internal void UpdateTask(string title, DateTime? due, string description, int id, string email)
         {
             foreach (TaskBL task in tasks)
                 if (task.id == id)

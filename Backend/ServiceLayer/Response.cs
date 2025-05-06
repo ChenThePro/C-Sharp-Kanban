@@ -6,7 +6,7 @@
     /// <typeparam name="T">The return type of the service method.</typeparam>
     public class Response<T>
     {
-        public string? ErrorMsg { get; set; }
+        public string? ErrorMsg { get; init; }
         public T? RetVal { get; set; }
 
         public Response(string? errorMsg, T? retVal) {

@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Text.Json;
 using System.Threading.Tasks;
 using Backend.BuisnessLayer;
 using Backend.ServiceLayer;
@@ -10,7 +11,7 @@ namespace Backend.BackendTests.Testings
 {
     public class TaskTests
     {
-        private ServiceFactory _factory = new ServiceFactory(new BoardFacade(), new UserFacade());
+        private ServiceFactory _factory = new ServiceFactory();
 
         /// <summary>
         /// Test adding a task successfully.
@@ -22,10 +23,8 @@ namespace Backend.BackendTests.Testings
         {
             _factory.GetUserService().Register("user@gmail.com", "Password1");
             _factory.GetBoardService().CreateBoard("board", "user@gmail.com");
-            Response<TaskSL> response = _factory.GetTaskService().AddTask("board", "Task Title", "19/09/9999", "Some description", DateTime.Today.ToString(), 1, "user@email.com");
-            if (response.RetVal == null)
-                return false;
-            return true;
+            Response<TaskSL> response = JsonSerializer.Deserialize<Response<TaskSL>>(_factory.GetTaskService().AddTask("board", "Task Title", DateTime.MaxValue, "Some description", DateTime.Today, 1, "user@email.com"));
+            return response.ErrorMsg == null;
         }
 
         /// <summary>
@@ -36,10 +35,8 @@ namespace Backend.BackendTests.Testings
         /// </summary>
         public bool TestAddTaskWithUnexistedBoard()
         {
-            Response<TaskSL> response = _factory.GetTaskService().AddTask("unknownBoard", "Task Title", "19/09/9999", "Description", DateTime.Today.ToString(), 2, "user@email.com");
-            if (response.RetVal != null)
-                return false;
-            return true;
+            Response<TaskSL> response = JsonSerializer.Deserialize<Response<TaskSL>>(_factory.GetTaskService().AddTask("unknownBoard", "Task Title", DateTime.MaxValue, "Description", DateTime.Today, 2, "user@email.com"));
+            return response.ErrorMsg != null;
         }
 
         /// <summary>
@@ -50,10 +47,8 @@ namespace Backend.BackendTests.Testings
         /// </summary>
         public bool TestAddTaskWithDueBeforeCreation()
         {
-            Response<TaskSL> response = _factory.GetTaskService().AddTask("board1", "Task", "19/09/9999", "Desc", "20/09/9999", 3, "user@email.com");
-            if (response.RetVal != null)
-                return false;
-            return true;
+            Response<TaskSL> response = JsonSerializer.Deserialize<Response<TaskSL>>(_factory.GetTaskService().AddTask("board1", "Task", DateTime.MinValue, "Desc", DateTime.MaxValue, 3, "user@email.com"));
+            return response.ErrorMsg != null;
         }
 
         /// <summary>
@@ -64,10 +59,8 @@ namespace Backend.BackendTests.Testings
         /// </summary>
         public bool TestAddTaskWithWrongId()
         {
-            Response<TaskSL> response = _factory.GetTaskService().AddTask("board", "Task", "19/09/9999", "Description", DateTime.Today.ToString(), -5, "user@email.com");
-            if (response.RetVal != null)
-                return false;
-            return true;
+            Response<TaskSL> response = JsonSerializer.Deserialize<Response<TaskSL>>(_factory.GetTaskService().AddTask("board", "Task", DateTime.MaxValue, "Description", DateTime.Today, -5, "user@email.com"));
+            return response.ErrorMsg != null;
         }
 
         /// <summary>
@@ -78,10 +71,8 @@ namespace Backend.BackendTests.Testings
         /// </summary>
         public bool TestAddTaskWithWrongEmail()
         {
-            Response<TaskSL> response = _factory.GetTaskService().AddTask("board", "Task", "19/09/9999", "Description", DateTime.Today.ToString(), 4, "badEmail");
-            if (response.RetVal != null)
-                return false;
-            return true;
+            Response<TaskSL> response = JsonSerializer.Deserialize<Response<TaskSL>>(_factory.GetTaskService().AddTask("board", "Task", DateTime.MaxValue, "Description", DateTime.Today, 4, "badEmail"));
+            return response.ErrorMsg != null;
         }
 
         /// <summary>
@@ -92,10 +83,8 @@ namespace Backend.BackendTests.Testings
         /// </summary>
         public bool TestAddTaskWithNoTitle()
         {
-            Response<TaskSL> response = _factory.GetTaskService().AddTask("board", "", "19/09/9999", "Description", DateTime.Today.ToString(), 5, "user@email.com");
-            if (response.RetVal != null)
-                return false;
-            return true;
+            Response<TaskSL> response = JsonSerializer.Deserialize<Response<TaskSL>>(_factory.GetTaskService().AddTask("board", "", DateTime.MaxValue, "Description", DateTime.Today, 5, "user@email.com"));
+            return response.ErrorMsg != null;
         }
 
         /// <summary>
@@ -107,10 +96,8 @@ namespace Backend.BackendTests.Testings
         public bool TestAddTaskLongTitle()
         {
             string longTitle = new string('A', 51);
-            Response<TaskSL> response = _factory.GetTaskService().AddTask("board1", longTitle, "19/09/9999", "Desc", DateTime.Today.ToString(), 6, "user@email.com");
-            if (response.RetVal != null)
-                return false;
-            return true;
+            Response<TaskSL> response = JsonSerializer.Deserialize<Response<TaskSL>>(_factory.GetTaskService().AddTask("board1", longTitle, DateTime.MaxValue, "Desc", DateTime.Today, 6, "user@email.com"));
+            return response.ErrorMsg != null;
         }
 
         /// <summary>
@@ -122,10 +109,8 @@ namespace Backend.BackendTests.Testings
         public bool TestAddTaskLongDescription()
         {
             string longDesc = new string('B', 301);
-            Response<TaskSL> response = _factory.GetTaskService().AddTask("board1", "Title", "19/09/9999", longDesc, DateTime.Today.ToString(), 7, "user@email.com");
-            if (response.RetVal != null)
-                return false;
-            return true;
+            Response<TaskSL> response = JsonSerializer.Deserialize<Response<TaskSL>>(_factory.GetTaskService().AddTask("board1", "Title", DateTime.MaxValue, longDesc, DateTime.Today, 7, "user@email.com"));
+            return response.ErrorMsg != null;
         }
 
         /// <summary>
@@ -136,10 +121,8 @@ namespace Backend.BackendTests.Testings
         /// </summary>
         public bool TestAddTaskCreationDate()
         {
-            Response<TaskSL> response = _factory.GetTaskService().AddTask("board1", "Task", "19/09/9999", "Description", DateTime.Today.ToString(), 8, "user@email.com");
-            if (response.RetVal.CreationTime == null)
-                return false;
-            return true;
+            Response<TaskSL> response = JsonSerializer.Deserialize<Response<TaskSL>>(_factory.GetTaskService().AddTask("board1", "Task", DateTime.MaxValue, "Description", DateTime.Today, 8, "user@email.com"));
+            return response.ErrorMsg == null;
         }
 
         /// <summary>
@@ -152,10 +135,10 @@ namespace Backend.BackendTests.Testings
         {
             string email = "user@example.com";
             string boardName = "board";
-            Response<TaskSL> response = _factory.GetTaskService().AddTask(boardName, "Title", "19/09/9999", "Desc", DateTime.Today.ToString(), 9, email);
-            if (response.RetVal == null) return false;
+            Response<TaskSL> response = JsonSerializer.Deserialize<Response<TaskSL>>(_factory.GetTaskService().AddTask(boardName, "Title", DateTime.MaxValue, "Desc", DateTime.Today, 9, email));
+            if (response.ErrorMsg != null) return false;
             int taskId = response.RetVal.Id;
-            var moveResp = _factory.GetTaskService().MoveTask(boardName, 0, taskId, email);
+            Response<object> moveResp = JsonSerializer.Deserialize<Response<object>>(_factory.GetTaskService().MoveTask(boardName, 0, taskId, email));
             return moveResp.ErrorMsg == null;
         }
 
@@ -167,12 +150,11 @@ namespace Backend.BackendTests.Testings
         {
             string email = "test@example.com";
             string boardName = "Board";
-            Response<TaskSL> resp = _factory.GetTaskService().AddTask(boardName, "Title", "19/09/9999", "Desc", DateTime.Today.ToString(), 9, email);
+            Response<TaskSL> resp = JsonSerializer.Deserialize<Response<TaskSL>>(_factory.GetTaskService().AddTask(boardName, "Title", DateTime.MaxValue, "Desc", DateTime.Today, 9, email));
             int taskId = resp.RetVal.Id;
-
             _factory.GetTaskService().MoveTask(boardName, 0, taskId, email);
             _factory.GetTaskService().MoveTask(boardName, 1, taskId, email);
-            var result = _factory.GetTaskService().MoveTask(boardName, 2, taskId, email);
+            Response<object> result = JsonSerializer.Deserialize<Response<object>>(_factory.GetTaskService().MoveTask(boardName, 2, taskId, email));
             return result.ErrorMsg != null;
         }
 
@@ -181,7 +163,7 @@ namespace Backend.BackendTests.Testings
         /// </summary>
         public bool MoveTask_InvalidBoard()
         {
-            var resp = _factory.GetTaskService().MoveTask("FakeBoard", 0, 0, "test@example.com");
+            Response<object> resp = JsonSerializer.Deserialize<Response<object>>(_factory.GetTaskService().MoveTask("FakeBoard", 0, 0, "test@example.com"));
             return resp.ErrorMsg != null;
         }
 
@@ -191,11 +173,10 @@ namespace Backend.BackendTests.Testings
         public bool MoveTask_InvalidEmail()
         {
             string board = "Board";
-            _factory.GetBoardService().CreateBoard("test@example.com", board);
-            var addResp = _factory.GetTaskService().AddTask(board, "Title", "19/09/9999", "Desc", DateTime.Today.ToString(), 10, "test@example.com");
+            JsonSerializer.Deserialize<Response<TaskSL>>(_factory.GetBoardService().CreateBoard("test@example.com", board));
+            Response<TaskSL> addResp = JsonSerializer.Deserialize<Response<TaskSL>>(_factory.GetTaskService().AddTask(board, "Title", DateTime.MaxValue, "Desc", DateTime.Today, 10, "test@example.com"));
             int taskId = addResp.RetVal.Id;
-
-            var resp = _factory.GetTaskService().MoveTask(board, 0, taskId, "wrong@example.com");
+            Response<object> resp = JsonSerializer.Deserialize<Response<object>>(_factory.GetTaskService().MoveTask(board, 0, taskId, "wrong@example.com"));
             return resp.ErrorMsg != null;
         }
 
@@ -207,8 +188,7 @@ namespace Backend.BackendTests.Testings
             string email = "test@example.com";
             string board = "Board";
             _factory.GetBoardService().CreateBoard(email, board);
-
-            var resp = _factory.GetTaskService().MoveTask(board, 0, 999, email);
+            Response<object> resp = JsonSerializer.Deserialize<Response<object>>(_factory.GetTaskService().MoveTask(board, 0, 999, email));
             return resp.ErrorMsg != null;
         }
 
@@ -220,10 +200,9 @@ namespace Backend.BackendTests.Testings
             string email = "test@example.com";
             string board = "Board";
             _factory.GetBoardService().CreateBoard(email, board);
-            var addResp = _factory.GetTaskService().AddTask(board, "Title", "19/09/9999", "Desc", DateTime.Today.ToString(), 11, email);
+            Response<TaskSL> addResp = JsonSerializer.Deserialize<Response<TaskSL>>(_factory.GetTaskService().AddTask(board, "Title", DateTime.MaxValue, "Desc", DateTime.Today, 11, email));
             int taskId = addResp.RetVal.Id;
-
-            var resp = _factory.GetTaskService().MoveTask(board, 99, taskId, email);
+            Response<object> resp = JsonSerializer.Deserialize<Response<object>>(_factory.GetTaskService().MoveTask(board, 99, taskId, email));
             return resp.ErrorMsg != null;
         }
 
@@ -236,10 +215,9 @@ namespace Backend.BackendTests.Testings
             string email = "test@example.com";
             string board = "Board";
             _factory.GetBoardService().CreateBoard(email, board);
-            var addResp = _factory.GetTaskService().AddTask(board, "Old", "19/09/9999", "Desc", DateTime.Today.ToString(), 12, email);
+            Response<TaskSL> addResp = JsonSerializer.Deserialize<Response<TaskSL>>(_factory.GetTaskService().AddTask(board, "Old", DateTime.MaxValue, "Desc", DateTime.Today, 12, email));
             int taskId = addResp.RetVal.Id;
-
-            var resp = _factory.GetTaskService().UpdateTask(board, "New", "Updated", "20/09/9999", taskId, email, 0);
+            Response<object> resp = JsonSerializer.Deserialize<Response<object>>(_factory.GetTaskService().UpdateTask(board, "New", "Updated", DateTime.MaxValue, taskId, email, 0));
             return resp.ErrorMsg == null;
         }
 
@@ -248,7 +226,7 @@ namespace Backend.BackendTests.Testings
         /// </summary>
         public bool UpdateTask_InvalidBoard()
         {
-            var resp = _factory.GetTaskService().UpdateTask("FakeBoard", "T", "D", "19/09/9999", 0, "test@example.com", 0);
+            Response<object> resp = JsonSerializer.Deserialize<Response<object>>(_factory.GetTaskService().UpdateTask("FakeBoard", "T", "D", DateTime.MaxValue, 0, "test@example.com", 0));
             return resp.ErrorMsg != null;
         }
 
@@ -260,10 +238,9 @@ namespace Backend.BackendTests.Testings
             string email = "test@example.com";
             string board = "Board";
             _factory.GetBoardService().CreateBoard(email, board);
-            var addResp = _factory.GetTaskService().AddTask(board, "Title", "19/09/9999", "Desc", DateTime.Today.ToString(), 20, email);
+            Response<TaskSL> addResp = JsonSerializer.Deserialize<Response<TaskSL>>(_factory.GetTaskService().AddTask(board, "Title", DateTime.MaxValue, "Desc", DateTime.Today, 20, email));
             int taskId = addResp.RetVal.Id;
-
-            var resp = _factory.GetTaskService().UpdateTask(board, "T", "D", "20/09/9999", taskId, "wrong@example.com", 0);
+            Response<object> resp = JsonSerializer.Deserialize<Response<object>>(_factory.GetTaskService().UpdateTask(board, "T", "D", DateTime.MaxValue, taskId, "wrong@example.com", 0));
             return resp.ErrorMsg != null;
         }
 
@@ -275,8 +252,7 @@ namespace Backend.BackendTests.Testings
             string email = "test@example.com";
             string board = "Board";
             _factory.GetBoardService().CreateBoard(email, board);
-
-            var resp = _factory.GetTaskService().UpdateTask(board, "T", "D", "19/09/9999", 999, email, 0);
+            Response<object> resp = JsonSerializer.Deserialize<Response<object>>(_factory.GetTaskService().UpdateTask(board, "T", "D", DateTime.MaxValue, 999, email, 0));
             return resp.ErrorMsg != null;
         }
 
@@ -288,10 +264,9 @@ namespace Backend.BackendTests.Testings
             string email = "test@example.com";
             string board = "Board";
             _factory.GetBoardService().CreateBoard(email, board);
-            var addResp = _factory.GetTaskService().AddTask(board, "Title", "19/09/9999", "Desc", DateTime.Today.ToString(), 21, email);
+            Response<TaskSL> addResp = JsonSerializer.Deserialize<Response<TaskSL>>(_factory.GetTaskService().AddTask(board, "Title", DateTime.MaxValue, "Desc", DateTime.Today, 21, email));
             int taskId = addResp.RetVal.Id;
-
-            var resp = _factory.GetTaskService().UpdateTask(board, "T", "D", "20/09/9999", taskId, email, 0);
+            Response<object> resp = JsonSerializer.Deserialize<Response<object>>(_factory.GetTaskService().UpdateTask(board, "T", "D", DateTime.MaxValue, taskId, email, 0));
             return resp.ErrorMsg != null;
         }
 
@@ -303,10 +278,9 @@ namespace Backend.BackendTests.Testings
             string email = "test@example.com";
             string board = "Board";
             _factory.GetBoardService().CreateBoard(email, board);
-            var addResp = _factory.GetTaskService().AddTask(board, "Title", "19/09/9999", "Desc", DateTime.Today.ToString(), 22, email);
+            Response<TaskSL> addResp = JsonSerializer.Deserialize<Response<TaskSL>>(_factory.GetTaskService().AddTask(board, "Title", DateTime.MaxValue, "Desc", DateTime.Today, 22, email));
             int taskId = addResp.RetVal.Id;
-
-            var resp = _factory.GetTaskService().UpdateTask(board, "", "Desc", "20/09/9999", taskId, email, 0);
+            Response<object> resp = JsonSerializer.Deserialize<Response<object>>(_factory.GetTaskService().UpdateTask(board, "", "Desc", DateTime.MaxValue, taskId, email, 0));
             return resp.ErrorMsg != null;
         }
 
@@ -318,11 +292,10 @@ namespace Backend.BackendTests.Testings
             string email = "test@example.com";
             string board = "Board";
             _factory.GetBoardService().CreateBoard(email, board);
-            var addResp = _factory.GetTaskService().AddTask(board, "T", "19/09/9999", "D", DateTime.Today.ToString(), 23, email);
+            Response<TaskSL> addResp = JsonSerializer.Deserialize<Response<TaskSL>>(_factory.GetTaskService().AddTask(board, "T", DateTime.MaxValue, "D", DateTime.Today, 23, email));
             int taskId = addResp.RetVal.Id;
-
             string longTitle = new string('A', 51);
-            var resp = _factory.GetTaskService().UpdateTask(board, longTitle, "Desc", "20/09/9999", taskId, email, 0);
+            Response<object> resp = JsonSerializer.Deserialize<Response<object>>(_factory.GetTaskService().UpdateTask(board, longTitle, "Desc", DateTime.MaxValue, taskId, email, 0));
             return resp.ErrorMsg != null;
         }
 
@@ -334,11 +307,10 @@ namespace Backend.BackendTests.Testings
             string email = "test@example.com";
             string board = "Board";
             _factory.GetBoardService().CreateBoard(email, board);
-            var addResp = _factory.GetTaskService().AddTask(board, "T", "19/09/9999", "D", DateTime.Today.ToString(), 24, email);
+            Response<TaskSL> addResp = JsonSerializer.Deserialize<Response<TaskSL>>(_factory.GetTaskService().AddTask(board, "T", DateTime.MaxValue, "D", DateTime.Today, 24, email));
             int taskId = addResp.RetVal.Id;
-
             string longDesc = new string('D', 301);
-            var resp = _factory.GetTaskService().UpdateTask(board, "Title", longDesc, "20/09/9999", taskId, email, 0);
+            Response<object> resp = JsonSerializer.Deserialize<Response<object>>(_factory.GetTaskService().UpdateTask(board, "Title", longDesc, DateTime.MaxValue, taskId, email, 0));
             return resp.ErrorMsg != null;
         }
 
@@ -350,10 +322,9 @@ namespace Backend.BackendTests.Testings
             string email = "test@example.com";
             string board = "Board";
             _factory.GetBoardService().CreateBoard(email, board);
-            var addResp = _factory.GetTaskService().AddTask(board, "T", "19/09/9999", "D", DateTime.Today.ToString(), 25, email);
+            var addResp = JsonSerializer.Deserialize<Response<TaskSL>>(_factory.GetTaskService().AddTask(board, "T", DateTime.MaxValue, "D", DateTime.Today, 25, email));
             int taskId = addResp.RetVal.Id;
-
-            var resp = _factory.GetTaskService().UpdateTask(board, "Title", "Desc", "19/09/9999", taskId, email, 0);
+            Response<object> resp = JsonSerializer.Deserialize<Response<object>>(_factory.GetTaskService().UpdateTask(board, "Title", "Desc", DateTime.MaxValue, taskId, email, 0));
             return resp.ErrorMsg != null;
         }
 

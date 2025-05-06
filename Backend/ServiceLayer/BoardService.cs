@@ -1,6 +1,4 @@
-﻿using System.Collections.Generic;
-using System.Data.Common;
-using System.Text.Json;
+﻿using System.Text.Json;
 using Backend.BuisnessLayer.BoardPackage;
 
 namespace Backend.ServiceLayer
@@ -86,19 +84,43 @@ namespace Backend.ServiceLayer
             }
         }
 
+        /// <summary>
+        /// Retrieves all tasks in a specific column of a board.
+        /// </summary>
+        /// <param name="email">The user's email address.</param>
+        /// <param name="boardName">The name of the board.</param>
+        /// <param name="columnOrdinal">The index of the column.</param>
+        /// <returns>Response containing a list of TaskBL objects in the column.</returns>
+        /// <exception cref="ArgumentNullException">If any input is null or empty.</exception>
+        /// <exception cref="ArgumentOutOfRangeException">If columnOrdinal is invalid.</exception>
+        /// <exception cref="KeyNotFoundException">If the board does not exist or is not accessible by the user.</exception>
+        /// <precondition>The user must own the board and the column must exist.</precondition>
+        /// <postcondition>A list of tasks in the specified column is returned.</postcondition>
         public string GetColumn(string email, string boardName, int columnOrdinal)
         {
             try
             {
-                List<TaskBL> lst = _boardFacade.GetColumn(email, boardName, columnOrdinal);
-                return JsonSerializer.Serialize(new Response<List<TaskBL>>(null, lst));
+                List<TaskSL> lst = _boardFacade.GetColumn(email, boardName, columnOrdinal);
+                return JsonSerializer.Serialize(new Response<List<TaskSL>>(null, lst));
             }
             catch (Exception ex)
             {
-                return JsonSerializer.Serialize(new Response<List<TaskBL>>(ex.Message, null));
+                return JsonSerializer.Serialize(new Response<List<TaskSL>>(ex.Message, null));
             }
         }
 
+        /// <summary>
+        /// Retrieves the task limit of a specific column in a board.
+        /// </summary>
+        /// <param name="email">The user's email address.</param>
+        /// <param name="boardName">The name of the board.</param>
+        /// <param name="columnOrdinal">The index of the column.</param>
+        /// <returns>Response containing the column's task limit.</returns>
+        /// <exception cref="ArgumentNullException">If any input is null or empty.</exception>
+        /// <exception cref="ArgumentOutOfRangeException">If columnOrdinal is out of range.</exception>
+        /// <exception cref="KeyNotFoundException">If the board does not exist or is not owned by the user.</exception>
+        /// <precondition>The specified column exists in the user's board.</precondition>
+        /// <postcondition>The task limit of the column is returned.</postcondition>
         public string GetColumnLimit(string email, string boardName, int columnOrdinal)
         {
             try
@@ -112,6 +134,18 @@ namespace Backend.ServiceLayer
             }
         }
 
+        /// <summary>
+        /// Retrieves the name of a specific column in a board.
+        /// </summary>
+        /// <param name="email">The user's email address.</param>
+        /// <param name="boardName">The name of the board.</param>
+        /// <param name="columnOrdinal">The index of the column.</param>
+        /// <returns>Response containing the name of the column.</returns>
+        /// <exception cref="ArgumentNullException">If any input is null or empty.</exception>
+        /// <exception cref="ArgumentOutOfRangeException">If columnOrdinal is out of range.</exception>
+        /// <exception cref="KeyNotFoundException">If the board does not exist or is not owned by the user.</exception>
+        /// <precondition>The specified column exists in the user's board.</precondition>
+        /// <postcondition>The column name is returned.</postcondition>
         public string GetColumnName(string email, string boardName, int columnOrdinal)
         {
             try
@@ -125,16 +159,25 @@ namespace Backend.ServiceLayer
             }
         }
 
+        /// <summary>
+        /// Retrieves all tasks currently in progress for a user.
+        /// </summary>
+        /// <param name="email">The user's email address.</param>
+        /// <returns>Response containing a list of in-progress TaskBL objects.</returns>
+        /// <exception cref="ArgumentNullException">If email is null or empty.</exception>
+        /// <exception cref="KeyNotFoundException">If no tasks are found or user is invalid.</exception>
+        /// <precondition>The user must be registered and have at least one in-progress task.</precondition>
+        /// <postcondition>A list of in-progress tasks is returned.</postcondition>
         public string InProgressTasks(string email)
         {
             try
             {
-                List<TaskBL> lst = _boardFacade.InProgressTasks(email);
-                return JsonSerializer.Serialize(new Response<List<TaskBL>>(null, lst));
+                List<TaskSL> lst = _boardFacade.InProgressTasks(email);
+                return JsonSerializer.Serialize(new Response<List<TaskSL>>(null, lst));
             }
             catch (Exception ex)
             {
-                return JsonSerializer.Serialize(new Response<List<TaskBL>>(ex.Message, null));
+                return JsonSerializer.Serialize(new Response<List<TaskSL>>(ex.Message, null));
             }
         }
     }

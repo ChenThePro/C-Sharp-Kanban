@@ -5,9 +5,12 @@ namespace Backend.BuisnessLayer.UserPackage
 {
     internal class UserFacade
     {
-        private Dictionary<string, UserBL> _emails;
+        internal Dictionary<string, UserBL> _emails;
         private static readonly ILog Log = LogManager.GetLogger(System.Reflection.MethodBase.GetCurrentMethod().DeclaringType);
 
+        /// <summary>
+        /// Initializes a new instance of the <see cref="UserFacade"/> class.
+        /// </summary>
         internal UserFacade()
         {
             _emails = new Dictionary<string, UserBL>();
@@ -18,8 +21,11 @@ namespace Backend.BuisnessLayer.UserPackage
         /// </summary>
         /// <param name="email">The user's email address.</param>
         /// <param name="password">The user's password.</param>
-        /// <returns>The <see cref="UserBL"/> instance associated with the user.</returns>
+        /// <returns>The <see cref="UserBL"/> instance representing the logged-in user.</returns>
         /// <exception cref="KeyNotFoundException">Thrown if the email does not exist.</exception>
+        /// <exception cref="UnauthorizedAccessException">Thrown if the password is incorrect.</exception>
+        /// <precondition>User must exist in the system.</precondition>
+        /// <postcondition>User is marked as logged in if credentials are valid.</postcondition>
         internal UserBL Login(string email, string password)
         {
             if (_emails.ContainsKey(email))
@@ -31,6 +37,10 @@ namespace Backend.BuisnessLayer.UserPackage
         /// Logs out the user associated with the given email.
         /// </summary>
         /// <param name="email">The user's email address.</param>
+        /// <exception cref="KeyNotFoundException">Thrown if the email does not exist.</exception>
+        /// <exception cref="InvalidOperationException">Thrown if the user is already logged out.</exception>
+        /// <precondition>User must be currently logged in.</precondition>
+        /// <postcondition>User is marked as logged out.</postcondition>
         internal void Logout(string email)
         {
             if (_emails.ContainsKey(email))
@@ -41,12 +51,14 @@ namespace Backend.BuisnessLayer.UserPackage
         /// <summary>
         /// Registers a new user with the provided email and password.
         /// </summary>
-        /// <param name="email">The user's email address.</param>
-        /// <param name="password">The user's password.</param>
+        /// <param name="email">The desired email address.</param>
+        /// <param name="password">The desired password.</param>
         /// <returns>The newly created <see cref="UserBL"/> instance.</returns>
         /// <exception cref="InvalidOperationException">Thrown if the email already exists.</exception>
         /// <exception cref="FormatException">Thrown if the email format is invalid.</exception>
         /// <exception cref="ArgumentException">Thrown if the password does not meet complexity requirements.</exception>
+        /// <precondition>Email must be unique and valid. Password must meet complexity rules.</precondition>
+        /// <postcondition>User is added to the system and marked as logged in.</postcondition>
         internal UserBL Register(string email, string password)
         {
             if (_emails.ContainsKey(email))
