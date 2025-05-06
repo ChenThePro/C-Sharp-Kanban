@@ -1,4 +1,6 @@
-﻿using System.Text.Json;
+﻿using System.Collections.Generic;
+using System.Data.Common;
+using System.Text.Json;
 using Backend.BuisnessLayer.BoardPackage;
 
 namespace Backend.ServiceLayer
@@ -84,19 +86,56 @@ namespace Backend.ServiceLayer
             }
         }
 
-        internal string GetColumn(string email, string boardName, int columnOrdinal)
+        public string GetColumn(string email, string boardName, int columnOrdinal)
         {
-            throw new NotImplementedException();
+            try
+            {
+                List<TaskBL> lst = _boardFacade.GetColumn(email, boardName, columnOrdinal);
+                return JsonSerializer.Serialize(new Response<List<TaskBL>>(null, lst));
+            }
+            catch (Exception ex)
+            {
+                return JsonSerializer.Serialize(new Response<object>(ex.Message, null));
+            }
         }
 
-        internal string GetColumnLimit(string email, string boardName, int columnOrdinal)
+        public string GetColumnLimit(string email, string boardName, int columnOrdinal)
         {
-            throw new NotImplementedException();
+            try
+            {
+                int limit = _boardFacade.GetColumnLimit(email, boardName, columnOrdinal);
+                return JsonSerializer.Serialize(new Response<int>(null, limit));
+            }
+            catch (Exception ex)
+            {
+                return JsonSerializer.Serialize(new Response<object>(ex.Message, null));
+            }
         }
 
-        internal string GetColumnName(string email, string boardName, int columnOrdinal)
+        public string GetColumnName(string email, string boardName, int columnOrdinal)
         {
-            throw new NotImplementedException();
+            try
+            {
+                string name = _boardFacade.GetColumnName(email, boardName, columnOrdinal);
+                return JsonSerializer.Serialize(new Response<string>(null, name));
+            }
+            catch (Exception ex)
+            {
+                return JsonSerializer.Serialize(new Response<object>(ex.Message, null));
+            }
+        }
+
+        public string InProgressTasks(string email)
+        {
+            try
+            {
+                List<TaskBL> lst = _boardFacade.InProgressTasks(email);
+                return JsonSerializer.Serialize(new Response<List<TaskBL>(null, lst));
+            }
+            catch (Exception ex)
+            {
+                return JsonSerializer.Serialize(new Response<object>(ex.Message, null));
+            }
         }
     }
 }

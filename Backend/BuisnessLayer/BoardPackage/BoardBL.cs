@@ -11,7 +11,7 @@ namespace Backend.BuisnessLayer.BoardPackage
         internal BoardBL(string name)
         {
             this.name = name;
-            columns = new List<ColumnBL> { new(), new(), new() }; 
+            columns = new List<ColumnBL> { new(0), new(1), new(2) }; 
         }
 
         internal TaskBL AddTask(string title, string due, string description, string creatinTime, int id, string email, int column)
@@ -50,6 +50,27 @@ namespace Backend.BuisnessLayer.BoardPackage
         internal void LimitColumn(int column, int limit, string email)
         {
             columns[column].LimitColumn(limit, email);
+        }
+
+        internal List<TaskBL> GetColumn(int columnOrdinal)
+        {
+            return columns[columnOrdinal].GetColumn();
+        }
+
+        internal int GetColumnLimit(int columnOrdinal)
+        {
+            return columns[columnOrdinal].GetColumnLimit();
+        }
+
+        internal string GetColumnName(int columnOrdinal)
+        {
+            return columns[columnOrdinal].GetColumnName();
+        }
+
+        internal List<TaskBL> InProgressTask()
+        {
+            return columns[0].GetColumn();
+
         }
     }
 }

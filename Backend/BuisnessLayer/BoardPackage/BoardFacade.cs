@@ -173,5 +173,34 @@ namespace Backend.BuisnessLayer.BoardPackage
             BoardBL board = GetBoardByName(boardName);
             board.UpdateTask(title, due, description, id, email, column);
         }
+
+        internal List<TaskBL> GetColumn(string email, string boardName, int columnOrdinal)
+        {
+            BoardBL board = GetBoardByName(boardName);
+            return board.GetColumn(columnOrdinal);
+
+        }
+
+        internal int GetColumnLimit(string email, string boardName, int columnOrdinal)
+        {
+            BoardBL board = GetBoardByName(boardName);
+            return board.GetColumnLimit(columnOrdinal);
+        }
+
+        internal string GetColumnName(string email, string boardName, int columnOrdinal)
+        {
+            BoardBL board = GetBoardByName(boardName);
+            return board.GetColumnName(columnOrdinal);
+        }
+
+        internal List<TaskBL> InProgressTasks(string email)
+        {
+            List<TaskBL> lst = new List<TaskBL>();
+            foreach (BoardBL board in boards) {
+                lst.Concat(board.InProgressTask();
+
+
+
+        }
     }
 }

@@ -290,7 +290,7 @@ namespace IntroSE.Kanban.Backend.ServiceLayer
         /// <returns>A response with a list of the in-progress tasks of the user, unless an error occurs (see <see cref="GradingService"/>)</returns>
         public string InProgressTasks(string email)
         {
-            string json = _serviceFactory.GetUserService().InProgressTasks(email);
+            string json = _serviceFactory.GetBoardService().InProgressTasks(email);
             Response<object> response = JsonSerializer.Deserialize<Response<object>>(json);
             return JsonSerializer.Serialize(response);
         }
