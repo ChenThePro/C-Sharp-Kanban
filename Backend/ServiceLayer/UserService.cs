@@ -62,12 +62,21 @@ namespace Backend.ServiceLayer
         /// Logs out the current user.
         /// </summary>
         /// <returns>An empty Response indicating logout status.</returns>
+        /// <exception cref="InvalidOperationException">If the user is not logged in.</exception>
+        /// <exception cref="KeyNotFoundException">If the email does not exists.</exception>
         /// <precondition>A user must be currently logged in.</precondition>
         /// <postcondition>The user's session is invalidated.</postcondition>
         public string Logout(string email)
         {
-            _userFacade.Logout(email);
-            return JsonSerializer.Serialize(new Response<object>(null, null));
+            try
+            {
+                _userFacade.Logout(email);
+                return JsonSerializer.Serialize(new Response<object>(null, null));
+            }
+            catch (Exception ex)
+            {
+                return JsonSerializer.Serialize(new Response<object>(ex.Message, null));
+            }
         }
 
        

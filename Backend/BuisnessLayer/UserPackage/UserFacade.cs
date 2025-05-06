@@ -33,7 +33,9 @@ namespace Backend.BuisnessLayer.UserPackage
         /// <param name="email">The user's email address.</param>
         internal void Logout(string email)
         {
-            _emails[email].Logout();
+            if (_emails.ContainsKey(email))
+                _emails[email].Logout();
+            throw new KeyNotFoundException("email doesn't exist");
         }
 
         /// <summary>
@@ -48,17 +50,17 @@ namespace Backend.BuisnessLayer.UserPackage
         internal UserBL Register(string email, string password)
         {
             if (_emails.ContainsKey(email))
-                throw new InvalidOperationException("Email already exists");
+                throw new InvalidOperationException("email already exists");
             if (!Regex.IsMatch(email, @"^[^@\s]+@[^@\s]+\.[^@\s]+$"))
-                throw new FormatException("Email format is not valid");
+                throw new FormatException("email format is not valid");
             if (password.Length < 6 || password.Length > 20)
-                throw new ArgumentException("Password must be between 6 and 20 characters");
+                throw new ArgumentException("password must be between 6 and 20 characters");
             if (!Regex.IsMatch(password, @"[A-Z]"))
-                throw new ArgumentException("Password must contain at least one uppercase letter");
+                throw new ArgumentException("password must contain at least one uppercase letter");
             if (!Regex.IsMatch(password, @"[a-z]"))
-                throw new ArgumentException("Password must contain at least one lowercase letter");
+                throw new ArgumentException("password must contain at least one lowercase letter");
             if (!Regex.IsMatch(password, @"\d"))
-                throw new ArgumentException("Password must contain at least one number");
+                throw new ArgumentException("password must contain at least one number");
             UserBL newUser = new UserBL(email, password);
             _emails[email] = newUser;
             Log.Info("new user" + email + "created");

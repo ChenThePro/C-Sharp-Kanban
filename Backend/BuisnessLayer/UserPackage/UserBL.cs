@@ -30,6 +30,8 @@ namespace Backend.BuisnessLayer.UserPackage
 
         internal void Logout()
         {
+            if (!loggedIn)
+                throw new InvalidOperationException("user not logged in");
             loggedIn = false;
             Log.Info("user logged out");
 

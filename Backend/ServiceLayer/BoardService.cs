@@ -95,7 +95,7 @@ namespace Backend.ServiceLayer
             }
             catch (Exception ex)
             {
-                return JsonSerializer.Serialize(new Response<object>(ex.Message, null));
+                return JsonSerializer.Serialize(new Response<List<TaskBL>>(ex.Message, null));
             }
         }
 
@@ -121,7 +121,7 @@ namespace Backend.ServiceLayer
             }
             catch (Exception ex)
             {
-                return JsonSerializer.Serialize(new Response<object>(ex.Message, null));
+                return JsonSerializer.Serialize(new Response<string>(ex.Message, null));
             }
         }
 
@@ -130,11 +130,11 @@ namespace Backend.ServiceLayer
             try
             {
                 List<TaskBL> lst = _boardFacade.InProgressTasks(email);
-                return JsonSerializer.Serialize(new Response<List<TaskBL>(null, lst));
+                return JsonSerializer.Serialize(new Response<List<TaskBL>>(null, lst));
             }
             catch (Exception ex)
             {
-                return JsonSerializer.Serialize(new Response<object>(ex.Message, null));
+                return JsonSerializer.Serialize(new Response<List<TaskBL>>(ex.Message, null));
             }
         }
     }
