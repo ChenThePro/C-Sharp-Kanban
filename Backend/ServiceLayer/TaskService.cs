@@ -32,7 +32,7 @@ namespace Backend.ServiceLayer
             try
             {
                 TaskBL task = _boardFacade.AddTask(boardName, title, due, description, creationTime, id, email);
-                return JsonSerializer.Serialize(new Response<TaskSL>("Task created successfuly", new TaskSL(task)));
+                return JsonSerializer.Serialize(new Response<TaskSL>(null, new TaskSL(task)));
             }
             catch (Exception ex)
             {
@@ -57,7 +57,7 @@ namespace Backend.ServiceLayer
             try
             {
                 _boardFacade.MoveTask(boardName, column, id, email);
-                return JsonSerializer.Serialize(new Response<object>("Task moved successfuly", null));
+                return JsonSerializer.Serialize(new Response<object>(null, null));
             }
             catch (Exception ex)
             {
@@ -84,7 +84,7 @@ namespace Backend.ServiceLayer
             try
             {
                 _boardFacade.UpdateTask(boardName, title, due, description, id, email, column);
-                return JsonSerializer.Serialize(new Response<object>("task updated", null));
+                return JsonSerializer.Serialize(new Response<object>(null, null));
             }
             catch (KeyNotFoundException)
             {

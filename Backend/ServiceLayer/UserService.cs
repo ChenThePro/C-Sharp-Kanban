@@ -67,7 +67,7 @@ namespace Backend.ServiceLayer
         public string Logout(string email)
         {
             _userFacade.Logout(email);
-            return JsonSerializer.Serialize(new Response<object>("Logged out", null));
+            return JsonSerializer.Serialize(new Response<object>(null, null));
         }
 
         internal string InProgressTasks(string email)

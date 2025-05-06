@@ -99,10 +99,9 @@ namespace IntroSE.Kanban.Backend.ServiceLayer
         /// <returns>An empty response, unless an error occurs (see <see cref="GradingService"/>)</returns>
         public string Logout(string email)
         {
+            //change logout
             string json = _serviceFactory.GetUserService().Logout(email);
             Response<object> response = JsonSerializer.Deserialize<Response<object>>(json);
-            if (response.ErrorMsg == "Logged out")
-                response.ErrorMsg = null;
             return JsonSerializer.Serialize(response);
         }
 
@@ -167,11 +166,7 @@ namespace IntroSE.Kanban.Backend.ServiceLayer
         {
             string json = _serviceFactory.GetTaskService().AddTask(boardName, title, dueDate.ToString(), description, DateTime.Today.ToString(), 1, email);
             Response<object> response = JsonSerializer.Deserialize<Response<object>>(json);
-            if (response.RetVal != null)
-            {
-                response.ErrorMsg = null;
-                response.RetVal = null;
-            }
+            response.RetVal = null;
             return JsonSerializer.Serialize(response);
         }
 
@@ -189,8 +184,6 @@ namespace IntroSE.Kanban.Backend.ServiceLayer
         {
             string json = _serviceFactory.GetTaskService().UpdateTask(boardName, null, null, dueDate.ToString(), taskId, email, columnOrdinal);
             Response<object> response = JsonSerializer.Deserialize<Response<object>>(json);
-            if (response.ErrorMsg == "task updated")
-                response.ErrorMsg = null;
             return JsonSerializer.Serialize(response);
         }
 
@@ -208,8 +201,6 @@ namespace IntroSE.Kanban.Backend.ServiceLayer
         {
             string json = _serviceFactory.GetTaskService().UpdateTask(boardName, title, null, null, taskId, email, columnOrdinal);
             Response<object> response = JsonSerializer.Deserialize<Response<object>>(json);
-            if (response.ErrorMsg == "task updated")
-                response.ErrorMsg = null;
             return JsonSerializer.Serialize(response);
         }
 
@@ -227,8 +218,6 @@ namespace IntroSE.Kanban.Backend.ServiceLayer
         {
             string json = _serviceFactory.GetTaskService().UpdateTask(boardName, null, description, null, taskId, email, columnOrdinal);
             Response<object> response = JsonSerializer.Deserialize<Response<object>>(json);
-            if (response.ErrorMsg == "task updated")
-                response.ErrorMsg = null;
             return JsonSerializer.Serialize(response);
         }
 
@@ -245,8 +234,6 @@ namespace IntroSE.Kanban.Backend.ServiceLayer
         {
             string json = _serviceFactory.GetTaskService().MoveTask(boardName, columnOrdinal, taskId, email);
             Response<object> response = JsonSerializer.Deserialize<Response<object>>(json);
-            if (response.ErrorMsg == "Task moved successfuly")
-                response.ErrorMsg = null;
             return JsonSerializer.Serialize(response);
         }
 
@@ -277,11 +264,7 @@ namespace IntroSE.Kanban.Backend.ServiceLayer
         {
             string json = _serviceFactory.GetBoardService().CreateBoard(name, email);
             Response<object> response = JsonSerializer.Deserialize<Response<object>>(json);
-            if (response.RetVal != null)
-            {
-                response.RetVal = null;
-                response.ErrorMsg = null;
-            }
+            response.RetVal = null;
             return JsonSerializer.Serialize(response);
         }
 
@@ -296,11 +279,6 @@ namespace IntroSE.Kanban.Backend.ServiceLayer
         {
             string json = _serviceFactory.GetBoardService().DeleteBoard(name, email);
             Response<object> response = JsonSerializer.Deserialize<Response<object>>(json);
-            if (response.ErrorMsg == "Board Deleted")
-            {
-                response.RetVal = null;
-                response.ErrorMsg = null;
-            }
             return JsonSerializer.Serialize(response);
         }
 

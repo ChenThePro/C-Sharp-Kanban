@@ -27,7 +27,7 @@ namespace Backend.ServiceLayer
             try
             {
                 BoardBL board = _boardFacade.CreateBoard(boardName, email);
-                return JsonSerializer.Serialize(new Response<BoardSL>("Board Created", new BoardSL(board)));
+                return JsonSerializer.Serialize(new Response<BoardSL>(null, new BoardSL(board)));
             }
             catch (Exception ex)
             {
@@ -50,7 +50,7 @@ namespace Backend.ServiceLayer
             try
             {
                 _boardFacade.DeleteBoard(boardName, email);
-                return JsonSerializer.Serialize(new Response<object>("Board Deleted", null));
+                return JsonSerializer.Serialize(new Response<object>(null, null));
             }
             catch (Exception ex)
             {
