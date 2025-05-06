@@ -1,16 +1,11 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Backend.BuisnessLayer;
 using Backend.ServiceLayer;
+using System.Text.Json;
 
 namespace Backend.BackendTests.Testings
 {
     public class BoardTests
     {
-        private ServiceFactory _factory = new ServiceFactory(new BoardFacade(), new UserFacade());
+        private ServiceFactory _factory = new ServiceFactory();
 
         /// <summary>
         /// Test creating a board with valid values.
@@ -23,10 +18,8 @@ namespace Backend.BackendTests.Testings
             string userEmail = "test@example.com";
             string boardName = "My First Board";
             _factory.GetUserService().Register(userEmail, "Password1");
-            Response<BoardSL> response = _factory.GetBoardService().CreateBoard(boardName, userEmail);
-            if (response.RetVal == null)
-                return false;
-            return true;
+            Response<BoardSL> response = JsonSerializer.Deserialize<Response<BoardSL>>(_factory.GetBoardService().CreateBoard(boardName, userEmail));
+            return response.ErrorMsg == null;
         }
 
         /// <summary>
@@ -39,10 +32,8 @@ namespace Backend.BackendTests.Testings
         {
             string userEmail = "test@example.com";
             string boardName = "My First Board";
-            Response<BoardSL> response = _factory.GetBoardService().CreateBoard(boardName, userEmail);
-            if (response.RetVal != null)
-                return false;
-            return true;
+            Response<BoardSL> response = JsonSerializer.Deserialize<Response<BoardSL>>(_factory.GetBoardService().CreateBoard(boardName, userEmail));
+            return response.ErrorMsg != null;
         }
 
         /// <summary>
@@ -55,10 +46,8 @@ namespace Backend.BackendTests.Testings
         {
             string userEmail = "test@example.com";
             string boardName = "my first board";
-            Response<BoardSL> response = _factory.GetBoardService().CreateBoard(boardName, userEmail);
-            if (response.RetVal != null)
-                return false;
-            return true;
+            Response<BoardSL> response = JsonSerializer.Deserialize<Response<BoardSL>>(_factory.GetBoardService().CreateBoard(boardName, userEmail));
+            return response.ErrorMsg != null;
         }
 
         /// <summary>
@@ -71,10 +60,8 @@ namespace Backend.BackendTests.Testings
         {
             string userEmail = "test@example.com";
             string boardName = "My First Board";
-            Response<object> deleteResponse = _factory.GetBoardService().DeleteBoard(boardName, userEmail);
-            if (deleteResponse.ErrorMsg != null)
-                return false;
-            return true;
+            Response<object> response = JsonSerializer.Deserialize<Response<object>>(_factory.GetBoardService().DeleteBoard(boardName, userEmail));
+            return response.ErrorMsg == null;
         }
 
         /// <summary>
@@ -86,10 +73,8 @@ namespace Backend.BackendTests.Testings
         public bool DeleteNonExistentBoard()
         {
             string userEmail = "test@example.com";
-            Response<object> response = _factory.GetBoardService().DeleteBoard("NonExistentBoard", userEmail);
-            if (response.ErrorMsg == null)
-                return false;
-            return true;
+            Response<object> response = JsonSerializer.Deserialize<Response<object>>(_factory.GetBoardService().DeleteBoard("NonExistentBoard", userEmail));
+            return response.ErrorMsg != null;
         }
 
         /// <summary>
@@ -104,10 +89,8 @@ namespace Backend.BackendTests.Testings
             string userEmail2 = "test2@example.com";
             string boardName = "Board";
             _factory.GetBoardService().CreateBoard(boardName, userEmail1);
-            Response<BoardSL> response = _factory.GetBoardService().CreateBoard(boardName, userEmail2);
-            if (response.RetVal == null)
-                return false;
-            return true;
+            Response<BoardSL> response = JsonSerializer.Deserialize<Response<BoardSL>>(_factory.GetBoardService().CreateBoard(boardName, userEmail2));
+            return response.ErrorMsg != null;
         }
 
         public void RunAll()

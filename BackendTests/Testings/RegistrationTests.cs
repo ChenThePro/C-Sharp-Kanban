@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Text.Json;
 using System.Threading.Tasks;
 using Backend.BuisnessLayer;
 using Backend.ServiceLayer;
@@ -10,7 +11,7 @@ namespace Backend.BackendTests.Testings
 {
     public class RegistrationTests
     {
-        private ServiceFactory _factory = new ServiceFactory(new BoardFacade(), new UserFacade());
+        private ServiceFactory _factory = new ServiceFactory();
 
         /// <summary>
         /// Test registering with an already existing email.
@@ -21,10 +22,8 @@ namespace Backend.BackendTests.Testings
         public bool TestExistedEmailRegister()
         {
             _factory.GetUserService().Register("existing@email.com", "Password1");
-            Response<UserSL> response = _factory.GetUserService().Register("existing@email.com", "Password2");
-            if (response.RetVal != null)
-                return false;
-            return true;
+            Response<UserSL> response = JsonSerializer.Deserialize<Response<UserSL>>(_factory.GetUserService().Register("existing@email.com", "Password2"));
+            return response.ErrorMsg != null;
         }
 
         /// <summary>
@@ -35,10 +34,8 @@ namespace Backend.BackendTests.Testings
         /// </summary>
         public bool TestNoUsernameRegister()
         {
-            Response<UserSL> response = _factory.GetUserService().Register(null, "Password1");
-            if (response.RetVal != null)
-                return false;
-            return true;
+            Response<UserSL> response = JsonSerializer.Deserialize<Response<UserSL>>(_factory.GetUserService().Register(null, "Password1"));
+            return response.ErrorMsg != null;
         }
 
         /// <summary>
@@ -49,10 +46,8 @@ namespace Backend.BackendTests.Testings
         /// </summary>
         public bool TestInvalidEmailRegister()
         {
-            Response<UserSL> response = _factory.GetUserService().Register("invalidemail", "Password1");
-            if (response.RetVal != null)
-                return false;
-            return true;
+            Response<UserSL> response = JsonSerializer.Deserialize<Response<UserSL>>(_factory.GetUserService().Register("invalidemail", "Password1"));
+            return response.ErrorMsg != null;
         }
 
         /// <summary>
@@ -63,10 +58,8 @@ namespace Backend.BackendTests.Testings
         /// </summary>
         public bool TestSuccessfullyRegister()
         {
-            Response<UserSL> response = _factory.GetUserService().Register("new@email.com", "Password1");
-            if (response.RetVal == null)
-                return false;
-            return true;
+            Response<UserSL> response = JsonSerializer.Deserialize<Response<UserSL>>(_factory.GetUserService().Register("new@email.com", "Password1"));
+            return response.ErrorMsg == null;
         }
 
         /// <summary>
@@ -77,10 +70,8 @@ namespace Backend.BackendTests.Testings
         /// </summary>
         public bool TestShortPasswordRegister()
         {
-            Response<UserSL> response = _factory.GetUserService().Register("short@email.com", "123");
-            if (response.RetVal != null)
-                return false;
-            return true;
+            Response<UserSL> response = JsonSerializer.Deserialize<Response<UserSL>>(_factory.GetUserService().Register("short@email.com", "123"));
+            return response.ErrorMsg != null;
         }
 
         /// <summary>
@@ -91,10 +82,8 @@ namespace Backend.BackendTests.Testings
         /// </summary>
         public bool TestLongPasswordRegister()
         {
-            Response<UserSL> response = _factory.GetUserService().Register("long@email.com", "Password!123456789010");
-            if (response.RetVal != null)
-                return false;
-            return true;
+            Response<UserSL> response = JsonSerializer.Deserialize<Response<UserSL>>(_factory.GetUserService().Register("long@email.com", "Password!123456789010"));
+            return response.ErrorMsg != null;
         }
 
         /// <summary>
@@ -105,10 +94,8 @@ namespace Backend.BackendTests.Testings
         /// </summary>
         public bool TestNonUpperPasswordRegister()
         {
-            Response<UserSL> response = _factory.GetUserService().Register("noupper@email.com", "password1");
-            if (response.RetVal != null)
-                return false;
-            return true;
+            Response<UserSL> response = JsonSerializer.Deserialize<Response<UserSL>>(_factory.GetUserService().Register("noupper@email.com", "password1"));
+            return response.ErrorMsg != null;
         }
 
         /// <summary>
@@ -119,10 +106,8 @@ namespace Backend.BackendTests.Testings
         /// </summary>
         public bool TestNonLowercasePasswordRegister()
         {
-            Response<UserSL> response = _factory.GetUserService().Register("nolower@email.com", "PASSWORD1");
-            if (response.RetVal != null)
-                return false;
-            return true;
+            Response<UserSL> response = JsonSerializer.Deserialize<Response<UserSL>>(_factory.GetUserService().Register("nolower@email.com", "PASSWORD1"));
+            return response.ErrorMsg != null;
         }
 
         /// <summary>
@@ -133,10 +118,8 @@ namespace Backend.BackendTests.Testings
         /// </summary>
         public bool TestNonDigitsPasswordRegister()
         {
-            Response<UserSL> response = _factory.GetUserService().Register("nodigit@email.com", "Password");
-            if (response.RetVal != null)
-                return false;
-            return true;
+            Response<UserSL> response = JsonSerializer.Deserialize<Response<UserSL>>(_factory.GetUserService().Register("nodigit@email.com", "Password"));
+            return response.ErrorMsg != null;
         }
 
         public void RunAll()

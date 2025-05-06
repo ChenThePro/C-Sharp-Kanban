@@ -1,21 +1,18 @@
 ﻿using log4net;
-using Backend.BuisnessLayer.BoardPackage;
 
 namespace Backend.BuisnessLayer.UserPackage
 {
     internal class UserBL
     {
-        private bool loggedIn;
+        internal bool loggedIn;
         internal string email;
         internal string password;
-        internal List<BoardBL> boards;
         private static readonly ILog Log = LogManager.GetLogger(System.Reflection.MethodBase.GetCurrentMethod().DeclaringType);
 
         internal UserBL(string email, string password)
         {
             this.email = email;
             this.password = password;
-            boards = new List<BoardBL>();
             loggedIn = true;
         }
 

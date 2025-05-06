@@ -1,34 +1,50 @@
+using Backend.BuisnessLayer.UserPackage;
+using Backend.ServiceLayer;
 using log4net;
 
 namespace Backend.BuisnessLayer.BoardPackage
 {
     internal class BoardFacade
     {
+        private readonly UserFacade _userfacade;
         private readonly Dictionary<string, BoardBL> boards;
         private static readonly ILog Log = LogManager.GetLogger(System.Reflection.MethodBase.GetCurrentMethod().DeclaringType);
 
-
-        internal BoardFacade()
+        /// <summary>
+        /// Initializes a new instance of the <see cref="BoardFacade"/> class.
+        /// </summary>
+        internal BoardFacade(UserFacade userfacade)
         {
+            _userfacade = userfacade;
             boards = new Dictionary<string, BoardBL>();
         }
 
         /// <summary>
-        /// helper function to check if board exist
+        /// helper function to check if user exist and logged in
         /// </summary>
-        /// <param name="boardName"></param>
-        /// <returns></returns>
+        /// <param name="email"></param>
+        /// <returns>True if the user exists and logged in; otherwise, false.</returns>
+        private bool UserExistsAndLoggedIn(string email)
+        {
+            return _userfacade._emails.ContainsKey(email) && _userfacade._emails[email].loggedIn;
+        }
+
+        /// <summary>
+        /// Checks whether a board with the specified name exists.
+        /// </summary>
+        /// <param name="boardName">The name of the board to check.</param>
+        /// <returns>True if the board exists; otherwise, false.</returns>
         private bool BoardExists(string boardName)
         {
             return boards.ContainsKey(boardName);
         }
 
         /// <summary>
-        /// helper function to get board by name;
+        /// Retrieves a board by its name.
         /// </summary>
-        /// <param name="boardName"></param>
-        /// <returns></returns>
-        /// <exception cref="KeyNotFoundException"></exception>
+        /// <param name="boardName">The name of the board.</param>
+        /// <returns>The corresponding <see cref="BoardBL"/> instance.</returns>
+        /// <exception cref="KeyNotFoundException">Thrown if the board does not exist.</exception>
         private BoardBL GetBoardByName(string boardName)
         {
             if (!BoardExists(boardName))
@@ -37,13 +53,13 @@ namespace Backend.BuisnessLayer.BoardPackage
         }
 
         /// <summary>
-        /// helper function to check if task name already exists in this board;
+        /// Retrieves a task from a board by its ID and column index.
         /// </summary>
-        /// <param name="boardName"></param>
-        /// <param name="id"></param>
-        /// <param name="column"></param>
-        /// <returns></returns>
-       private TaskBL? GetTaskByIdAndColumn(string boardName, int id, int column)
+        /// <param name="boardName">The name of the board.</param>
+        /// <param name="id">The task ID.</param>
+        /// <param name="column">The column index.</param>
+        /// <returns>The corresponding <see cref="TaskBL"/> instance, or null if not found.</returns>
+        private TaskBL? GetTaskByIdAndColumn(string boardName, int id, int column)
        {
             BoardBL board = GetBoardByName(boardName);
             return board.GetTaskByIdAndColumn(id, column);
@@ -64,48 +80,52 @@ namespace Backend.BuisnessLayer.BoardPackage
         /// <returns></returns>
         /// <exception cref="ArgumentNullException"></exception>
         /// <exception cref="KeyNotFoundException"></exception>
-        /// <exception cref="Exception"></exception>
-        internal TaskBL AddTask(string boardName, string title, string due, string description, string creatinTime, int id, string email)
+        /// <exception cref="InvalidOperationException">Thrown when email does not exist or not logged in.</exception>
+        internal TaskBL AddTask(string boardName, string title, DateTime due, string description, DateTime creationTime, int id, string email)
         {
+            if (due.CompareTo(creationTime) < 0)
+                throw new InvalidOperationException("due can't be before creation");
+            if (!UserExistsAndLoggedIn(email))
+                throw new InvalidOperationException("user is not logged in or doesn't exist");
             if (string.IsNullOrWhiteSpace(title))
                 throw new ArgumentNullException("title cannot be null or empty");
             if (GetTaskByIdAndColumn(boardName, id, 0) != null || GetTaskByIdAndColumn(boardName, id, 1) != null || GetTaskByIdAndColumn(boardName, id, 2) != null)
                 throw new InvalidOperationException("task id is already taken in this board");
-            return boards[boardName].AddTask(title, due, description, creatinTime, id, email, 0);
+            return boards[boardName].AddTask(title, due, description, creationTime, id, email, 0);
            
         }
 
         /// <summary>
-        /// Creates a new board with the specified name and owner email.
+        /// Creates a new board for a user.
         /// </summary>
-        /// <param name="boardName">The name of the board to create.</param>
-        /// <param name="email">The email of the board's creator.</param>
-        /// <returns>The created BoardBL object.</returns>
-        /// <exception cref="ArgumentNullException">Thrown when the board name or email is null or empty.</exception>
-        /// <exception cref="InvalidOperationException">Thrown when a board with the given name already exists.</exception>
+        /// <param name="boardName">The name of the board.</param>
+        /// <param name="email">The user's email.</param>
+        /// <returns>The created <see cref="BoardBL"/> instance.</returns>
+        /// <exception cref="ArgumentNullException">Thrown if boardName or email is null or empty.</exception>
+        /// <exception cref="InvalidOperationException">Thrown if a board with the given name already exists.</exception>
         internal BoardBL CreateBoard(string boardName, string email)
         {
-            if (string.IsNullOrWhiteSpace(boardName) || string.IsNullOrWhiteSpace(email))
-                throw new ArgumentNullException("Board name or email cannot be null or empty.");
+            if (!UserExistsAndLoggedIn(email))
+                throw new InvalidOperationException("user is not logged in or doesn't exist");
             if (BoardExists(boardName))
-                throw new InvalidOperationException("Board already exists");
-            boards.Add(boardName, new BoardBL(boardName));
+                throw new InvalidOperationException("board already exists");
+            boards.Add(boardName, new BoardBL(boardName, email));
             Log.Info("new board created - " + boardName);
             return boards[boardName];
             
         }
 
         /// <summary>
-        /// Deletes an existing board with the specified name.
+        /// Deletes an existing board.
         /// </summary>
         /// <param name="boardName">The name of the board to delete.</param>
-        /// <param name="email">The email of the user attempting to delete the board.</param>
-        /// <exception cref="ArgumentNullException">Thrown when the board name or email is null or empty.</exception>
-        /// <exception cref="KeyNotFoundException">Thrown when the specified board does not exist.</exception>
+        /// <param name="email">The user's email.</param>
+        /// <exception cref="ArgumentNullException">Thrown if boardName or email is null or empty.</exception>
+        /// <exception cref="KeyNotFoundException">Thrown if the board does not exist.</exception>
         internal void DeleteBoard(string boardName, string email)
         {
-            if (string.IsNullOrWhiteSpace(boardName) || string.IsNullOrWhiteSpace(email))
-                throw new ArgumentNullException("Board name or email cannot be null or empty.");
+            if (!UserExistsAndLoggedIn(email))
+                throw new InvalidOperationException("user is not logged in or doesn't exist");
             if (!BoardExists(boardName))
                 throw new KeyNotFoundException("Board not found");
             boards.Remove(boardName);
@@ -115,15 +135,17 @@ namespace Backend.BuisnessLayer.BoardPackage
         /// <summary>
         /// Sets a task limit for a specific column in a board.
         /// </summary>
-        /// <param name="boardName">The name of the board containing the column.</param>
-        /// <param name="column">The column index (0 = Backlog, 1 = In Progress, 2 = Done).</param>
-        /// <param name="limit">The maximum number of tasks allowed in the column.</param>
-        /// <param name="email">The email of the user applying the limit.</param>
-        /// <exception cref="InvalidOperationException">Thrown when the column index is out of range.</exception>
-        /// <exception cref="ArgumentException">Thrown when the limit is negative.</exception>
-        /// <exception cref="KeyNotFoundException">Thrown when the specified board does not exist.</exception>
+        /// <param name="boardName">The name of the board.</param>
+        /// <param name="column">The column index.</param>
+        /// <param name="limit">The new task limit (must be non-negative).</param>
+        /// <param name="email">The user's email.</param>
+        /// <exception cref="ArgumentException">Thrown if the limit is negative.</exception>
+        /// <exception cref="InvalidOperationException">Thrown if the column index is invalid.</exception>
+        /// <exception cref="KeyNotFoundException">Thrown if the board does not exist.</exception>
         internal void LimitColumn(string boardName, int column, int limit, string email)
         {
+            if (!UserExistsAndLoggedIn(email))
+                throw new InvalidOperationException("user is not logged in or doesn't exist");
             if (column >= 3 || column < 0)
                 throw new InvalidOperationException("invalid column");
             if (limit < 0)
@@ -133,16 +155,18 @@ namespace Backend.BuisnessLayer.BoardPackage
         }
 
         /// <summary>
-        /// Moves a task from its current column to the next column in the workflow.
+        /// Moves a task to the next column.
         /// </summary>
-        /// <param name="boardName">The name of the board containing the task.</param>
-        /// <param name="column">The current column of the task (0=Backlog, 1=In Progress).</param>
-        /// <param name="id">The unique identifier of the task to move.</param>
-        /// <param name="email">The email of the user attempting to move the task.</param>
-        /// <exception cref="InvalidOperationException">Thrown when the column is invalid or exceeds limit.</exception>
-        /// <exception cref="KeyNotFoundException">Thrown when the board or task does not exist.</exception>
+        /// <param name="boardName">The name of the board.</param>
+        /// <param name="column">The current column index.</param>
+        /// <param name="id">The task ID.</param>
+        /// <param name="email">The user's email.</param>
+        /// <exception cref="InvalidOperationException">Thrown if the column index is invalid.</exception>
+        /// <exception cref="KeyNotFoundException">Thrown if the board or task does not exist.</exception>
         internal void MoveTask(string boardName, int column, int id, string email)
         {
+            if (!UserExistsAndLoggedIn(email))
+                throw new InvalidOperationException("user is not logged in or doesn't exist");
             if (column >= 2 || column < 0)
                 throw new InvalidOperationException("invalid column");
             BoardBL board = GetBoardByName(boardName);
@@ -150,20 +174,22 @@ namespace Backend.BuisnessLayer.BoardPackage
         }
 
         /// <summary>
-        /// Updates the details of an existing task.
+        /// Updates a task's details.
         /// </summary>
-        /// <param name="boardName">The name of the board containing the task.</param>
-        /// <param name="title">The new title for the task.</param>
-        /// <param name="due">The new due date for the task.</param>
-        /// <param name="description">The new description for the task.</param>
-        /// <param name="id">The unique identifier of the task to update.</param>
-        /// <param name="email">The email of the user attempting to update the task.</param>
-        /// <param name="column">The column where the task is located (0=Backlog, 1=In Progress, 2=Done).</param>
-        /// <exception cref="ArgumentNullException">Thrown when the title is null or empty.</exception>
-        /// <exception cref="InvalidOperationException">Thrown when the task ID is already taken.</exception>
-        /// <exception cref="KeyNotFoundException">Thrown when the board or task does not exist.</exception>
-        internal void UpdateTask(string boardName, string title, string due, string description, int id, string email, int column)
+        /// <param name="boardName">The name of the board.</param>
+        /// <param name="title">The new title.</param>
+        /// <param name="due">The new due date.</param>
+        /// <param name="description">The new description.</param>
+        /// <param name="id">The task ID.</param>
+        /// <param name="email">The user's email.</param>
+        /// <param name="column">The column index.</param>
+        /// <exception cref="KeyNotFoundException">Thrown if the board or task does not exist.</exception>
+        /// <exception cref="ArgumentNullException">Thrown if the title is null or empty.</exception>
+        /// <exception cref="InvalidOperationException">Thrown if the user doesn't exist or is not logged in ot task id is taken or invalid column.</exception>
+        internal void UpdateTask(string boardName, string title, DateTime? due, string description, int id, string email, int column)
         {
+            if (!UserExistsAndLoggedIn(email))
+                throw new InvalidOperationException("user is not logged in or doesn't exist");
             if (column >= 2 || column < 0)
                 throw new InvalidOperationException("invalid column");
             if (string.IsNullOrWhiteSpace(title))
@@ -174,30 +200,74 @@ namespace Backend.BuisnessLayer.BoardPackage
             board.UpdateTask(title, due, description, id, email, column);
         }
 
-        internal List<TaskBL> GetColumn(string email, string boardName, int columnOrdinal)
+        /// <summary>
+        /// Retrieves all tasks in a specified column.
+        /// </summary>
+        /// <param name="email">The user's email.</param>
+        /// <param name="boardName">The board's name.</param>
+        /// <param name="columnOrdinal">The column index.</param>
+        /// <returns>A list of <see cref="TaskBL"/>.</returns>
+        internal List<TaskSL> GetColumn(string email, string boardName, int columnOrdinal)
         {
+            if (!UserExistsAndLoggedIn(email))
+                throw new InvalidOperationException("user is not logged in or doesn't exist");
+            if (columnOrdinal >= 2 || columnOrdinal < 0)
+                throw new InvalidOperationException("invalid column");
             BoardBL board = GetBoardByName(boardName);
-            return board.GetColumn(columnOrdinal);
+            return (List<TaskSL>) board.GetColumn(columnOrdinal).Select(task => new TaskSL(task)));
 
         }
 
+        /// <summary>
+        /// Retrieves the task limit for a specified column.
+        /// </summary>
+        /// <param name="email">The user's email.</param>
+        /// <param name="boardName">The board's name.</param>
+        /// <param name="columnOrdinal">The column index.</param>
+        /// <returns>The task limit.</returns>
         internal int GetColumnLimit(string email, string boardName, int columnOrdinal)
         {
+            if (!UserExistsAndLoggedIn(email))
+                throw new InvalidOperationException("user is not logged in or doesn't exist");
+            if (columnOrdinal >= 2 || columnOrdinal < 0)
+                throw new InvalidOperationException("invalid column");
             BoardBL board = GetBoardByName(boardName);
             return board.GetColumnLimit(columnOrdinal);
         }
 
+        /// <summary>
+        /// Gets the name of a specific column in a board.
+        /// </summary>
+        /// <param name="email">The email of the requesting user.</param>
+        /// <param name="boardName">The name of the board.</param>
+        /// <param name="columnOrdinal">The index of the column.</param>
+        /// <returns>The name of the column.</returns>
         internal string GetColumnName(string email, string boardName, int columnOrdinal)
         {
+            if (!UserExistsAndLoggedIn(email))
+                throw new InvalidOperationException("user is not logged in or doesn't exist");
+            if (columnOrdinal >= 2 || columnOrdinal < 0)
+                throw new InvalidOperationException("invalid column");
             BoardBL board = GetBoardByName(boardName);
             return board.GetColumnName(columnOrdinal);
         }
 
-        internal List<TaskBL> InProgressTasks(string email)
+        /// <summary>
+        /// Retrieves all in-progress tasks across all boards.
+        /// </summary>
+        /// <param name="email">The email of the requesting user.</param>
+        /// <returns>A list of in-progress <see cref="TaskSL"/> objects.</returns>
+        internal List<TaskSL> InProgressTasks(string email)
         {
-            List<TaskBL> lst = new List<TaskBL>();
+            if (!UserExistsAndLoggedIn(email))
+                throw new InvalidOperationException("user is not logged in or doesn't exist");
+            List<TaskSL> lst = new List<TaskSL>(); List<TaskBL> inProgress;
             foreach (BoardBL board in boards.Values)
-                lst.AddRange(board.InProgressTask());
+                if (board.owner == email)
+                {
+                    inProgress = board.InProgressTask();
+                    lst.AddRange(inProgress.Select(task => new TaskSL(task)));
+                }
             return lst;
         }
     }

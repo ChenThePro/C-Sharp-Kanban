@@ -4,19 +4,23 @@ namespace Backend.BuisnessLayer.BoardPackage
 {
     internal class BoardBL
     {
+        internal readonly string owner;
         internal string name;
         internal List<ColumnBL> columns;
         private static readonly ILog Log = LogManager.GetLogger(System.Reflection.MethodBase.GetCurrentMethod().DeclaringType);
 
-        internal BoardBL(string name)
+        internal BoardBL(string name, string owner)
         {
             this.name = name;
-            columns = new List<ColumnBL> { new(0), new(1), new(2) }; 
+            columns = new List<ColumnBL> { new(0), new(1), new(2) };
+            this.owner = owner;
         }
 
-        internal TaskBL AddTask(string title, string due, string description, string creatinTime, int id, string email, int column)
+        internal TaskBL AddTask(string title, DateTime due, string description, DateTime creationTime, int id, string email, int column)
         {
-            TaskBL task = new TaskBL(title, due, description, creatinTime, id);
+            if (owner != email)
+                throw new KeyNotFoundException("email doesn't exist");
+            TaskBL task = new TaskBL(title, due, description, creationTime, id);
             columns[column].Add(task, email);
             return task;
         }
@@ -37,7 +41,7 @@ namespace Backend.BuisnessLayer.BoardPackage
             throw new KeyNotFoundException("task doesn't exist");
         }
 
-        internal void UpdateTask(string title, string due, string description, int id, string email, int column)
+        internal void UpdateTask(string title, DateTime? due, string description, int id, string email, int column)
         {
             columns[column].UpdateTask(title, due, description, id, email);
         }

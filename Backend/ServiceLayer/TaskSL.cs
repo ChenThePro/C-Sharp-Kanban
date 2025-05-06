@@ -5,9 +5,9 @@ namespace Backend.ServiceLayer
     public class TaskSL
     {
         public string Title { get; set; }
-        public string Due { get; set; }
+        public DateTime Due { get; set; }
         public string Description { get; set; }
-        public string CreationTime { get; init; }
+        public DateTime CreationTime { get; init; }
         public int Id { get; set; }
         internal TaskSL(TaskBL task)
         {

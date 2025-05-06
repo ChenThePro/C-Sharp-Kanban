@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Text.Json;
 using System.Threading.Tasks;
 using Backend.BuisnessLayer;
 using Backend.ServiceLayer;
@@ -10,7 +11,7 @@ namespace Backend.BackendTests.Testings
 {
     public class LoginTests
     {
-        private ServiceFactory _factory = new ServiceFactory(new BoardFacade(), new UserFacade());
+        private ServiceFactory _factory = new ServiceFactory();
 
         /// <summary>
         /// Test login after successful registration.
@@ -21,10 +22,8 @@ namespace Backend.BackendTests.Testings
         public bool TestLoggedInAfterRegister()
         {
             _factory.GetUserService().Register("user@email.com", "Password1");
-            Response<UserSL> response = _factory.GetUserService().Login("user@gmail.com", "Password1");
-            if (response.RetVal == null)
-                return false;
-            return true;
+            Response<UserSL> response = JsonSerializer.Deserialize<Response<UserSL>>(_factory.GetUserService().Login("user@email.com", "Password1"));
+            return response.ErrorMsg != null;
         }
 
         /// <summary>
@@ -35,10 +34,8 @@ namespace Backend.BackendTests.Testings
         /// </summary>
         public bool TestWrongUsernameLogin()
         {
-            Response<UserSL> response = _factory.GetUserService().Login("wrongUser@gmail.com", "Password1");
-            if (response.RetVal != null)
-                return false;
-            return true;
+            Response<UserSL> response = JsonSerializer.Deserialize<Response<UserSL>>(_factory.GetUserService().Login("wrongUser@gmail.com", "Password1"));
+            return response.ErrorMsg == null;
         }
 
         /// <summary>
@@ -49,10 +46,8 @@ namespace Backend.BackendTests.Testings
         /// </summary>
         public bool TestWrongPasswordLogin()
         {
-            Response<UserSL> response = _factory.GetUserService().Login("user@email.com", "wrongPassword");
-            if (response.RetVal != null)
-                return false;
-            return true;
+            Response<UserSL> response = JsonSerializer.Deserialize<Response<UserSL>>(_factory.GetUserService().Login("user@email.com", "wrongPassword"));
+            return response.ErrorMsg == null;
         }
 
         /// <summary>
@@ -63,10 +58,8 @@ namespace Backend.BackendTests.Testings
         /// </summary>
         public bool TestLogout()
         {
-            Response<object> response = _factory.GetUserService().Logout("user@gmail.com");
-            if (response.ErrorMsg != "logout succusfully")
-                return false;
-            return true;
+            Response<object> response = JsonSerializer.Deserialize<Response<object>>(_factory.GetUserService().Logout("user@email.com"));
+            return response.ErrorMsg == null;
         }
 
         public void RunAll()

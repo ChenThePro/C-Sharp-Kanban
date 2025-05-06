@@ -15,10 +15,10 @@ namespace Backend.ServiceLayer
         private BoardService? _boardService;
         private UserService? _userService;
 
-        internal ServiceFactory()
+        public ServiceFactory()
         {
-            _boardFacade = new BoardFacade();
             _userFacade = new UserFacade();
+            _boardFacade = new BoardFacade(_userFacade);
             var logRepository = LogManager.GetRepository(Assembly.GetEntryAssembly());
             XmlConfigurator.Configure(logRepository, new FileInfo("log4net.config"));
         }

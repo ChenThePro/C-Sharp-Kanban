@@ -1,8 +1,6 @@
-﻿using Backend.ServiceLayer;
-using Microsoft.VisualBasic;
-using System.Collections.Generic;
+﻿using Backend.BuisnessLayer.BoardPackage;
+using Backend.ServiceLayer;
 using System.Text.Json;
-using System.Xml.Linq;
 
 
 namespace IntroSE.Kanban.Backend.ServiceLayer
@@ -75,7 +73,6 @@ namespace IntroSE.Kanban.Backend.ServiceLayer
             return JsonSerializer.Serialize(response);
         }
 
-
         /// <summary>
         ///  This method logs in an existing user.
         /// </summary>
@@ -91,7 +88,6 @@ namespace IntroSE.Kanban.Backend.ServiceLayer
             return JsonSerializer.Serialize(response);
         }
 
-
         /// <summary>
         /// This method logs out a logged in user. 
         /// </summary>
@@ -99,7 +95,6 @@ namespace IntroSE.Kanban.Backend.ServiceLayer
         /// <returns>An empty response, unless an error occurs (see <see cref="GradingService"/>)</returns>
         public string Logout(string email)
         {
-            //change logout
             string json = _serviceFactory.GetUserService().Logout(email);
             Response<object> response = JsonSerializer.Deserialize<Response<object>>(json);
             return JsonSerializer.Serialize(response);
@@ -130,12 +125,9 @@ namespace IntroSE.Kanban.Backend.ServiceLayer
         public string GetColumnLimit(string email, string boardName, int columnOrdinal)
         {
             string json = _serviceFactory.GetBoardService().GetColumnLimit(email, boardName, columnOrdinal);
-            Response<object> response = JsonSerializer.Deserialize<Response<object>>(json);
-            if (int.TryParse(response.ErrorMsg, out _))
-                response.ErrorMsg = null;
+            Response<int> response = JsonSerializer.Deserialize<Response<int>>(json);
             return JsonSerializer.Serialize(response);
         }
-
 
         /// <summary>
         /// This method gets the name of a specific column
@@ -147,11 +139,9 @@ namespace IntroSE.Kanban.Backend.ServiceLayer
         public string GetColumnName(string email, string boardName, int columnOrdinal)
         {
             string json = _serviceFactory.GetBoardService().GetColumnName(email, boardName, columnOrdinal);
-            Response<object> response = JsonSerializer.Deserialize<Response<object>>(json);
-            response.RetVal = null;
+            Response<string> response = JsonSerializer.Deserialize<Response<string>>(json);
             return JsonSerializer.Serialize(response);
         }
-
 
         /// <summary>
         /// This method adds a new task.
@@ -164,12 +154,11 @@ namespace IntroSE.Kanban.Backend.ServiceLayer
         /// <returns>An empty response, unless an error occurs (see <see cref="GradingService"/>)</returns>
         public string AddTask(string email, string boardName, string title, string description, DateTime dueDate)
         {
-            string json = _serviceFactory.GetTaskService().AddTask(boardName, title, dueDate.ToString(), description, DateTime.Today.ToString(), 1, email);
+            string json = _serviceFactory.GetTaskService().AddTask(boardName, title, dueDate, description, DateTime.Today, 1, email);
             Response<object> response = JsonSerializer.Deserialize<Response<object>>(json);
             response.RetVal = null;
             return JsonSerializer.Serialize(response);
         }
-
 
         /// <summary>
         /// This method updates the due date of a task
@@ -182,11 +171,10 @@ namespace IntroSE.Kanban.Backend.ServiceLayer
         /// <returns>An empty response, unless an error occurs (see <see cref="GradingService"/>)</returns>
         public string UpdateTaskDueDate(string email, string boardName, int columnOrdinal, int taskId, DateTime dueDate)
         {
-            string json = _serviceFactory.GetTaskService().UpdateTask(boardName, null, null, dueDate.ToString(), taskId, email, columnOrdinal);
+            string json = _serviceFactory.GetTaskService().UpdateTask(boardName, null, null, dueDate, taskId, email, columnOrdinal);
             Response<object> response = JsonSerializer.Deserialize<Response<object>>(json);
             return JsonSerializer.Serialize(response);
         }
-
 
         /// <summary>
         /// This method updates task title.
@@ -204,7 +192,6 @@ namespace IntroSE.Kanban.Backend.ServiceLayer
             return JsonSerializer.Serialize(response);
         }
 
-
         /// <summary>
         /// This method updates the description of a task.
         /// </summary>
@@ -221,7 +208,6 @@ namespace IntroSE.Kanban.Backend.ServiceLayer
             return JsonSerializer.Serialize(response);
         }
 
-
         /// <summary>
         /// This method advances a task to the next column
         /// </summary>
@@ -237,23 +223,6 @@ namespace IntroSE.Kanban.Backend.ServiceLayer
             return JsonSerializer.Serialize(response);
         }
 
-
-        /// <summary>
-        /// This method returns a column given it's name
-        /// </summary>
-        /// <param name="email">Email of the user, must be logged in</param>
-        /// <param name="boardName">The name of the board</param>
-        /// <param name="columnOrdinal">The column ID. The first column is identified by 0, the ID increases by 1 for each column</param>
-        /// <returns>A response with a list of the column's tasks, unless an error occurs (see <see cref="GradingService"/>)</returns>
-        public string GetColumn(string email, string boardName, int columnOrdinal)
-        {
-            string json = _serviceFactory.GetBoardService().GetColumn(email, boardName, columnOrdinal);
-            Response<object> response = JsonSerializer.Deserialize<Response<object>>(json);
-            return JsonSerializer.Serialize(response);
-
-        }
-
-
         /// <summary>
         /// This method creates a board for the given user.
         /// </summary>
@@ -268,7 +237,6 @@ namespace IntroSE.Kanban.Backend.ServiceLayer
             return JsonSerializer.Serialize(response);
         }
 
-
         /// <summary>
         /// This method deletes a board.
         /// </summary>
@@ -282,7 +250,6 @@ namespace IntroSE.Kanban.Backend.ServiceLayer
             return JsonSerializer.Serialize(response);
         }
 
-
         /// <summary>
         /// This method returns all in-progress tasks of a user.
         /// </summary>
@@ -291,7 +258,21 @@ namespace IntroSE.Kanban.Backend.ServiceLayer
         public string InProgressTasks(string email)
         {
             string json = _serviceFactory.GetBoardService().InProgressTasks(email);
-            Response<object> response = JsonSerializer.Deserialize<Response<object>>(json);
+            Response<List<TaskSL>> response = JsonSerializer.Deserialize<Response<List<TaskSL>>>(json);
+            return JsonSerializer.Serialize(response);
+        }
+
+        /// <summary>
+        /// This method returns a column given it's name
+        /// </summary>
+        /// <param name="email">Email of the user, must be logged in</param>
+        /// <param name="boardName">The name of the board</param>
+        /// <param name="columnOrdinal">The column ID. The first column is identified by 0, the ID increases by 1 for each column</param>
+        /// <returns>A response with a list of the column's tasks, unless an error occurs (see <see cref="GradingService"/>)</returns>
+        public string GetColumn(string email, string boardName, int columnOrdinal)
+        {
+            string json = _serviceFactory.GetBoardService().GetColumn(email, boardName, columnOrdinal);
+            Response<List<TaskSL>> response = JsonSerializer.Deserialize<Response<List<TaskSL>>>(json);
             return JsonSerializer.Serialize(response);
         }
     }
