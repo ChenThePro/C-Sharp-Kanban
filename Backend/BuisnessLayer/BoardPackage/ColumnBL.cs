@@ -1,37 +1,33 @@
 ﻿using log4net;
+using System;
 
 namespace Backend.BuisnessLayer.BoardPackage
 {
     internal class ColumnBL
     {
+        private enum Names
+        {
+            Backlog,
+            InProgress,
+            Done
+        }
         private int limit = -1;
         internal List<TaskBL> tasks;
         private static readonly ILog Log = LogManager.GetLogger(System.Reflection.MethodBase.GetCurrentMethod().DeclaringType);
-        private string name;
+        private readonly string name;
 
         internal ColumnBL(int num)
         {
             tasks = new List<TaskBL>();
-            switch (num)
-            {
-                case 0:
-                    name = "backlog";
-                    break;
-                case 1:
-                    name = "in progress";
-                    break;
-                case 2:
-                    name = "done";
-                    break;
-            }
+            name = Enum.GetName(typeof(Names), num);
         }
 
         internal void Add(TaskBL newTask, string email)
         {
-            if (limit == -1 || limit > tasks.Count)
-                tasks.Add(newTask);
+            if (limit != -1 && limit <= tasks.Count)
+                throw new InvalidOperationException("exceeds column's limit");
             Log.Info("task added succesfully");
-            throw new InvalidOperationException("exceeds column's limit");
+            tasks.Add(newTask);
         }
 
         internal void Delete(TaskBL task, string email)

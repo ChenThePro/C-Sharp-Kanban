@@ -196,11 +196,9 @@ namespace Backend.BuisnessLayer.BoardPackage
         internal List<TaskBL> InProgressTasks(string email)
         {
             List<TaskBL> lst = new List<TaskBL>();
-            foreach (BoardBL board in boards) {
-                lst.Concat(board.InProgressTask();
-
-
-
+            foreach (BoardBL board in boards.Values)
+                lst.AddRange(board.InProgressTask());
+            return lst;
         }
     }
 }
