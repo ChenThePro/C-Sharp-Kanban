@@ -1,5 +1,4 @@
 using IntroSE.Kanban.Backend.ServiceLayer;
-using System.Text.Json;
 
 namespace IntroSE.Kanban.BackendTests.Testings
 {

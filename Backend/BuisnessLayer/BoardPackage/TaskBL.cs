@@ -1,6 +1,5 @@
 ﻿using log4net;
 using System;
-using System.ComponentModel.Design;
 using System.Reflection;
 
 namespace IntroSE.Kanban.Backend.BuisnessLayer.BoardPackage
@@ -26,7 +25,7 @@ namespace IntroSE.Kanban.Backend.BuisnessLayer.BoardPackage
         internal void Update(string title, DateTime? due, string description, string email)
         {
             if (due.HasValue)
-                if (((DateTime) due).CompareTo(creationTime) < 0)
+                if (((DateTime)due).CompareTo(creationTime) < 0)
                     throw new InvalidOperationException("due can't be before creation");
             this.title = title ?? this.title;
             this.description = description ?? this.description;
