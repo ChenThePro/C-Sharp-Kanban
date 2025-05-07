@@ -1,12 +1,12 @@
 ﻿using log4net;
 using log4net.Config;
 using System.Reflection;
-using Backend.BuisnessLayer.UserPackage;
-using Backend.BuisnessLayer.BoardPackage;
 using System.IO;
+using IntroSE.Kanban.Backend.BuisnessLayer.BoardPackage;
+using IntroSE.Kanban.Backend.BuisnessLayer.UserPackage;
 
 
-namespace Backend.ServiceLayer
+namespace IntroSE.Kanban.Backend.ServiceLayer
 {
     public class ServiceFactory
     {
@@ -20,6 +20,9 @@ namespace Backend.ServiceLayer
         {
             _userFacade = new UserFacade();
             _boardFacade = new BoardFacade(_userFacade);
+            _taskService = null;
+            _boardService = null;
+            _userService = null;
             var logRepository = LogManager.GetRepository(Assembly.GetEntryAssembly());
             XmlConfigurator.Configure(logRepository, new FileInfo("log4net.config"));
         }

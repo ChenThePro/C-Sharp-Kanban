@@ -1,9 +1,10 @@
-﻿using log4net;
+﻿using IntroSE.Kanban.Backend.ServiceLayer;
+using log4net;
 using System;
 using System.Collections.Generic;
 using System.Reflection;
 
-namespace Backend.BuisnessLayer.BoardPackage
+namespace IntroSE.Kanban.Backend.BuisnessLayer.BoardPackage
 {
     internal class BoardBL
     {
@@ -19,37 +20,29 @@ namespace Backend.BuisnessLayer.BoardPackage
             this.owner = owner;
         }
 
-        internal TaskBL AddTask(string title, DateTime due, string description, DateTime creationTime, int id, string email, int column)
+        internal TaskBL AddTask(string title, DateTime due, string description, DateTime creationTime, int id, int column)
         {
-            if (owner != email)
-                throw new KeyNotFoundException("email doesn't exist");
             TaskBL task = new TaskBL(title, due, description, creationTime, id);
-            columns[column].Add(task, email);
+            columns[column].Add(task, owner);
             return task;
         }
 
         internal void MoveTask(int column, int id, string email)
         {
-            foreach (TaskBL task in columns[column].tasks)
-            {
-                if (task.id == id)
-                {
-                    columns[column + 1].Add(task, email);
-                    columns[column].Delete(task, email);
-                    Log.Info("task moved from" + task.id + "to" + column);
-                    return;
-
-                }
-            }
-            throw new KeyNotFoundException("task doesn't exist");
+            TaskBL task = GetTaskByIdAndColumn(id, column);
+            if (task == null)
+                throw new KeyNotFoundException("task doesn't exist");
+            columns[column + 1].Add(task, email);
+            columns[column].Delete(task, email);
+            Log.Info("task moved from" + task.id + "to" + column);
         }
 
-        internal void UpdateTask(string? title, DateTime? due, string? description, int id, string email, int column)
+        internal void UpdateTask(string title, DateTime? due, string description, int id, string email, int column)
         {
             columns[column].UpdateTask(title, due, description, id, email);
         }
 
-        internal TaskBL? GetTaskByIdAndColumn(int id, int column)
+        internal TaskBL GetTaskByIdAndColumn(int id, int column)
         {
             return columns[column].GetTaskByIdAndColumn(id);
         }

@@ -1,16 +1,14 @@
-using Backend.BuisnessLayer.UserPackage;
-using Backend.ServiceLayer;
+using IntroSE.Kanban.Backend.BuisnessLayer.UserPackage;
 using log4net;
 using System;
 using System.Collections.Generic;
 using System.Reflection;
 
-namespace Backend.BuisnessLayer.BoardPackage
+namespace IntroSE.Kanban.Backend.BuisnessLayer.BoardPackage
 {
     internal class BoardFacade
     {
         private readonly UserFacade _userfacade;
-        private readonly Dictionary<string, BoardBL> boards;
         private static readonly ILog Log = LogManager.GetLogger(MethodBase.GetCurrentMethod().DeclaringType);
 
         /// <summary>
@@ -19,7 +17,6 @@ namespace Backend.BuisnessLayer.BoardPackage
         internal BoardFacade(UserFacade userfacade)
         {
             _userfacade = userfacade;
-            boards = new Dictionary<string, BoardBL>(StringComparer.OrdinalIgnoreCase);
         }
 
         /// <summary>
@@ -30,42 +27,6 @@ namespace Backend.BuisnessLayer.BoardPackage
         private bool UserExistsAndLoggedIn(string email)
         {
             return _userfacade._emails.ContainsKey(email) && _userfacade._emails[email].loggedIn;
-        }
-
-        /// <summary>
-        /// Checks whether a board with the specified name exists.
-        /// </summary>
-        /// <param name="boardName">The name of the board to check.</param>
-        /// <returns>True if the board exists; otherwise, false.</returns>
-        private bool BoardExists(string boardName)
-        {
-            return boards.ContainsKey(boardName);
-        }
-
-        /// <summary>
-        /// Retrieves a board by its name.
-        /// </summary>
-        /// <param name="boardName">The name of the board.</param>
-        /// <returns>The corresponding <see cref="BoardBL"/> instance.</returns>
-        /// <exception cref="KeyNotFoundException">Thrown if the board does not exist.</exception>
-        private BoardBL GetBoardByName(string boardName)
-        {
-            if (!BoardExists(boardName))
-                throw new KeyNotFoundException("Board not found");
-            return boards[boardName];
-        }
-
-        /// <summary>
-        /// Retrieves a task from a board by its ID and column index.
-        /// </summary>
-        /// <param name="boardName">The name of the board.</param>
-        /// <param name="id">The task ID.</param>
-        /// <param name="column">The column index.</param>
-        /// <returns>The corresponding <see cref="TaskBL"/> instance, or null if not found.</returns>
-        private TaskBL? GetTaskByIdAndColumn(string boardName, int id, int column)
-        {
-            BoardBL board = GetBoardByName(boardName);
-            return board.GetTaskByIdAndColumn(id, column);
         }
 
         /// <summary>
@@ -86,7 +47,9 @@ namespace Backend.BuisnessLayer.BoardPackage
         /// <exception cref="InvalidOperationException">Thrown when email does not exist or not logged in.</exception>
         internal TaskBL AddTask(string boardName, string title, DateTime due, string description, DateTime creationTime, int id, string email)
         {
-            if (title.Length > 50 || description.Length > 300)
+            if (string.IsNullOrEmpty(title) || title.Length > 50)
+                throw new ArgumentException("title invalid");
+            if (description != null && description.Length > 300)
                 throw new InvalidOperationException("exceeds limit");
             if (id < 0)
                 throw new InvalidOperationException("id can't be negative");
@@ -94,12 +57,11 @@ namespace Backend.BuisnessLayer.BoardPackage
                 throw new InvalidOperationException("due can't be before creation");
             if (!UserExistsAndLoggedIn(email))
                 throw new InvalidOperationException("user is not logged in or doesn't exist");
-            if (string.IsNullOrWhiteSpace(title))
-                throw new ArgumentNullException("title cannot be null or empty");
-            if (GetTaskByIdAndColumn(boardName, id, 0) != null || GetTaskByIdAndColumn(boardName, id, 1) != null || GetTaskByIdAndColumn(boardName, id, 2) != null)
+            UserBL user = _userfacade.GetUser(email);
+            BoardBL board = user.GetBoard(boardName);
+            if (board.GetTaskByIdAndColumn(id, 0) != null || board.GetTaskByIdAndColumn(id, 1) != null || board.GetTaskByIdAndColumn(id, 2) != null)
                 throw new InvalidOperationException("task id is already taken in this board");
-            return boards[boardName].AddTask(title, due, description, creationTime, id, email, 0);
-
+            return board.AddTask(title, due, description, creationTime, id, 0);
         }
 
         /// <summary>
@@ -114,12 +76,15 @@ namespace Backend.BuisnessLayer.BoardPackage
         {
             if (!UserExistsAndLoggedIn(email))
                 throw new InvalidOperationException("user is not logged in or doesn't exist");
-            if (BoardExists(boardName))
+            if (string.IsNullOrEmpty(boardName))
+                throw new ArgumentException("board name is not valid");
+            UserBL user = _userfacade.GetUser(email);
+            if (user.BoardExists(boardName))
                 throw new InvalidOperationException("board already exists");
-            boards.Add(boardName, new BoardBL(boardName, email));
-            Log.Info("new board created - " + boardName);
-            return boards[boardName];
-
+            BoardBL board = new BoardBL(boardName, email);
+            user.CreateBoard(board);
+            Log.Info("new board created - " + boardName + " for" + email);
+            return board;
         }
 
         /// <summary>
@@ -133,9 +98,8 @@ namespace Backend.BuisnessLayer.BoardPackage
         {
             if (!UserExistsAndLoggedIn(email))
                 throw new InvalidOperationException("user is not logged in or doesn't exist");
-            if (!BoardExists(boardName))
-                throw new KeyNotFoundException("Board not found");
-            boards.Remove(boardName);
+            UserBL user = _userfacade.GetUser(email);
+            user.DeleteBoard(boardName);
             Log.Info(boardName + "deleted");
         }
 
@@ -153,11 +117,12 @@ namespace Backend.BuisnessLayer.BoardPackage
         {
             if (!UserExistsAndLoggedIn(email))
                 throw new InvalidOperationException("user is not logged in or doesn't exist");
-            if (column >= 3 || column < 0)
+            if (column > 2 || column < 0)
                 throw new InvalidOperationException("invalid column");
             if (limit < 0)
                 throw new ArgumentException("limit cannot be negative");
-            BoardBL board = GetBoardByName(boardName);
+            UserBL user = _userfacade.GetUser(email);
+            BoardBL board = user.GetBoard(boardName);
             board.LimitColumn(column, limit, email);
         }
 
@@ -174,9 +139,12 @@ namespace Backend.BuisnessLayer.BoardPackage
         {
             if (!UserExistsAndLoggedIn(email))
                 throw new InvalidOperationException("user is not logged in or doesn't exist");
-            if (column >= 2 || column < 0)
+            if (column > 1 || column < 0)
                 throw new InvalidOperationException("invalid column");
-            BoardBL board = GetBoardByName(boardName);
+            if (id < 0)
+                throw new InvalidOperationException("id can't be negative");
+            UserBL user = _userfacade.GetUser(email);
+            BoardBL board = user.GetBoard(boardName);
             board.MoveTask(column, id, email);
         }
 
@@ -193,23 +161,20 @@ namespace Backend.BuisnessLayer.BoardPackage
         /// <exception cref="KeyNotFoundException">Thrown if the board or task does not exist.</exception>
         /// <exception cref="ArgumentNullException">Thrown if the title is null or empty.</exception>
         /// <exception cref="InvalidOperationException">Thrown if the user doesn't exist or is not logged in ot task id is taken or invalid column.</exception>
-        internal void UpdateTask(string boardName, string? title, DateTime? due, string? description, int id, string email, int column)
+        internal void UpdateTask(string boardName, string title, DateTime? due, string description, int id, string email, int column)
         {
-            if (title != null)
-                if (title.Length > 50)
-                    throw new InvalidOperationException("exceeds limit");
-            if (description != null)
-                if (description.Length > 50)
-                    throw new InvalidOperationException("exceeds limit");
+            if (title != null && title.Length > 50)
+                throw new ArgumentException("title invalid");
+            if (description != null && description.Length > 300)
+                throw new InvalidOperationException("exceeds limit");
             if (!UserExistsAndLoggedIn(email))
                 throw new InvalidOperationException("user is not logged in or doesn't exist");
-            if (column >= 2 || column < 0)
+            if (column > 2 || column < 0)
                 throw new InvalidOperationException("invalid column");
-            if (string.IsNullOrWhiteSpace(title))
-                throw new ArgumentNullException("title cannot be null or empty");
-            if (GetTaskByIdAndColumn(boardName, id, 0) != null || GetTaskByIdAndColumn(boardName, id, 1) != null || GetTaskByIdAndColumn(boardName, id, 2) != null)
-                throw new InvalidOperationException("task id is already taken in this board");
-            BoardBL board = GetBoardByName(boardName);
+            if (id < 0)
+                throw new InvalidOperationException("id can't be null");
+            UserBL user = _userfacade.GetUser(email);
+            BoardBL board = user.GetBoard(boardName);
             board.UpdateTask(title, due, description, id, email, column);
         }
 
@@ -224,9 +189,10 @@ namespace Backend.BuisnessLayer.BoardPackage
         {
             if (!UserExistsAndLoggedIn(email))
                 throw new InvalidOperationException("user is not logged in or doesn't exist");
-            if (columnOrdinal >= 2 || columnOrdinal < 0)
+            if (columnOrdinal > 2 || columnOrdinal < 0)
                 throw new InvalidOperationException("invalid column");
-            BoardBL board = GetBoardByName(boardName);
+            UserBL user = _userfacade.GetUser(email);
+            BoardBL board = user.GetBoard(boardName);
             return board.GetColumn(columnOrdinal);
         }
 
@@ -241,9 +207,10 @@ namespace Backend.BuisnessLayer.BoardPackage
         {
             if (!UserExistsAndLoggedIn(email))
                 throw new InvalidOperationException("user is not logged in or doesn't exist");
-            if (columnOrdinal >= 2 || columnOrdinal < 0)
+            if (columnOrdinal > 2 || columnOrdinal < 0)
                 throw new InvalidOperationException("invalid column");
-            BoardBL board = GetBoardByName(boardName);
+            UserBL user = _userfacade.GetUser(email);
+            BoardBL board = user.GetBoard(boardName);
             return board.GetColumnLimit(columnOrdinal);
         }
 
@@ -258,9 +225,10 @@ namespace Backend.BuisnessLayer.BoardPackage
         {
             if (!UserExistsAndLoggedIn(email))
                 throw new InvalidOperationException("user is not logged in or doesn't exist");
-            if (columnOrdinal >= 2 || columnOrdinal < 0)
+            if (columnOrdinal > 2 || columnOrdinal < 0)
                 throw new InvalidOperationException("invalid column");
-            BoardBL board = GetBoardByName(boardName);
+            UserBL user = _userfacade.GetUser(email);
+            BoardBL board = user.GetBoard(boardName);
             return board.GetColumnName(columnOrdinal);
         }
 
@@ -273,11 +241,8 @@ namespace Backend.BuisnessLayer.BoardPackage
         {
             if (!UserExistsAndLoggedIn(email))
                 throw new InvalidOperationException("user is not logged in or doesn't exist");
-            List<TaskBL> lst = new List<TaskBL>();
-            foreach (BoardBL board in boards.Values)
-                if (board.owner == email)
-                    lst.AddRange(board.GetColumn(0));
-            return lst;
+            UserBL user = _userfacade.GetUser(email);
+            return user.InProgressTasks();
         }
     }
 }

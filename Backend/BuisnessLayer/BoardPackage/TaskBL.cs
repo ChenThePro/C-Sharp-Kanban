@@ -1,8 +1,9 @@
 ﻿using log4net;
 using System;
+using System.ComponentModel.Design;
 using System.Reflection;
 
-namespace Backend.BuisnessLayer.BoardPackage
+namespace IntroSE.Kanban.Backend.BuisnessLayer.BoardPackage
 {
     internal class TaskBL
     {
@@ -22,12 +23,14 @@ namespace Backend.BuisnessLayer.BoardPackage
             this.id = id;
         }
 
-        internal void Update(string? title, DateTime? due, string? description, int? id, string email)
+        internal void Update(string title, DateTime? due, string description, string email)
         {
-            this.title = title ??= this.title;
-            this.description = description ??= this.description;
-            this.due = due ??= this.due;
-            this.id = id ??= this.id;
+            if (due.HasValue)
+                if (((DateTime) due).CompareTo(creationTime) < 0)
+                    throw new InvalidOperationException("due can't be before creation");
+            this.title = title ?? this.title;
+            this.description = description ?? this.description;
+            this.due = due ?? this.due;
             Log.Info("task updated");
         }
     }

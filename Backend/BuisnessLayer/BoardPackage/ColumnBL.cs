@@ -3,34 +3,40 @@ using System;
 using System.Collections.Generic;
 using System.Reflection;
 
-namespace Backend.BuisnessLayer.BoardPackage
+namespace IntroSE.Kanban.Backend.BuisnessLayer.BoardPackage
 {
     internal class ColumnBL
     {
-        private enum Names
-        {
-            Backlog,
-            InProgress,
-            Done
-        }
-        private int limit = -1;
+        private int limit;
         internal List<TaskBL> tasks;
         private static readonly ILog Log = LogManager.GetLogger(MethodBase.GetCurrentMethod().DeclaringType);
         private readonly string name;
 
         internal ColumnBL(int num)
         {
+            switch (num)
+            {
+                case 0:
+                    name = "backlog";
+                    break;
+                case 1:
+                    name = "in progress";
+                    break;
+                case 2:
+                    name = "done";
+                    break;
+                default:
+                    throw new ArgumentException("invalid column num");
+            }
             tasks = new List<TaskBL>();
-            if (Enum.IsDefined(typeof(Names), num))
-                name = ((Names)num).ToString();
-            else throw new ArgumentOutOfRangeException(nameof(num), "Invalid column number");
+            limit = -1;
         }
 
         internal void Add(TaskBL task, string email)
         {
-            if (limit != -1 && limit <= tasks.Count)
+            if (limit != -1 && limit == tasks.Count)
                 throw new InvalidOperationException("exceeds column's limit");
-            Log.Info("task added succesfully");
+            Log.Info(email + " task added succesfully");
             tasks.Add(task);
         }
 
@@ -39,18 +45,18 @@ namespace Backend.BuisnessLayer.BoardPackage
             tasks.Remove(task);
         }
 
-        internal void UpdateTask(string? title, DateTime? due, string? description, int id, string email)
+        internal void UpdateTask(string title, DateTime? due, string description, int id, string email)
         {
             foreach (TaskBL task in tasks)
                 if (task.id == id)
                 {
-                    task.Update(title, due, description, id, email);
+                    task.Update(title, due, description, email);
                     return;
                 }
             throw new KeyNotFoundException("task doensn't exist");
         }
 
-        internal TaskBL? GetTaskByIdAndColumn(int id)
+        internal TaskBL GetTaskByIdAndColumn(int id)
         {
             foreach (TaskBL task in tasks)
                 if (task.id == id)

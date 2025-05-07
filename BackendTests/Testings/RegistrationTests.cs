@@ -1,7 +1,7 @@
 using System.Text.Json;
-using Backend.ServiceLayer;
+using IntroSE.Kanban.Backend.ServiceLayer;
 
-namespace Backend.BackendTests.Testings
+namespace IntroSE.Kanban.BackendTests.Testings
 {
     public class RegistrationTests
     {
@@ -11,64 +11,55 @@ namespace Backend.BackendTests.Testings
         {
             _factory.GetUserService().Register("existing@email.com", "Password1");
             string json = _factory.GetUserService().Register("existing@email.com", "Password2");
-            Response response = JsonSerializer.Deserialize<Response>(json)!;
-            return response.ErrorMsg != null;
+            return !json.Contains("\"ErrorMessage\":null");
         }
 
         public bool TestNoUsernameRegister()
         {
             string json = _factory.GetUserService().Register(null!, "Password1");
-            Response response = JsonSerializer.Deserialize<Response>(json)!;
-            return response.ErrorMsg != null;
+            return !json.Contains("\"ErrorMessage\":null");
         }
 
         public bool TestInvalidEmailRegister()
         {
             string json = _factory.GetUserService().Register("invalidemail", "Password1");
-            Response response = JsonSerializer.Deserialize<Response>(json)!;
-            return response.ErrorMsg != null;
+            return !json.Contains("\"ErrorMessage\":null");
         }
 
         public bool TestSuccessfullyRegister()
         {
             string json = _factory.GetUserService().Register("new@email.com", "Password1");
-            Response response = JsonSerializer.Deserialize<Response>(json)!;
-            return response.ErrorMsg == null;
+            return json.Contains("\"ErrorMessage\":null");
         }
 
         public bool TestShortPasswordRegister()
         {
             string json = _factory.GetUserService().Register("short@email.com", "123");
-            Response response = JsonSerializer.Deserialize<Response>(json)!;
-            return response.ErrorMsg != null;
+            return !json.Contains("\"ErrorMessage\":null");
         }
 
         public bool TestLongPasswordRegister()
         {
             string json = _factory.GetUserService().Register("long@email.com", "Password!123456789010");
-            Response response = JsonSerializer.Deserialize<Response>(json)!;
-            return response.ErrorMsg != null;
+            return !json.Contains("\"ErrorMessage\":null");
         }
 
         public bool TestNonUpperPasswordRegister()
         {
             string json = _factory.GetUserService().Register("noupper@email.com", "password1");
-            Response response = JsonSerializer.Deserialize<Response>(json)!;
-            return response.ErrorMsg != null;
+            return !json.Contains("\"ErrorMessage\":null");
         }
 
         public bool TestNonLowercasePasswordRegister()
         {
             string json = _factory.GetUserService().Register("nolower@email.com", "PASSWORD1");
-            Response response = JsonSerializer.Deserialize<Response>(json)!;
-            return response.ErrorMsg != null;
+            return !json.Contains("\"ErrorMessage\":null");
         }
 
         public bool TestNonDigitsPasswordRegister()
         {
             string json = _factory.GetUserService().Register("nodigit@email.com", "Password");
-            Response response = JsonSerializer.Deserialize<Response>(json)!;
-            return response.ErrorMsg != null;
+            return !json.Contains("\"ErrorMessage\":null");
         }
 
         public void RunAll()

@@ -2,9 +2,9 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text.Json;
-using Backend.BuisnessLayer.BoardPackage;
+using IntroSE.Kanban.Backend.BuisnessLayer.BoardPackage;
 
-namespace Backend.ServiceLayer
+namespace IntroSE.Kanban.Backend.ServiceLayer
 {
     public class BoardService
     {
@@ -103,7 +103,7 @@ namespace Backend.ServiceLayer
         {
             try
             {
-                List<TaskSL> lst = (List<TaskSL>) _boardFacade.GetColumn(email, boardName, columnOrdinal).Select(task => new TaskSL(task.title, task.due, task.description, task.creationTime, task.id));
+                List<TaskSL> lst = _boardFacade.GetColumn(email, boardName, columnOrdinal).Select(task => new TaskSL(task.title, task.due, task.description, task.creationTime, task.id)).ToList();
                 return JsonSerializer.Serialize(new Response(null, lst));
             }
             catch (Exception ex)
@@ -111,7 +111,6 @@ namespace Backend.ServiceLayer
                 return JsonSerializer.Serialize(new Response(ex.Message, null));
             }
         }
-
 
         /// <summary>
         /// Retrieves the task limit of a specific column in a board.
@@ -176,7 +175,7 @@ namespace Backend.ServiceLayer
         {
             try
             {
-                List<TaskSL> lst = (List<TaskSL>) _boardFacade.InProgressTasks(email).Select(task => new TaskSL(task.title, task.due, task.description, task.creationTime, task.id));
+                List<TaskSL> lst = _boardFacade.InProgressTasks(email).Select(task => new TaskSL(task.title, task.due, task.description, task.creationTime, task.id)).ToList();
                 return JsonSerializer.Serialize(new Response(null, lst));
             }
             catch (Exception ex)

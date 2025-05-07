@@ -1,8 +1,8 @@
 ﻿using System;
 using System.Text.Json;
-using Backend.BuisnessLayer.BoardPackage;
+using IntroSE.Kanban.Backend.BuisnessLayer.BoardPackage;
 
-namespace Backend.ServiceLayer
+namespace IntroSE.Kanban.Backend.ServiceLayer
 {
     public class TaskService
     {
@@ -83,7 +83,7 @@ namespace Backend.ServiceLayer
         /// <exception cref="ArgumentNullException">Thrown if the title is null or empty.</exception>
         /// <precondition>The task must exist in the given column and belong to the user.</precondition>
         /// <postcondition>The task's title, description, and due date are updated.</postcondition>
-        public string UpdateTask(string boardName, string? title, string? description, DateTime? due, int id, string email, int column)
+        public string UpdateTask(string boardName, string title, string description, DateTime? due, int id, string email, int column)
         {
             try
             {

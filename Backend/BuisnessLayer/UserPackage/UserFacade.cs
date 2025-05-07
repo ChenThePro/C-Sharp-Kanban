@@ -4,7 +4,7 @@ using System.Collections.Generic;
 using System.Reflection;
 using System.Text.RegularExpressions;
 
-namespace Backend.BuisnessLayer.UserPackage
+namespace IntroSE.Kanban.Backend.BuisnessLayer.UserPackage
 {
     internal class UserFacade
     {
@@ -31,9 +31,9 @@ namespace Backend.BuisnessLayer.UserPackage
         /// <postcondition>User is marked as logged in if credentials are valid.</postcondition>
         internal UserBL Login(string email, string password)
         {
-            if (_emails.ContainsKey(email))
-                return _emails[email].Login(password);
-            throw new KeyNotFoundException("email doesn't exist");
+            if (!_emails.ContainsKey(email))
+                throw new KeyNotFoundException("email doesn't exist");
+            return _emails[email].Login(password);
         }
 
         /// <summary>
@@ -80,6 +80,11 @@ namespace Backend.BuisnessLayer.UserPackage
             _emails[email] = newUser;
             Log.Info("new user" + email + "created");
             return newUser;
+        }
+
+        internal UserBL GetUser(string email)
+        {
+            return _emails[email];
         }
     }
 }

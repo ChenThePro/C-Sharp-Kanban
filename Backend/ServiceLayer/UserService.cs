@@ -1,8 +1,8 @@
 using System;
 using System.Text.Json;
-using Backend.BuisnessLayer.UserPackage;
+using IntroSE.Kanban.Backend.BuisnessLayer.UserPackage;
 
-namespace Backend.ServiceLayer
+namespace IntroSE.Kanban.Backend.ServiceLayer
 {
     public class UserService
     {

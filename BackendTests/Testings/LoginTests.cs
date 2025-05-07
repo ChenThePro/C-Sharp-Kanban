@@ -1,7 +1,7 @@
 using System.Text.Json;
-using Backend.ServiceLayer;
+using IntroSE.Kanban.Backend.ServiceLayer;
 
-namespace Backend.BackendTests.Testings
+namespace IntroSE.Kanban.BackendTests.Testings
 {
     public class LoginTests
     {
@@ -13,29 +13,25 @@ namespace Backend.BackendTests.Testings
         {
             _factory.GetUserService().Register(_userEmail, _password);
             string json = _factory.GetUserService().Login(_userEmail, _password);
-            Response response = JsonSerializer.Deserialize<Response>(json)!;
-            return response.ErrorMsg != null;
+            return !json.Contains("\"ErrorMessage\":null");
         }
 
         public bool TestWrongUsernameLogin()
         {
             string json = _factory.GetUserService().Login("wrongUser@gmail.com", _password);
-            Response response = JsonSerializer.Deserialize<Response>(json)!;
-            return response.ErrorMsg != null;
+            return !json.Contains("\"ErrorMessage\":null");
         }
 
         public bool TestWrongPasswordLogin()
         {
             string json = _factory.GetUserService().Login(_userEmail, "wrongPassword");
-            Response response = JsonSerializer.Deserialize<Response>(json)!;
-            return response.ErrorMsg != null;
+            return !json.Contains("\"ErrorMessage\":null");
         }
 
         public bool TestLogout()
         {
             string json = _factory.GetUserService().Logout(_userEmail);
-            Response response = JsonSerializer.Deserialize<Response>(json)!;
-            return response.ErrorMsg == null;
+            return json.Contains("\"ErrorMessage\":null");
         }
 
         public void RunAll()

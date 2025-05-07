@@ -1,4 +1,4 @@
-﻿namespace Backend.ServiceLayer
+﻿namespace IntroSE.Kanban.Backend.ServiceLayer
 {
     public class BoardSL
     {

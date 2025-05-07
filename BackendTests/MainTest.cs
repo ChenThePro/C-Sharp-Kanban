@@ -1,10 +1,10 @@
-﻿using Backend.BackendTests.Testings;
+﻿using IntroSE.Kanban.BackendTests.Testings;
 
-namespace BackendTests
+namespace IntroSE.Kanban.BackendTests
 {
     public class MainTest
     {
-        public static void Main(String[] args)
+        public static void Main(string[] args)
         {
             Console.WriteLine("🚀 Running all tests!\n");
             Console.WriteLine("👤 Running user-related tests...");
