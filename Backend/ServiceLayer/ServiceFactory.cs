@@ -3,6 +3,7 @@ using log4net.Config;
 using System.Reflection;
 using Backend.BuisnessLayer.UserPackage;
 using Backend.BuisnessLayer.BoardPackage;
+using System.IO;
 
 
 namespace Backend.ServiceLayer
@@ -11,15 +12,15 @@ namespace Backend.ServiceLayer
     {
         private readonly BoardFacade _boardFacade;
         private readonly UserFacade _userFacade;
-        private TaskService? _taskService;
-        private BoardService? _boardService;
-        private UserService? _userService;
+        private TaskService _taskService;
+        private BoardService _boardService;
+        private UserService _userService;
 
         public ServiceFactory()
         {
             _userFacade = new UserFacade();
             _boardFacade = new BoardFacade(_userFacade);
-            var logRepository = LogManager.GetRepository(Assembly.GetEntryAssembly()!);
+            var logRepository = LogManager.GetRepository(Assembly.GetEntryAssembly());
             XmlConfigurator.Configure(logRepository, new FileInfo("log4net.config"));
         }
 

@@ -1,4 +1,6 @@
 using log4net;
+using System;
+using System.Collections.Generic;
 using System.Reflection;
 using System.Text.RegularExpressions;
 
@@ -7,7 +9,7 @@ namespace Backend.BuisnessLayer.UserPackage
     internal class UserFacade
     {
         internal Dictionary<string, UserBL> _emails;
-        private static readonly ILog Log = LogManager.GetLogger(MethodBase.GetCurrentMethod()!.DeclaringType!);
+        private static readonly ILog Log = LogManager.GetLogger(MethodBase.GetCurrentMethod().DeclaringType);
 
         /// <summary>
         /// Initializes a new instance of the <see cref="UserFacade"/> class.

@@ -1,4 +1,6 @@
 ﻿using log4net;
+using System;
+using System.Collections.Generic;
 using System.Reflection;
 
 namespace Backend.BuisnessLayer.BoardPackage
@@ -8,7 +10,7 @@ namespace Backend.BuisnessLayer.BoardPackage
         internal readonly string owner;
         internal string name;
         internal List<ColumnBL> columns;
-        private static readonly ILog Log = LogManager.GetLogger(MethodBase.GetCurrentMethod()!.DeclaringType!);
+        private static readonly ILog Log = LogManager.GetLogger(MethodBase.GetCurrentMethod().DeclaringType);
 
         internal BoardBL(string name, string owner)
         {

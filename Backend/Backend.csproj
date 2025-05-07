@@ -3,18 +3,11 @@
   <PropertyGroup>
     <OutputType>Library</OutputType>
     <TargetFramework>net6.0</TargetFramework>
-    <ImplicitUsings>enable</ImplicitUsings>
-    <Nullable>enable</Nullable>
+	  <RootNamespace>IntroSE.Kanban.Backend</RootNamespace>
+	  <AssemblyName>IntroSE.Kanban.Backend</AssemblyName>
   </PropertyGroup>
 
   <ItemGroup>
     <PackageReference Include="log4net" Version="3.0.4" />
   </ItemGroup>
-
-  <ItemGroup>
-    <None Update="log4net.config">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
-  </ItemGroup>
-
 </Project>

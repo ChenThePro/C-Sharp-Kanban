@@ -5,8 +5,10 @@
     <TargetFramework>net6.0</TargetFramework>
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
-	  <StartupObject>BackendTests.MainTest</StartupObject>
   </PropertyGroup>
+	<PropertyGroup>
+		<OutputType>Exe</OutputType>
+	</PropertyGroup>
 
   <ItemGroup>
     <ProjectReference Include="..\Backend\Backend.csproj" />

@@ -1,4 +1,6 @@
 ﻿using log4net;
+using System;
+using System.Collections.Generic;
 using System.Reflection;
 
 namespace Backend.BuisnessLayer.BoardPackage
@@ -13,7 +15,7 @@ namespace Backend.BuisnessLayer.BoardPackage
         }
         private int limit = -1;
         internal List<TaskBL> tasks;
-        private static readonly ILog Log = LogManager.GetLogger(MethodBase.GetCurrentMethod()!.DeclaringType!);
+        private static readonly ILog Log = LogManager.GetLogger(MethodBase.GetCurrentMethod().DeclaringType);
         private readonly string name;
 
         internal ColumnBL(int num)

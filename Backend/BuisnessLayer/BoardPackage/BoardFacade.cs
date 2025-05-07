@@ -1,6 +1,8 @@
 using Backend.BuisnessLayer.UserPackage;
 using Backend.ServiceLayer;
 using log4net;
+using System;
+using System.Collections.Generic;
 using System.Reflection;
 
 namespace Backend.BuisnessLayer.BoardPackage
@@ -9,7 +11,7 @@ namespace Backend.BuisnessLayer.BoardPackage
     {
         private readonly UserFacade _userfacade;
         private readonly Dictionary<string, BoardBL> boards;
-        private static readonly ILog Log = LogManager.GetLogger(MethodBase.GetCurrentMethod()!.DeclaringType!);
+        private static readonly ILog Log = LogManager.GetLogger(MethodBase.GetCurrentMethod().DeclaringType);
 
         /// <summary>
         /// Initializes a new instance of the <see cref="BoardFacade"/> class.
