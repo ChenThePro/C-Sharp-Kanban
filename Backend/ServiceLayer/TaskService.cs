@@ -34,11 +34,11 @@ namespace Backend.ServiceLayer
             try
             {
                 TaskBL task = _boardFacade.AddTask(boardName, title, due, description, creationTime, id, email);
-                return JsonSerializer.Serialize(new Response());
+                return JsonSerializer.Serialize(new Response(null, null));
             }
             catch (Exception ex)
             {
-                return JsonSerializer.Serialize(new Response(ex.Message));
+                return JsonSerializer.Serialize(new Response(ex.Message, null));
             }
         }
 
@@ -59,11 +59,11 @@ namespace Backend.ServiceLayer
             try
             {
                 _boardFacade.MoveTask(boardName, column, id, email);
-                return JsonSerializer.Serialize(new Response());
+                return JsonSerializer.Serialize(new Response(null, null));
             }
             catch (Exception ex)
             {
-                return JsonSerializer.Serialize(new Response(ex.Message));
+                return JsonSerializer.Serialize(new Response(ex.Message, null));
             }
         }
 
@@ -88,11 +88,11 @@ namespace Backend.ServiceLayer
             try
             {
                 _boardFacade.UpdateTask(boardName, title, due, description, id, email, column);
-                return JsonSerializer.Serialize(new Response());
+                return JsonSerializer.Serialize(new Response(null, null));
             }
             catch (Exception ex)
             {
-                return JsonSerializer.Serialize(new Response(ex.Message));
+                return JsonSerializer.Serialize(new Response(ex.Message, null));
             }
         }
     }
