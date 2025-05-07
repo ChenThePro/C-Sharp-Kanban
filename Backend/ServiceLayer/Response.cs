@@ -8,7 +8,6 @@
     {
         public string ErrorMsg { get; set; }
         public object RetVal { get; set; }
-
         public Response(string errorMsg, object retVal) {
             ErrorMsg = errorMsg;
             RetVal = retVal;
