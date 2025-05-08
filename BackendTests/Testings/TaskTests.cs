@@ -13,63 +13,63 @@ namespace IntroSE.Kanban.BackendTests.Testings
         {
             _factory.GetUserService().Register(_userEmail, _password);
             _factory.GetBoardService().CreateBoard(_boardName, _userEmail);
-            string json = _factory.GetTaskService().AddTask(_boardName, "Task Title", DateTime.MaxValue, "Some description", DateTime.Today, 1, _userEmail);
+            string json = _factory.GetTaskService().AddTask(_boardName, "Task Title", DateTime.MaxValue, "Some description", DateTime.Today, _userEmail);
             return json.Contains("\"ErrorMessage\":null");
         }
 
         public bool TestAddTaskWithUnexistedBoard()
         {
-            string json = _factory.GetTaskService().AddTask("unknownBoard", "Task Title", DateTime.MaxValue, "Description", DateTime.Today, 2, _userEmail);
+            string json = _factory.GetTaskService().AddTask("unknownBoard", "Task Title", DateTime.MaxValue, "Description", DateTime.Today, _userEmail);
             return json.Contains("\"ErrorMessage\"") && !json.Contains("\"ErrorMessage\":null");
         }
 
         public bool TestAddTaskWithDueBeforeCreation()
         {
-            string json = _factory.GetTaskService().AddTask(_boardName, "Task", DateTime.MinValue, "Desc", DateTime.MaxValue, 3, _userEmail);
+            string json = _factory.GetTaskService().AddTask(_boardName, "Task", DateTime.MinValue, "Desc", DateTime.MaxValue, _userEmail);
             return json.Contains("\"ErrorMessage\"") && !json.Contains("\"ErrorMessage\":null");
         }
 
         public bool TestAddTaskWithWrongId()
         {
-            string json = _factory.GetTaskService().AddTask(_boardName, "Task", DateTime.MaxValue, "Description", DateTime.Today, -5, _userEmail);
+            string json = _factory.GetTaskService().AddTask(_boardName, "Task", DateTime.MaxValue, "Description", DateTime.Today, _userEmail);
             return json.Contains("\"ErrorMessage\"") && !json.Contains("\"ErrorMessage\":null");
         }
 
         public bool TestAddTaskWithWrongEmail()
         {
-            string json = _factory.GetTaskService().AddTask(_boardName, "Task", DateTime.MaxValue, "Description", DateTime.Today, 4, "badEmail");
+            string json = _factory.GetTaskService().AddTask(_boardName, "Task", DateTime.MaxValue, "Description", DateTime.Today, "badEmail");
             return json.Contains("\"ErrorMessage\"") && !json.Contains("\"ErrorMessage\":null");
         }
 
         public bool TestAddTaskWithNoTitle()
         {
-            string json = _factory.GetTaskService().AddTask(_boardName, "", DateTime.MaxValue, "Description", DateTime.Today, 5, _userEmail);
+            string json = _factory.GetTaskService().AddTask(_boardName, "", DateTime.MaxValue, "Description", DateTime.Today, _userEmail);
             return json.Contains("\"ErrorMessage\"") && !json.Contains("\"ErrorMessage\":null");
         }
 
         public bool TestAddTaskLongTitle()
         {
             string longTitle = new string('A', 51);
-            string json = _factory.GetTaskService().AddTask(_boardName, longTitle, DateTime.MaxValue, "Desc", DateTime.Today, 6, _userEmail);
+            string json = _factory.GetTaskService().AddTask(_boardName, longTitle, DateTime.MaxValue, "Desc", DateTime.Today, _userEmail);
             return json.Contains("\"ErrorMessage\"") && !json.Contains("\"ErrorMessage\":null");
         }
 
         public bool TestAddTaskLongDescription()
         {
             string longDesc = new string('B', 301);
-            string json = _factory.GetTaskService().AddTask(_boardName, "Title", DateTime.MaxValue, longDesc, DateTime.Today, 7, _userEmail);
+            string json = _factory.GetTaskService().AddTask(_boardName, "Title", DateTime.MaxValue, longDesc, DateTime.Today, _userEmail);
             return json.Contains("\"ErrorMessage\"") && !json.Contains("\"ErrorMessage\":null");
         }
 
         public bool TestAddTaskCreationDate()
         {
-            string json = _factory.GetTaskService().AddTask(_boardName, "Task", DateTime.MaxValue, "Description", DateTime.Today, 8, _userEmail);
+            string json = _factory.GetTaskService().AddTask(_boardName, "Task", DateTime.MaxValue, "Description", DateTime.Today, _userEmail);
             return json.Contains("\"ErrorMessage\":null");
         }
 
         public bool MoveTask_Valid()
         {
-            string rawJson = _factory.GetTaskService().AddTask(_boardName, "Title", DateTime.MaxValue, "Desc", DateTime.Today, 9, _userEmail);
+            string rawJson = _factory.GetTaskService().AddTask(_boardName, "Title", DateTime.MaxValue, "Desc", DateTime.Today, _userEmail);
             if (!rawJson.Contains("\"ErrorMessage\":null"))
                 return false;
             string moveJson = _factory.GetTaskService().MoveTask(_boardName, 0, 9, _userEmail);
@@ -78,7 +78,7 @@ namespace IntroSE.Kanban.BackendTests.Testings
 
         public bool MoveTask_FromLastColumn()
         {
-            string rawJson = _factory.GetTaskService().AddTask(_boardName, "Title", DateTime.MaxValue, "Desc", DateTime.Today, 10, _userEmail);
+            string rawJson = _factory.GetTaskService().AddTask(_boardName, "Title", DateTime.MaxValue, "Desc", DateTime.Today, _userEmail);
             if (!rawJson.Contains("\"ErrorMessage\":null"))
                 return false;
             _factory.GetTaskService().MoveTask(_boardName, 0, 10, _userEmail);
