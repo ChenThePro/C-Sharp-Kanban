@@ -49,10 +49,11 @@ namespace IntroSE.Kanban.Backend.ServiceLayer
     /// </summary>
     public class GradingService
     {
+        private readonly ServiceFactory _serviceFactory;
 
         public GradingService()
         {
-            throw new NotImplementedException();
+            _serviceFactory = new ServiceFactory();
         }
 
 
@@ -64,9 +65,8 @@ namespace IntroSE.Kanban.Backend.ServiceLayer
         /// <returns>An empty response, unless an error occurs (see <see cref="GradingService"/>)</returns>
         public string Register(string email, string password)
         {
-            throw new NotImplementedException();
+            return _serviceFactory.GetUserService().Register(email, password);
         }
-
 
         /// <summary>
         ///  This method logs in an existing user.
@@ -76,9 +76,8 @@ namespace IntroSE.Kanban.Backend.ServiceLayer
         /// <returns>A response with the user's email, unless an error occurs (see <see cref="GradingService"/>)</returns>
         public string Login(string email, string password)
         {
-            throw new NotImplementedException();
+            return _serviceFactory.GetUserService().Login(email, password);
         }
-
 
         /// <summary>
         /// This method logs out a logged in user. 
@@ -87,7 +86,7 @@ namespace IntroSE.Kanban.Backend.ServiceLayer
         /// <returns>An empty response, unless an error occurs (see <see cref="GradingService"/>)</returns>
         public string Logout(string email)
         {
-            throw new NotImplementedException();
+            return _serviceFactory.GetUserService().Logout(email);
         }
 
         /// <summary>
@@ -100,7 +99,7 @@ namespace IntroSE.Kanban.Backend.ServiceLayer
         /// <returns>An empty response, unless an error occurs (see <see cref="GradingService"/>)</returns>
         public string LimitColumn(string email, string boardName, int columnOrdinal, int limit)
         {
-            throw new NotImplementedException();
+            return _serviceFactory.GetBoardService().LimitColumn(boardName, columnOrdinal, limit, email);
         }
 
         /// <summary>
@@ -112,9 +111,8 @@ namespace IntroSE.Kanban.Backend.ServiceLayer
         /// <returns>A response with the column's limit, unless an error occurs (see <see cref="GradingService"/>)</returns>
         public string GetColumnLimit(string email, string boardName, int columnOrdinal)
         {
-            throw new NotImplementedException();
+            return _serviceFactory.GetBoardService().GetColumnLimit(email, boardName, columnOrdinal);
         }
-
 
         /// <summary>
         /// This method gets the name of a specific column
@@ -125,9 +123,8 @@ namespace IntroSE.Kanban.Backend.ServiceLayer
         /// <returns>A response with the column's name, unless an error occurs (see <see cref="GradingService"/>)</returns>
         public string GetColumnName(string email, string boardName, int columnOrdinal)
         {
-            throw new NotImplementedException();
+            return _serviceFactory.GetBoardService().GetColumnName(email, boardName, columnOrdinal);
         }
-
 
         /// <summary>
         /// This method adds a new task.
@@ -140,9 +137,8 @@ namespace IntroSE.Kanban.Backend.ServiceLayer
         /// <returns>An empty response, unless an error occurs (see <see cref="GradingService"/>)</returns>
         public string AddTask(string email, string boardName, string title, string description, DateTime dueDate)
         {
-            throw new NotImplementedException();
+            return _serviceFactory.GetTaskService().AddTask(boardName, title, dueDate, description, DateTime.Today, 1, email);
         }
-
 
         /// <summary>
         /// This method updates the due date of a task
@@ -155,9 +151,8 @@ namespace IntroSE.Kanban.Backend.ServiceLayer
         /// <returns>An empty response, unless an error occurs (see <see cref="GradingService"/>)</returns>
         public string UpdateTaskDueDate(string email, string boardName, int columnOrdinal, int taskId, DateTime dueDate)
         {
-            throw new NotImplementedException();
+            return _serviceFactory.GetTaskService().UpdateTask(boardName, null, null, dueDate, taskId, email, columnOrdinal);
         }
-
 
         /// <summary>
         /// This method updates task title.
@@ -170,9 +165,8 @@ namespace IntroSE.Kanban.Backend.ServiceLayer
         /// <returns>An empty response, unless an error occurs (see <see cref="GradingService"/>)</returns>
         public string UpdateTaskTitle(string email, string boardName, int columnOrdinal, int taskId, string title)
         {
-            throw new NotImplementedException();
+            return _serviceFactory.GetTaskService().UpdateTask(boardName, title, null, null, taskId, email, columnOrdinal);
         }
-
 
         /// <summary>
         /// This method updates the description of a task.
@@ -185,9 +179,8 @@ namespace IntroSE.Kanban.Backend.ServiceLayer
         /// <returns>An empty response, unless an error occurs (see <see cref="GradingService"/>)</returns>
         public string UpdateTaskDescription(string email, string boardName, int columnOrdinal, int taskId, string description)
         {
-            throw new NotImplementedException();
+            return _serviceFactory.GetTaskService().UpdateTask(boardName, null, description, null, taskId, email, columnOrdinal);
         }
-
 
         /// <summary>
         /// This method advances a task to the next column
@@ -199,9 +192,40 @@ namespace IntroSE.Kanban.Backend.ServiceLayer
         /// <returns>An empty response, unless an error occurs (see <see cref="GradingService"/>)</returns>
         public string AdvanceTask(string email, string boardName, int columnOrdinal, int taskId)
         {
-            throw new NotImplementedException();
+            return _serviceFactory.GetTaskService().MoveTask(boardName, columnOrdinal, taskId, email);
         }
 
+        /// <summary>
+        /// This method creates a board for the given user.
+        /// </summary>
+        /// <param name="email">Email of the user, must be logged in</param>
+        /// <param name="name">The name of the new board</param>
+        /// <returns>An empty response, unless an error occurs (see <see cref="GradingService"/>)</returns>
+        public string CreateBoard(string email, string name)
+        {
+            return _serviceFactory.GetBoardService().CreateBoard(name, email);
+        }
+
+        /// <summary>
+        /// This method deletes a board.
+        /// </summary>
+        /// <param name="email">Email of the user. Must be logged in and an owner of the board.</param>
+        /// <param name="name">The name of the board</param>
+        /// <returns>An empty response, unless an error occurs (see <see cref="GradingService"/>)</returns>
+        public string DeleteBoard(string email, string name)
+        {
+            return _serviceFactory.GetBoardService().DeleteBoard(name, email);
+        }
+
+        /// <summary>
+        /// This method returns all in-progress tasks of a user.
+        /// </summary>
+        /// <param name="email">Email of the user. Must be logged in</param>
+        /// <returns>A response with a list of the in-progress tasks of the user, unless an error occurs (see <see cref="GradingService"/>)</returns>
+        public string InProgressTasks(string email)
+        {
+            return _serviceFactory.GetBoardService().InProgressTasks(email);
+        }
 
         /// <summary>
         /// This method returns a column given it's name
@@ -212,42 +236,7 @@ namespace IntroSE.Kanban.Backend.ServiceLayer
         /// <returns>A response with a list of the column's tasks, unless an error occurs (see <see cref="GradingService"/>)</returns>
         public string GetColumn(string email, string boardName, int columnOrdinal)
         {
-            throw new NotImplementedException();
-        }
-
-
-        /// <summary>
-        /// This method creates a board for the given user.
-        /// </summary>
-        /// <param name="email">Email of the user, must be logged in</param>
-        /// <param name="name">The name of the new board</param>
-        /// <returns>An empty response, unless an error occurs (see <see cref="GradingService"/>)</returns>
-        public string CreateBoard(string email, string name)
-        {
-            throw new NotImplementedException();
-        }
-
-
-        /// <summary>
-        /// This method deletes a board.
-        /// </summary>
-        /// <param name="email">Email of the user. Must be logged in and an owner of the board.</param>
-        /// <param name="name">The name of the board</param>
-        /// <returns>An empty response, unless an error occurs (see <see cref="GradingService"/>)</returns>
-        public string DeleteBoard(string email, string name)
-        {
-            throw new NotImplementedException();
-        }
-
-
-        /// <summary>
-        /// This method returns all in-progress tasks of a user.
-        /// </summary>
-        /// <param name="email">Email of the user. Must be logged in</param>
-        /// <returns>A response with a list of the in-progress tasks of the user, unless an error occurs (see <see cref="GradingService"/>)</returns>
-        public string InProgressTasks(string email)
-        {
-            throw new NotImplementedException();
+            return _serviceFactory.GetBoardService().GetColumn(email, boardName, columnOrdinal);
         }
     }
 }

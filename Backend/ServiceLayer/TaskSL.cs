@@ -1,25 +1,20 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
-namespace Backend.ServiceLayer
+namespace IntroSE.Kanban.Backend.ServiceLayer
 {
     public class TaskSL
     {
         public string Title { get; set; }
-        public string Due { get; set; }
+        public DateTime Due { get; set; }
         public string Description { get; set; }
-        public string CreationTime { get; set; }
+        public DateTime CreationTime { get; init; }
         public int Id { get; set; }
-
-        public TaskSL(string title, string due, string description, string creatinTime, int id)
+        public TaskSL(string title, DateTime due, string description, DateTime creationTime, int id)
         {
             Title = title;
             Due = due;
             Description = description;
-            CreationTime = creatinTime;
+            CreationTime = creationTime;
             Id = id;
         }
     }

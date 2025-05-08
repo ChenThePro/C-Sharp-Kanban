@@ -1,34 +1,45 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Backend.BuisnessLayer;
+﻿using log4net;
+using log4net.Config;
+using System.Reflection;
+using System.IO;
+using IntroSE.Kanban.Backend.BuisnessLayer.BoardPackage;
+using IntroSE.Kanban.Backend.BuisnessLayer.UserPackage;
 
-namespace Backend.ServiceLayer
+
+namespace IntroSE.Kanban.Backend.ServiceLayer
 {
     public class ServiceFactory
     {
-        public UserService Us { get; private set; }
-        public BoardService Bs { get; private set; }
-        public TaskService Ts { get; private set; }
+        private readonly BoardFacade _boardFacade;
+        private readonly UserFacade _userFacade;
+        private TaskService _taskService;
+        private BoardService _boardService;
+        private UserService _userService;
 
-        /// <summary>
-        /// Initializes all services and their dependencies.
-        /// </summary>
-        /// <exception cref="InvalidOperationException">If service dependencies cannot be initialized.</exception>
         public ServiceFactory()
         {
-            try
-            {
-                Us = new UserService(new UserFacade());
-                Bs = new BoardService(new BoardFacade());
-                Ts = new TaskService(new BoardFacade());
-            }
-            catch (Exception ex)
-            {
-                throw new InvalidOperationException("Failed to initialize services.", ex);
-            }
+            _userFacade = new UserFacade();
+            _boardFacade = new BoardFacade(_userFacade);
+            _taskService = null;
+            _boardService = null;
+            _userService = null;
+            var logRepository = LogManager.GetRepository(Assembly.GetEntryAssembly());
+            XmlConfigurator.Configure(logRepository, new FileInfo("log4net.config"));
+        }
+
+        public TaskService GetTaskService()
+        {
+            return _taskService ??= new TaskService(_boardFacade);
+        }
+
+        public BoardService GetBoardService()
+        {
+            return _boardService ??= new BoardService(_boardFacade);
+        }
+
+        public UserService GetUserService()
+        {
+            return _userService ??= new UserService(_userFacade);
         }
     }
 }

@@ -1,15 +1,10 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Tests;
+﻿using IntroSE.Kanban.BackendTests.Testings;
 
-namespace BackendTests
+namespace IntroSE.Kanban.BackendTests
 {
     public class MainTest
     {
-        public static void main(String[] args)
+        public static void Main(string[] args)
         {
             Console.WriteLine("🚀 Running all tests!\n");
             Console.WriteLine("👤 Running user-related tests...");

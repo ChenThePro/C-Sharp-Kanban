@@ -1,11 +1,8 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Backend.BuisnessLayer;
+using System.Text.Json;
+using IntroSE.Kanban.Backend.BuisnessLayer.BoardPackage;
 
-namespace Backend.ServiceLayer
+namespace IntroSE.Kanban.Backend.ServiceLayer
 {
     public class TaskService
     {
@@ -19,72 +16,83 @@ namespace Backend.ServiceLayer
         /// <summary>
         /// Adds a new task to a board's backlog.
         /// </summary>
-        /// <param name="boardName">Board name.</param>
-        /// <param name="title">Task title.</param>
+        /// <param name="boardName">Name of the board.</param>
+        /// <param name="title">Title of the task.</param>
+        /// <param name="due">Due date of the task.</param>
         /// <param name="description">Task description.</param>
-        /// <param name="due">Due date (ISO 8601 format).</param>
+        /// <param name="creationTime">Task creation timestamp.</param>
         /// <param name="id">Unique task identifier.</param>
-        /// <param name="email">Owner's email.</param>
-        /// <returns>Response containing the created TaskSL.</returns>
-        /// <exception cref="ArgumentNullException">If any required parameter is null or empty.</exception>
-        /// <precondition>The board must exist and the ID must be unique.</precondition>
+        /// <param name="email">Email of the task owner.</param>
+        /// <returns>Serialized response containing the created <see cref="TaskSL"/> or an error message.</returns>
+        /// <exception cref="ArgumentNullException">If the title is null or empty.</exception>
+        /// <exception cref="InvalidOperationException">If the board or user is in an invalid state for the operation.</exception>
+        /// <exception cref="KeyNotFoundException">If the specified board does not exist.</exception>
+        /// <precondition>The board must exist and the task ID must be unique within it.</precondition>
         /// <postcondition>The new task is added to the board's backlog.</postcondition>
-        public Response<TaskSL> AddTask(string boardName, string title, string description, string due, int id, string creatinTime, string email)
+        public string AddTask(string boardName, string title, DateTime due, string description, DateTime creationTime, int id, string email)
         {
-            if (string.IsNullOrWhiteSpace(boardName) || string.IsNullOrWhiteSpace(title) || string.IsNullOrWhiteSpace(email))
-                throw new ArgumentNullException("Board name, title, or email cannot be null or empty.");
-            TaskSL task = _boardFacade.AddTask(boardName, title, description, due, id, creatinTime , email);
-            return new Response<TaskSL>("", task);
+            try
+            {
+                TaskBL task = _boardFacade.AddTask(boardName, title, due, description, creationTime, id, email);
+                return JsonSerializer.Serialize(new Response(null, null));
+            }
+            catch (Exception ex)
+            {
+                return JsonSerializer.Serialize(new Response(ex.Message, null));
+            }
         }
 
         /// <summary>
-        /// Moves an existing task to the next column.
+        /// Moves a task to the next column in the specified board.
         /// </summary>
-        /// <param name="boardName">Board name.</param>
-        /// <param name="column">Current column name.</param>
-        /// <param name="id">Task ID.</param>
-        /// <param name="email">Owner's email.</param>
-        /// <returns>An empty Response.</returns>
-        /// <exception cref="InvalidOperationException">If task cannot be moved (e.g. already in Done).</exception>
-        /// <precondition>The task must exist in the specified column.</precondition>
+        /// <param name="boardName">Name of the board.</param>
+        /// <param name="column">Index of the current column.</param>
+        /// <param name="id">ID of the task to move.</param>
+        /// <param name="email">Email of the user initiating the move.</param>
+        /// <returns>Serialized empty response or error message.</returns>
+        /// <exception cref="InvalidOperationException">If the move is not allowed by board rules.</exception>
+        /// <exception cref="KeyNotFoundException">If the board or task does not exist.</exception>
+        /// <precondition>The task must exist in the specified column and belong to the user.</precondition>
         /// <postcondition>The task is moved to the next column.</postcondition>
-        public Response<object> MoveTask(string boardName, string column, int id, string email)
+        public string MoveTask(string boardName, int column, int id, string email)
         {
             try
             {
                 _boardFacade.MoveTask(boardName, column, id, email);
-                return new Response<object>("", null);
+                return JsonSerializer.Serialize(new Response(null, null));
             }
-            catch (InvalidOperationException)
+            catch (Exception ex)
             {
-                throw;
+                return JsonSerializer.Serialize(new Response(ex.Message, null));
             }
         }
 
         /// <summary>
-        /// Updates an existing task's details.
+        /// Updates the properties of an existing task.
         /// </summary>
-        /// <param name="boardName">Board name.</param>
-        /// <param name="title">New task title.</param>
-        /// <param name="description">New description.</param>
-        /// <param name="due">New due date.</param>
-        /// <param name="id">Task ID.</param>
-        /// <param name="email">Owner's email.</param>
-        /// <param name="column">Column containing the task.</param>
-        /// <returns>An empty Response.</returns>
-        /// <exception cref="KeyNotFoundException">If the task ID does not exist.</exception>
-        /// <precondition>The task must exist in the given column.</precondition>
-        /// <postcondition>The task fields are updated with the new values.</postcondition>
-        public Response<object> UpdateTask(string boardName, string title, string description, string due, int id, string email, string column)
+        /// <param name="boardName">Name of the board containing the task.</param>
+        /// <param name="title">New title for the task.</param>
+        /// <param name="description">New description for the task.</param>
+        /// <param name="due">New due date for the task.</param>
+        /// <param name="id">ID of the task to update.</param>
+        /// <param name="email">User's email address.</param>
+        /// <param name="column">Index of the column containing the task.</param>
+        /// <returns>Serialized empty response or error message.</returns>
+        /// <exception cref="KeyNotFoundException">If the board or task is not found.</exception>
+        /// <exception cref="InvalidOperationException">Thrown if the user doesn't exist or is not logged in ot task id is taken or invalid column.</exception>
+        /// <exception cref="ArgumentNullException">Thrown if the title is null or empty.</exception>
+        /// <precondition>The task must exist in the given column and belong to the user.</precondition>
+        /// <postcondition>The task's title, description, and due date are updated.</postcondition>
+        public string UpdateTask(string boardName, string title, string description, DateTime? due, int id, string email, int column)
         {
             try
             {
-                _boardFacade.UpdateTask(boardName, title, description, due, id, email, column);
-                return new Response<object>("", null);
+                _boardFacade.UpdateTask(boardName, title, due, description, id, email, column);
+                return JsonSerializer.Serialize(new Response(null, null));
             }
-            catch (KeyNotFoundException)
+            catch (Exception ex)
             {
-                throw;
+                return JsonSerializer.Serialize(new Response(ex.Message, null));
             }
         }
     }

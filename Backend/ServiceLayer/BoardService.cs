@@ -1,11 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Backend.BuisnessLayer;
+using System.Text.Json;
+using IntroSE.Kanban.Backend.BuisnessLayer.BoardPackage;
 
-namespace Backend.ServiceLayer
+namespace IntroSE.Kanban.Backend.ServiceLayer
 {
     public class BoardService
     {
@@ -23,14 +22,20 @@ namespace Backend.ServiceLayer
         /// <param name="email">The email of the user creating the board.</param>
         /// <returns>Response containing the created BoardSL object.</returns>
         /// <exception cref="ArgumentNullException">If boardName or email is null or empty.</exception>
+        /// <exception cref="InvalidOperationException">If boardName exists.</exception>
         /// <precondition>boardName and email must be non-empty strings.</precondition>
         /// <postcondition>A new board is created and associated with the user.</postcondition>
-        public Response<BoardSL> CreateBoard(string boardName, string email)
+        public string CreateBoard(string boardName, string email)
         {
-            if (string.IsNullOrWhiteSpace(boardName) || string.IsNullOrWhiteSpace(email))
-                throw new ArgumentNullException("Board name and email cannot be null or empty.");
-            BoardSL board = _boardFacade.CreateBoard(boardName, email);
-            return new Response<BoardSL>("", board);
+            try
+            {
+                BoardBL board = _boardFacade.CreateBoard(boardName, email);
+                return JsonSerializer.Serialize(new Response(null, null));
+            }
+            catch (Exception ex)
+            {
+                return JsonSerializer.Serialize(new Response(ex.Message, null));
+            }
         }
 
         /// <summary>
@@ -40,14 +45,20 @@ namespace Backend.ServiceLayer
         /// <param name="email">The user's email who owns the board.</param>
         /// <returns>An empty Response indicating success or failure.</returns>
         /// <exception cref="ArgumentNullException">If boardName or email is null or empty.</exception>
+        /// <exception cref="KeyNotFoundException">If boardName doesn't exist.</exception>
         /// <precondition>The board must exist and be owned by the user.</precondition>
         /// <postcondition>The board is removed from the system.</postcondition>
-        public Response<object> DeleteBoard(string boardName, string email)
+        public String DeleteBoard(string boardName, string email)
         {
-            if (string.IsNullOrWhiteSpace(boardName) || string.IsNullOrWhiteSpace(email))
-                throw new ArgumentNullException("Board name and email cannot be null or empty.");
-            _boardFacade.DeleteBoard(boardName, email);
-            return new Response<object>("", null);
+            try
+            {
+                _boardFacade.DeleteBoard(boardName, email);
+                return JsonSerializer.Serialize(new Response(null, null));
+            }
+            catch (Exception ex)
+            {
+                return JsonSerializer.Serialize(new Response(ex.Message, null));
+            }
         }
 
         /// <summary>
@@ -58,39 +69,119 @@ namespace Backend.ServiceLayer
         /// <param name="limit">The new limit for the column (must be non-negative).</param>
         /// <param name="email">The user's email.</param>
         /// <returns>An empty Response indicating success or failure.</returns>
-        /// <exception cref="ArgumentOutOfRangeException">If limit is negative.</exception>
+        /// <exception cref="ArgumentException">If limit is negative.</exception>
+        /// <exception cref="InvalidOperationException">If column is not valid or number of existing tasks in the column larger than limit.</exception>
+        /// <exception cref="KeyNotFoundException">If boardname doexn't exist.</exception>
         /// <precondition>Board and column must exist and belong to the user.</precondition>
         /// <postcondition>The column's task limit is updated.</postcondition>
-        public Response<object> LimitColumn(string boardName, int column, int limit, string email)
+        public string LimitColumn(string boardName, int column, int limit, string email)
         {
-            if (limit < 0)
-                throw new ArgumentOutOfRangeException(nameof(limit), "Limit must be non-negative.");
-            _boardFacade.LimitColumn(boardName, column, limit, email);
-            return new Response<object>("", null);
+            try
+            {
+                _boardFacade.LimitColumn(boardName, column, limit, email);
+                return JsonSerializer.Serialize(new Response(null, null));
+            }
+            catch (Exception ex)
+            {
+                return JsonSerializer.Serialize(new Response(ex.Message, null));
+            }
         }
 
         /// <summary>
-        /// The AddTask function validates input, adds the task to the board via _boardFacade, and returns a success response
+        /// Retrieves all tasks in a specific column of a board.
         /// </summary>
-        /// <param name="boardName"></param>
-        /// <param name="title"></param>
-        /// <param name="description"></param>
-        /// <param name="due"></param>
-        /// <param name="id"></param>
-        /// <param name="creatinTime"></param>
-        /// <param name="email"></param>
-        /// <returns></returns>
-        /// <exception cref="ArgumentNullException"></exception>
-        public Response<object> AddTask(string boardName, string title, string description, string due, int id, string creatinTime, string email)
+        /// <param name="email">The user's email address.</param>
+        /// <param name="boardName">The name of the board.</param>
+        /// <param name="columnOrdinal">The index of the column.</param>
+        /// <returns>Response containing a list of TaskBL objects in the column.</returns>
+        /// <exception cref="ArgumentNullException">If any input is null or empty.</exception>
+        /// <exception cref="ArgumentOutOfRangeException">If columnOrdinal is invalid.</exception>
+        /// <exception cref="KeyNotFoundException">If the board does not exist or is not accessible by the user.</exception>
+        /// <precondition>The user must own the board and the column must exist.</precondition>
+        /// <postcondition>A list of tasks in the specified column is returned.</postcondition>
+        public string GetColumn(string email, string boardName, int columnOrdinal)
         {
+            try
+            {
+                List<TaskSL> lst = _boardFacade.GetColumn(email, boardName, columnOrdinal).Select(task => new TaskSL(task.title, task.due, task.description, task.creationTime, task.id)).ToList();
+                return JsonSerializer.Serialize(new Response(null, lst));
+            }
+            catch (Exception ex)
+            {
+                return JsonSerializer.Serialize(new Response(ex.Message, null));
+            }
+        }
 
-            if (string.IsNullOrEmpty(boardName) || string.IsNullOrEmpty(title))
-                throw new ArgumentNullException("Board name and task title cannot be null or empty.");
+        /// <summary>
+        /// Retrieves the task limit of a specific column in a board.
+        /// </summary>
+        /// <param name="email">The user's email address.</param>
+        /// <param name="boardName">The name of the board.</param>
+        /// <param name="columnOrdinal">The index of the column.</param>
+        /// <returns>Response containing the column's task limit.</returns>
+        /// <exception cref="ArgumentNullException">If any input is null or empty.</exception>
+        /// <exception cref="ArgumentOutOfRangeException">If columnOrdinal is out of range.</exception>
+        /// <exception cref="KeyNotFoundException">If the board does not exist or is not owned by the user.</exception>
+        /// <precondition>The specified column exists in the user's board.</precondition>
+        /// <postcondition>The task limit of the column is returned.</postcondition>
+        public string GetColumnLimit(string email, string boardName, int columnOrdinal)
+        {
+            try
+            {
+                int limit = _boardFacade.GetColumnLimit(email, boardName, columnOrdinal);
+                return JsonSerializer.Serialize(new Response(null, limit));
+            }
+            catch (Exception ex)
+            {
+                return JsonSerializer.Serialize(new Response(ex.Message, null));
+            }
+        }
 
+        /// <summary>
+        /// Retrieves the name of a specific column in a board.
+        /// </summary>
+        /// <param name="email">The user's email address.</param>
+        /// <param name="boardName">The name of the board.</param>
+        /// <param name="columnOrdinal">The index of the column.</param>
+        /// <returns>Response containing the name of the column.</returns>
+        /// <exception cref="ArgumentNullException">If any input is null or empty.</exception>
+        /// <exception cref="ArgumentOutOfRangeException">If columnOrdinal is out of range.</exception>
+        /// <exception cref="KeyNotFoundException">If the board does not exist or is not owned by the user.</exception>
+        /// <precondition>The specified column exists in the user's board.</precondition>
+        /// <postcondition>The column name is returned.</postcondition>
+        public string GetColumnName(string email, string boardName, int columnOrdinal)
+        {
+            try
+            {
+                string name = _boardFacade.GetColumnName(email, boardName, columnOrdinal);
+                return JsonSerializer.Serialize(new Response(null, name));
+            }
+            catch (Exception ex)
+            {
+                return JsonSerializer.Serialize(new Response(ex.Message, null));
+            }
+        }
 
-            _boardFacade.AddTask(boardName, title, description, due, id, creatinTime, email);
-
-            return new Response<object>("Task added successfully.", null);
+        /// <summary>
+        /// Retrieves all tasks currently in progress for a user.
+        /// </summary>
+        /// <param name="email">The user's email address.</param>
+        /// <returns>Response containing a list of in-progress TaskBL objects.</returns>
+        /// <exception cref="ArgumentNullException">If email is null or empty.</exception>
+        /// <exception cref="KeyNotFoundException">If no tasks are found or user is invalid.</exception>
+        /// <precondition>The user must be registered and have at least one in-progress task.</precondition>
+        /// <postcondition>A list of in-progress tasks is returned.</postcondition>
+        public string InProgressTasks(string email)
+        {
+            try
+            {
+                List<TaskSL> lst = _boardFacade.InProgressTasks(email).Select(task => new TaskSL(task.title, task.due, task.description, task.creationTime, task.id)).ToList();
+                return JsonSerializer.Serialize(new Response(null, lst));
+            }
+            catch (Exception ex)
+            {
+                return JsonSerializer.Serialize(new Response(ex.Message, null));
+            }
         }
     }
 }
