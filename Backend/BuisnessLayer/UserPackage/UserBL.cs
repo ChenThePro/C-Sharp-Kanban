@@ -71,7 +71,7 @@ namespace IntroSE.Kanban.Backend.BuisnessLayer.UserPackage
         {
             List<TaskBL> lst = new List<TaskBL>();
             foreach (BoardBL board in _boards)
-                lst.AddRange(board.GetColumn(0));
+                lst.AddRange(board.GetColumn(1));
             return lst;
         }
     }

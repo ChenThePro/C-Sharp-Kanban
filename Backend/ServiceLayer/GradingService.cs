@@ -137,7 +137,7 @@ namespace IntroSE.Kanban.Backend.ServiceLayer
         /// <returns>An empty response, unless an error occurs (see <see cref="GradingService"/>)</returns>
         public string AddTask(string email, string boardName, string title, string description, DateTime dueDate)
         {
-            return _serviceFactory.GetTaskService().AddTask(boardName, title, dueDate, description, DateTime.Today, 1, email);
+            return _serviceFactory.GetTaskService().AddTask(boardName, title, dueDate, description, DateTime.Today, email);
         }
 
         /// <summary>

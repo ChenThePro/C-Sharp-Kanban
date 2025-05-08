@@ -163,7 +163,7 @@ namespace IntroSE.Kanban.Backend.BuisnessLayer.BoardPackage
         /// <exception cref="InvalidOperationException">Thrown if the user doesn't exist or is not logged in ot task id is taken or invalid column.</exception>
         internal void UpdateTask(string boardName, string title, DateTime? due, string description, int id, string email, int column)
         {
-            if (title != null && title.Length > 50)
+            if (title != null && (title.Length > 50 || title.Length == 0))
                 throw new ArgumentException("title invalid");
             if (description != null && description.Length > 300)
                 throw new InvalidOperationException("exceeds limit");
@@ -173,9 +173,12 @@ namespace IntroSE.Kanban.Backend.BuisnessLayer.BoardPackage
                 throw new InvalidOperationException("invalid column");
             if (id < 0)
                 throw new InvalidOperationException("id can't be null");
+            if (title == null && description == null && due == null)
+                throw new ArgumentNullException("nothing to update");
             UserBL user = _userfacade.GetUser(email);
             BoardBL board = user.GetBoard(boardName);
             board.UpdateTask(title, due, description, id, email, column);
+
         }
 
         /// <summary>
