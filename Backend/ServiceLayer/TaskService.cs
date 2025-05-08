@@ -8,9 +8,18 @@ namespace IntroSE.Kanban.Backend.ServiceLayer
     {
         private readonly BoardFacade _boardFacade;
 
+        private int _count = 0;
+
+
         internal TaskService(BoardFacade boardFacade)
         {
             _boardFacade = boardFacade;
+        }
+
+        public int TaskIdGenerator()
+        {
+            _count++;
+            return _count;
         }
 
         /// <summary>
@@ -29,10 +38,11 @@ namespace IntroSE.Kanban.Backend.ServiceLayer
         /// <exception cref="KeyNotFoundException">If the specified board does not exist.</exception>
         /// <precondition>The board must exist and the task ID must be unique within it.</precondition>
         /// <postcondition>The new task is added to the board's backlog.</postcondition>
-        public string AddTask(string boardName, string title, DateTime due, string description, DateTime creationTime, int id, string email)
+        public string AddTask(string boardName, string title, DateTime due, string description, DateTime creationTime, string email)
         {
             try
             {
+                int id = TaskIdGenerator();
                 TaskBL task = _boardFacade.AddTask(boardName, title, due, description, creationTime, id, email);
                 return JsonSerializer.Serialize(new Response(null, null));
             }
