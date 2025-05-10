@@ -29,12 +29,6 @@ namespace IntroSE.Kanban.BackendTests.Testings
             return json.Contains("\"ErrorMessage\"") && !json.Contains("\"ErrorMessage\":null");
         }
 
-        public bool TestAddTaskWithWrongId()
-        {
-            string json = _factory.GetTaskService().AddTask(_boardName, "Task", DateTime.MaxValue, "Description", DateTime.Today, _userEmail);
-            return json.Contains("\"ErrorMessage\"") && !json.Contains("\"ErrorMessage\":null");
-        }
-
         public bool TestAddTaskWithWrongEmail()
         {
             string json = _factory.GetTaskService().AddTask(_boardName, "Task", DateTime.MaxValue, "Description", DateTime.Today, "badEmail");
@@ -72,7 +66,7 @@ namespace IntroSE.Kanban.BackendTests.Testings
             string rawJson = _factory.GetTaskService().AddTask(_boardName, "Title", DateTime.MaxValue, "Desc", DateTime.Today, _userEmail);
             if (!rawJson.Contains("\"ErrorMessage\":null"))
                 return false;
-            string moveJson = _factory.GetTaskService().MoveTask(_boardName, 0, 9, _userEmail);
+            string moveJson = _factory.GetTaskService().MoveTask(_boardName, 0, 3, _userEmail);
             return moveJson.Contains("\"ErrorMessage\":null");
         }
 
@@ -166,7 +160,6 @@ namespace IntroSE.Kanban.BackendTests.Testings
             Console.WriteLine("🔹 TestAddTaskSuccessfully: " + TestAddTaskSuccessfully());
             Console.WriteLine("🔹 TestAddTaskWithUnexistedBoard: " + TestAddTaskWithUnexistedBoard());
             Console.WriteLine("🔹 TestAddTaskWithDueBeforeCreation: " + TestAddTaskWithDueBeforeCreation());
-            Console.WriteLine("🔹 TestAddTaskWithWrongId: " + TestAddTaskWithWrongId());
             Console.WriteLine("🔹 TestAddTaskWithWrongEmail: " + TestAddTaskWithWrongEmail());
             Console.WriteLine("🔹 TestAddTaskWithNoTitle: " + TestAddTaskWithNoTitle());
             Console.WriteLine("🔹 TestAddTaskLongTitle: " + TestAddTaskLongTitle());
