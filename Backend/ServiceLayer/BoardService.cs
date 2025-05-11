@@ -103,7 +103,7 @@ namespace IntroSE.Kanban.Backend.ServiceLayer
         {
             try
             {
-                List<TaskSL> lst = _boardFacade.GetColumn(email, boardName, columnOrdinal).Select(task => new TaskSL(task.title, task.due, task.description, task.creationTime, task.id)).ToList();
+                List<TaskSL> lst = _boardFacade.GetColumn(email, boardName, columnOrdinal).Select(task => new TaskSL(task.Title, task.Due, task.Description, task.CreationTime, task.Id)).ToList();
                 return JsonSerializer.Serialize(new Response(null, lst));
             }
             catch (Exception ex)
@@ -175,7 +175,7 @@ namespace IntroSE.Kanban.Backend.ServiceLayer
         {
             try
             {
-                List<TaskSL> lst = _boardFacade.InProgressTasks(email).Select(task => new TaskSL(task.title, task.due, task.description, task.creationTime, task.id)).ToList();
+                List<TaskSL> lst = _boardFacade.InProgressTasks(email).Select(task => new TaskSL(task.Title, task.Due, task.Description, task.CreationTime, task.Id)).ToList();
                 return JsonSerializer.Serialize(new Response(null, lst));
             }
             catch (Exception ex)

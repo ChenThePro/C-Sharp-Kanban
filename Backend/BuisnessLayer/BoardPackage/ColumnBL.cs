@@ -7,83 +7,92 @@ namespace IntroSE.Kanban.Backend.BuisnessLayer.BoardPackage
 {
     internal class ColumnBL
     {
-        private int limit;
-        internal List<TaskBL> tasks;
+        private int _limit;
+        private readonly string _name;
+        private readonly List<TaskBL> _tasks;
         private static readonly ILog Log = LogManager.GetLogger(MethodBase.GetCurrentMethod().DeclaringType);
-        private readonly string name;
 
         internal ColumnBL(int num)
         {
             switch (num)
             {
                 case 0:
-                    name = "backlog";
+                    _name = "backlog";
                     break;
                 case 1:
-                    name = "in progress";
+                    _name = "in progress";
                     break;
                 case 2:
-                    name = "done";
+                    _name = "done";
                     break;
                 default:
+                    Log.Error("invalid column num");
                     throw new ArgumentException("invalid column num");
             }
-            tasks = new List<TaskBL>();
-            limit = -1;
+            _tasks = new List<TaskBL>();
+            _limit = -1;
         }
 
         internal void Add(TaskBL task, string email)
         {
-            if (limit != -1 && limit == tasks.Count)
+            if (_limit != -1 && _limit == _tasks.Count)
+            {
+                Log.Error("exceeds column's limit");
                 throw new InvalidOperationException("exceeds column's limit");
+            }
             Log.Info(email + " task added succesfully");
-            tasks.Add(task);
+            _tasks.Add(task);
         }
 
         internal void Delete(TaskBL task, string email)
         {
-            tasks.Remove(task);
+            _tasks.Remove(task);
+            Log.Info(email + " task removed succesfully");
         }
 
         internal void UpdateTask(string title, DateTime? due, string description, int id, string email)
         {
-            foreach (TaskBL task in tasks)
-                if (task.id == id)
+            foreach (TaskBL task in _tasks)
+                if (task.Id == id)
                 {
                     task.Update(title, due, description, email);
                     return;
                 }
+            Log.Error("task doensn't exist");
             throw new KeyNotFoundException("task doensn't exist");
         }
 
         internal TaskBL GetTaskByIdAndColumn(int id)
         {
-            foreach (TaskBL task in tasks)
-                if (task.id == id)
+            foreach (TaskBL task in _tasks)
+                if (task.Id == id)
                     return task;
             return null;
         }
 
         internal void LimitColumn(int limit, string email)
         {
-            if (limit < tasks.Count)
+            if (limit < _tasks.Count)
+            {
+                Log.Error("limit too low");
                 throw new InvalidOperationException("limit too low");
-            this.limit = limit;
+            }
+            _limit = limit;
         }
 
         internal List<TaskBL> GetColumn()
         {
-            return tasks;
+            return _tasks;
         }
 
         internal int GetColumnLimit()
         {
-            return limit;
+            return _limit;
         }
 
         internal string GetColumnName()
         {
-            return name;
+            return _name;
         }
     }
 }

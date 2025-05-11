@@ -26,7 +26,7 @@ namespace IntroSE.Kanban.Backend.BuisnessLayer.BoardPackage
         /// <returns>True if the user exists and logged in; otherwise, false.</returns>
         private bool UserExistsAndLoggedIn(string email)
         {
-            return _userfacade._emails.ContainsKey(email) && _userfacade._emails[email].loggedIn;
+            return _userfacade._emails.ContainsKey(email) && _userfacade._emails[email].LoggedIn;
         }
 
         /// <summary>
@@ -48,19 +48,37 @@ namespace IntroSE.Kanban.Backend.BuisnessLayer.BoardPackage
         internal TaskBL AddTask(string boardName, string title, DateTime due, string description, DateTime creationTime, int id, string email)
         {
             if (string.IsNullOrEmpty(title) || title.Length > 50)
+            {
+                Log.Error("title invalid");
                 throw new ArgumentException("title invalid");
+            }
             if (description != null && description.Length > 300)
-                throw new InvalidOperationException("exceeds limit");
+            {
+                Log.Error("description exceeds limit");
+                throw new InvalidOperationException("description exceeds limit");
+            }
             if (id < 0)
+            {
+                Log.Error("id can't be negative");
                 throw new InvalidOperationException("id can't be negative");
+            }
             if (due.CompareTo(creationTime) < 0)
+            {
+                Log.Error("due can't be before creation");
                 throw new InvalidOperationException("due can't be before creation");
+            }
             if (!UserExistsAndLoggedIn(email))
+            {
+                Log.Error("user is not logged in or doesn't exist");
                 throw new InvalidOperationException("user is not logged in or doesn't exist");
+            }
             UserBL user = _userfacade.GetUser(email);
             BoardBL board = user.GetBoard(boardName);
             if (board.GetTaskByIdAndColumn(id, 0) != null || board.GetTaskByIdAndColumn(id, 1) != null || board.GetTaskByIdAndColumn(id, 2) != null)
+            {
+                Log.Error("task id is already taken in this board");
                 throw new InvalidOperationException("task id is already taken in this board");
+            }
             return board.AddTask(title, due, description, creationTime, id, 0);
         }
 
@@ -75,15 +93,24 @@ namespace IntroSE.Kanban.Backend.BuisnessLayer.BoardPackage
         internal BoardBL CreateBoard(string boardName, string email)
         {
             if (!UserExistsAndLoggedIn(email))
+            {
+                Log.Error("user is not logged in or doesn't exist");
                 throw new InvalidOperationException("user is not logged in or doesn't exist");
+            }
             if (string.IsNullOrEmpty(boardName))
+            {
+                Log.Error("board name is not valid");
                 throw new ArgumentException("board name is not valid");
+            }
             UserBL user = _userfacade.GetUser(email);
             if (user.BoardExists(boardName))
+            {
+                Log.Error("board already exists");
                 throw new InvalidOperationException("board already exists");
+            }
             BoardBL board = new BoardBL(boardName, email);
             user.CreateBoard(board);
-            Log.Info("new board created - " + boardName + " for" + email);
+            Log.Info("new board created " + boardName + " for " + email);
             return board;
         }
 
@@ -97,10 +124,13 @@ namespace IntroSE.Kanban.Backend.BuisnessLayer.BoardPackage
         internal void DeleteBoard(string boardName, string email)
         {
             if (!UserExistsAndLoggedIn(email))
+            {
+                Log.Error("user is not logged in or doesn't exist");
                 throw new InvalidOperationException("user is not logged in or doesn't exist");
+            }
             UserBL user = _userfacade.GetUser(email);
             user.DeleteBoard(boardName);
-            Log.Info(boardName + "deleted");
+            Log.Info(boardName + "deleted for " + email);
         }
 
         /// <summary>
@@ -116,11 +146,20 @@ namespace IntroSE.Kanban.Backend.BuisnessLayer.BoardPackage
         internal void LimitColumn(string boardName, int column, int limit, string email)
         {
             if (!UserExistsAndLoggedIn(email))
+            {
+                Log.Error("user is not logged in or doesn't exist");
                 throw new InvalidOperationException("user is not logged in or doesn't exist");
+            }
             if (column > 2 || column < 0)
+            {
+                Log.Error("invalid column");
                 throw new InvalidOperationException("invalid column");
+            }
             if (limit < 0)
+            {
+                Log.Error("limit cannot be negative");
                 throw new ArgumentException("limit cannot be negative");
+            }
             UserBL user = _userfacade.GetUser(email);
             BoardBL board = user.GetBoard(boardName);
             board.LimitColumn(column, limit, email);
@@ -138,11 +177,20 @@ namespace IntroSE.Kanban.Backend.BuisnessLayer.BoardPackage
         internal void MoveTask(string boardName, int column, int id, string email)
         {
             if (!UserExistsAndLoggedIn(email))
+            {
+                Log.Error("user is not logged in or doesn't exist");
                 throw new InvalidOperationException("user is not logged in or doesn't exist");
+            }
             if (column > 1 || column < 0)
+            {
+                Log.Error("invalid column");
                 throw new InvalidOperationException("invalid column");
+            }
             if (id < 0)
+            {
+                Log.Error("id can't be negative");
                 throw new InvalidOperationException("id can't be negative");
+            }
             UserBL user = _userfacade.GetUser(email);
             BoardBL board = user.GetBoard(boardName);
             board.MoveTask(column, id, email);
@@ -164,21 +212,38 @@ namespace IntroSE.Kanban.Backend.BuisnessLayer.BoardPackage
         internal void UpdateTask(string boardName, string title, DateTime? due, string description, int id, string email, int column)
         {
             if (title != null && (title.Length > 50 || title.Length == 0))
+            {
+                Log.Error("title invalid");
                 throw new ArgumentException("title invalid");
+            }
             if (description != null && description.Length > 300)
+            {
+                Log.Error("exceeds limit");
                 throw new InvalidOperationException("exceeds limit");
+            }
             if (!UserExistsAndLoggedIn(email))
+            {
+                Log.Error("user is not logged in or doesn't exist");
                 throw new InvalidOperationException("user is not logged in or doesn't exist");
+            }
             if (column > 2 || column < 0)
+            {
+                Log.Error("invalid column");
                 throw new InvalidOperationException("invalid column");
+            }
             if (id < 0)
-                throw new InvalidOperationException("id can't be null");
+            {
+                Log.Error("id can't be negative");
+                throw new InvalidOperationException("id can't be negative");
+            }
             if (title == null && description == null && due == null)
+            {
+                Log.Error("nothing to update");
                 throw new ArgumentNullException("nothing to update");
+            }
             UserBL user = _userfacade.GetUser(email);
             BoardBL board = user.GetBoard(boardName);
             board.UpdateTask(title, due, description, id, email, column);
-
         }
 
         /// <summary>
@@ -191,9 +256,15 @@ namespace IntroSE.Kanban.Backend.BuisnessLayer.BoardPackage
         internal List<TaskBL> GetColumn(string email, string boardName, int columnOrdinal)
         {
             if (!UserExistsAndLoggedIn(email))
+            {
+                Log.Error("user is not logged in or doesn't exist");
                 throw new InvalidOperationException("user is not logged in or doesn't exist");
+            }
             if (columnOrdinal > 2 || columnOrdinal < 0)
+            {
+                Log.Error("invalid column");
                 throw new InvalidOperationException("invalid column");
+            }
             UserBL user = _userfacade.GetUser(email);
             BoardBL board = user.GetBoard(boardName);
             return board.GetColumn(columnOrdinal);
@@ -209,9 +280,15 @@ namespace IntroSE.Kanban.Backend.BuisnessLayer.BoardPackage
         internal int GetColumnLimit(string email, string boardName, int columnOrdinal)
         {
             if (!UserExistsAndLoggedIn(email))
+            {
+                Log.Error("user is not logged in or doesn't exist");
                 throw new InvalidOperationException("user is not logged in or doesn't exist");
+            }
             if (columnOrdinal > 2 || columnOrdinal < 0)
+            {
+                Log.Error("invalid column");
                 throw new InvalidOperationException("invalid column");
+            }
             UserBL user = _userfacade.GetUser(email);
             BoardBL board = user.GetBoard(boardName);
             return board.GetColumnLimit(columnOrdinal);
@@ -227,9 +304,15 @@ namespace IntroSE.Kanban.Backend.BuisnessLayer.BoardPackage
         internal string GetColumnName(string email, string boardName, int columnOrdinal)
         {
             if (!UserExistsAndLoggedIn(email))
+            {
+                Log.Error("user is not logged in or doesn't exist");
                 throw new InvalidOperationException("user is not logged in or doesn't exist");
+            }
             if (columnOrdinal > 2 || columnOrdinal < 0)
+            {
+                Log.Error("invalid column");
                 throw new InvalidOperationException("invalid column");
+            }
             UserBL user = _userfacade.GetUser(email);
             BoardBL board = user.GetBoard(boardName);
             return board.GetColumnName(columnOrdinal);
@@ -243,7 +326,10 @@ namespace IntroSE.Kanban.Backend.BuisnessLayer.BoardPackage
         internal List<TaskBL> InProgressTasks(string email)
         {
             if (!UserExistsAndLoggedIn(email))
+            {
+                Log.Error("user is not logged in or doesn't exist");
                 throw new InvalidOperationException("user is not logged in or doesn't exist");
+            }
             UserBL user = _userfacade.GetUser(email);
             return user.InProgressTasks();
         }
