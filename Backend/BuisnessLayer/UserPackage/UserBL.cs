@@ -8,51 +8,61 @@ namespace IntroSE.Kanban.Backend.BuisnessLayer.UserPackage
 {
     internal class UserBL
     {
-        internal bool loggedIn;
-        internal string email;
-        internal string password;
-        internal readonly List<BoardBL> _boards;
+        internal bool LoggedIn;
+        internal string Email;
+        private string _password;
+        private readonly List<BoardBL> _boards;
         private static readonly ILog Log = LogManager.GetLogger(MethodBase.GetCurrentMethod().DeclaringType);
 
         internal UserBL(string email, string password)
         {
-            this.email = email;
-            this.password = password;
-            loggedIn = true;
+            Email = email;
+            _password = password;
+            LoggedIn = true;
             _boards = new List<BoardBL>();
         }
 
         internal UserBL Login(string password)
         {
-            if (this.password != password)
+            if (_password != password)
+            {
+                Log.Error("password incorrect");
                 throw new UnauthorizedAccessException("password incorrect");
-            if (loggedIn)
+            }
+            if (LoggedIn)
+            {
+                Log.Error("already logged in");
                 throw new InvalidOperationException("already logged in");
-            loggedIn = true;
+            }
+            LoggedIn = true;
             Log.Info("user logged in successfully");
             return this;
         }
 
         internal void Logout()
         {
-            if (!loggedIn)
+            if (!LoggedIn)
+            {
+                Log.Error("user not logged in");
                 throw new InvalidOperationException("user not logged in");
-            loggedIn = false;
+            }
+            LoggedIn = false;
             Log.Info("user logged out");
         }
 
         internal BoardBL GetBoard(string boardName)
         {
             foreach (BoardBL board in _boards)
-                if (board.name.ToLower() == boardName.ToLower())
+                if (board.Name.ToLower() == boardName.ToLower())
                     return board;
+            Log.Error("boardname doesn't exist in user");
             throw new KeyNotFoundException("boardname doesn't exist in user");
         }
 
         internal bool BoardExists(string boardName)
         {
             foreach (BoardBL board in _boards)
-                if (board.name.ToLower() == boardName.ToLower())
+                if (board.Name.ToLower() == boardName.ToLower())
                     return true;
             return false;
         }
