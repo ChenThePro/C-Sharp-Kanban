@@ -9,7 +9,6 @@ namespace IntroSE.Kanban.BackendTests
     {
         public static void Main(string[] args)
         {
-            Console.WriteLine("we check achya's kuku requirements");
             Console.WriteLine("🚀 Running all tests!\n");
             Console.WriteLine("👤 Running user-related tests...");
             new RegistrationTests().RunAll();
