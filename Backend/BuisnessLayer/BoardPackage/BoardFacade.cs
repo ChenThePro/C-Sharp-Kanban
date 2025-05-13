@@ -10,6 +10,8 @@ namespace IntroSE.Kanban.Backend.BuisnessLayer.BoardPackage
     {
         private readonly UserFacade _userfacade;
         private static readonly ILog Log = LogManager.GetLogger(MethodBase.GetCurrentMethod().DeclaringType);
+        private const int DESC_MAX = 300;
+        private const int TITLE_MAX = 50;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="BoardFacade"/> class.
@@ -47,12 +49,13 @@ namespace IntroSE.Kanban.Backend.BuisnessLayer.BoardPackage
         /// <exception cref="InvalidOperationException">Thrown when email does not exist or not logged in.</exception>
         internal TaskBL AddTask(string boardName, string title, DateTime due, string description, DateTime creationTime, int id, string email)
         {
-            if (string.IsNullOrEmpty(title) || title.Length > 50)
+            if (string.IsNullOrWhiteSpace(title) || title.Length > TITLE_MAX)
             {
                 Log.Error("title invalid");
                 throw new ArgumentException("title invalid");
             }
-            if (description != null && description.Length > 300)
+            // maybe check for string.IsNullOrWhiteSpace(description)
+            if (description != null && description.Length > DESC_MAX)
             {
                 Log.Error("description exceeds limit");
                 throw new InvalidOperationException("description exceeds limit");
@@ -97,7 +100,7 @@ namespace IntroSE.Kanban.Backend.BuisnessLayer.BoardPackage
                 Log.Error("user is not logged in or doesn't exist");
                 throw new InvalidOperationException("user is not logged in or doesn't exist");
             }
-            if (string.IsNullOrEmpty(boardName))
+            if (string.IsNullOrWhiteSpace(boardName))
             {
                 Log.Error("board name is not valid");
                 throw new ArgumentException("board name is not valid");
@@ -155,7 +158,7 @@ namespace IntroSE.Kanban.Backend.BuisnessLayer.BoardPackage
                 Log.Error("invalid column");
                 throw new InvalidOperationException("invalid column");
             }
-            if (limit < 0)
+            if ((limit < 0 && limit != -1) || limit == 0)
             {
                 Log.Error("limit cannot be negative");
                 throw new ArgumentException("limit cannot be negative");
@@ -211,12 +214,13 @@ namespace IntroSE.Kanban.Backend.BuisnessLayer.BoardPackage
         /// <exception cref="InvalidOperationException">Thrown if the user doesn't exist or is not logged in ot task id is taken or invalid column.</exception>
         internal void UpdateTask(string boardName, string title, DateTime? due, string description, int id, string email, int column)
         {
-            if (title != null && (title.Length > 50 || title.Length == 0))
+            if (string.IsNullOrWhiteSpace(title) || title.Length > TITLE_MAX)
             {
                 Log.Error("title invalid");
                 throw new ArgumentException("title invalid");
             }
-            if (description != null && description.Length > 300)
+            // maybe check for string.IsNullOrWhiteSpace(description)
+            if ((description != null && description.Length > DESC_MAX) || )
             {
                 Log.Error("exceeds limit");
                 throw new InvalidOperationException("exceeds limit");
