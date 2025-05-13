@@ -72,7 +72,7 @@ namespace IntroSE.Kanban.Backend.BuisnessLayer.BoardPackage
 
         internal void LimitColumn(int limit, string email)
         {
-            if (limit < _tasks.Count)
+            if (limit != -1 && limit < _tasks.Count)
             {
                 Log.Error("limit too low");
                 throw new InvalidOperationException("limit too low");

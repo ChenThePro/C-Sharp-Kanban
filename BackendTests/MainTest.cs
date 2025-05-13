@@ -1,5 +1,7 @@
 ﻿using IntroSE.Kanban.Backend.ServiceLayer;
 using IntroSE.Kanban.BackendTests.Testings;
+using log4net;
+using System.Text.RegularExpressions;
 
 namespace IntroSE.Kanban.BackendTests
 {
