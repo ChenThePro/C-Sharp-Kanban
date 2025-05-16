@@ -97,5 +97,9 @@ namespace IntroSE.Kanban.Backend.ServiceLayer
                 return JsonSerializer.Serialize(new Response(ex.Message, null));
             }
         }
+        public string AssignTask(string email, string boardName, int columnOrdinal, int taskID, string emailAssignee)
+        {
+            throw new NotImplementedException();
+        }
     }
 }
