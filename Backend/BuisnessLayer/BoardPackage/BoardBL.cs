@@ -68,5 +68,10 @@ namespace IntroSE.Kanban.Backend.BuisnessLayer.BoardPackage
         {
             return Columns[columnOrdinal].GetColumnName();
         }
+
+        internal void AssignTask(int column, int id, string email)
+        {
+            Columns[column].AssignTask(id, email);
+        }
     }
 }

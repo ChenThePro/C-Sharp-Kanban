@@ -12,6 +12,7 @@ namespace IntroSE.Kanban.Backend.BuisnessLayer.BoardPackage
         internal readonly DateTime CreationTime;
         internal readonly int Id;
         private static readonly ILog Log = LogManager.GetLogger(MethodBase.GetCurrentMethod().DeclaringType);
+        internal string Assigne;
 
         internal TaskBL(string title, DateTime due, string description, DateTime creationTime, int id)
         {
@@ -20,6 +21,7 @@ namespace IntroSE.Kanban.Backend.BuisnessLayer.BoardPackage
             Description = description;
             CreationTime = creationTime;
             Id = id;
+            Assigne = null;
         }
 
         internal void Update(string title, DateTime? due, string description, string email)
@@ -34,6 +36,16 @@ namespace IntroSE.Kanban.Backend.BuisnessLayer.BoardPackage
             Description = description ?? Description;
             Due = due ?? Due;
             Log.Info("task updated");
+        }
+
+        internal void AssignTask( string email)
+        {
+            if(Assigne != null)
+            {
+                Log.Error("task already assigned");
+                throw new InvalidOperationException("task already assigned");
+            }
+            Assigne = email;
         }
     }
 }

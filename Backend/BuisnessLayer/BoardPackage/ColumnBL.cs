@@ -94,5 +94,16 @@ namespace IntroSE.Kanban.Backend.BuisnessLayer.BoardPackage
         {
             return _name;
         }
+
+        internal void AssignTask(int id, string email)
+        {
+            TaskBL task = GetTaskByIdAndColumn(id);
+            if (task == null)
+            {
+                Log.Error("task " + id + " for " + email + " doesn't exist in " + _name);
+                throw new KeyNotFoundException("task doesn't exist");
+            }
+            task.AssignTask(email);
+        }
     }
 }
