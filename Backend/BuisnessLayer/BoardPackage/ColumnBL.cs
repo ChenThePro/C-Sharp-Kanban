@@ -94,5 +94,9 @@ namespace IntroSE.Kanban.Backend.BuisnessLayer.BoardPackage
         {
             return _name;
         }
+        public string AssignTask(string email, string boardName, int columnOrdinal, int taskID, string emailAssignee)
+        {
+            throw new NotImplementedException();
+        }
     }
 }

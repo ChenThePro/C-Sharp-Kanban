@@ -35,5 +35,9 @@ namespace IntroSE.Kanban.Backend.BuisnessLayer.BoardPackage
             Due = due ?? Due;
             Log.Info("task updated");
         }
+        public string AssignTask(string email, string boardName, int columnOrdinal, int taskID, string emailAssignee)
+        {
+            throw new NotImplementedException();
+        }
     }
 }

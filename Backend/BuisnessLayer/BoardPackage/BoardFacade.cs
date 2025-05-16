@@ -220,7 +220,7 @@ namespace IntroSE.Kanban.Backend.BuisnessLayer.BoardPackage
                 throw new ArgumentException("title invalid");
             }
             // maybe check for string.IsNullOrWhiteSpace(description)
-            if ((description != null && description.Length > DESC_MAX) || )
+            if ((description != null && description.Length > DESC_MAX))
             {
                 Log.Error("exceeds limit");
                 throw new InvalidOperationException("exceeds limit");

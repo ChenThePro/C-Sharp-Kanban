@@ -84,5 +84,13 @@ namespace IntroSE.Kanban.Backend.BuisnessLayer.UserPackage
                 lst.AddRange(board.GetColumn(1));
             return lst;
         }
+        internal string AssignTask(string email, string boardName, int columnOrdinal, int taskID, string emailAssignee)
+        {
+            throw new NotImplementedException();
+        }
+        internal string TransferOwnership(string currentOwnerEmail, string newOwnerEmail, string boardName)
+        {
+            throw new NotImplementedException();
+        }
     }
 }
