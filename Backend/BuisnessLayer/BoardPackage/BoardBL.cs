@@ -10,19 +10,23 @@ namespace IntroSE.Kanban.Backend.BuisnessLayer.BoardPackage
         internal readonly string Owner;
         internal readonly string Name;
         internal readonly List<ColumnBL> Columns;
+        public int Id;
         private static readonly ILog Log = LogManager.GetLogger(MethodBase.GetCurrentMethod().DeclaringType);
+
 
         internal BoardBL(string name, string owner)
         {
             Name = name;
             Columns = new List<ColumnBL> { new(0), new(1), new(2) };
             Owner = owner;
+            Id = 1;
         }
 
         internal TaskBL AddTask(string title, DateTime due, string description, DateTime creationTime, int id, int column)
         {
             TaskBL task = new TaskBL(title, due, description, creationTime, id);
             Columns[column].Add(task, Owner);
+            this.Id = Id + 1;
             return task;
         }
 

@@ -1,3 +1,4 @@
+using System.Collections.Immutable;
 using IntroSE.Kanban.Backend.ServiceLayer;
 
 namespace IntroSE.Kanban.BackendTests.Testings
@@ -46,6 +47,41 @@ namespace IntroSE.Kanban.BackendTests.Testings
             return !json.Contains("\"ErrorMessage\":null");
         }
 
+
+        public bool CheckOwnership()
+        {
+            _factory.GetBoardService().CreateBoard(_boardName, _userEmail);
+            string json = _factory.GetBoardService().TransferOwnership(_userEmail,"noa@gmail.com", _boardName);
+            return !json.Contains("\"ErrorMessage\":null");
+        }
+        /// <summary>
+        /// to change the id to the board id!!!!!!!!!!!!!!!!
+        /// </summary>
+        /// <returns></returns>
+        public bool CheckJoiningToANewBoard()
+        {
+            _factory.GetBoardService().CreateBoard(_boardName, _userEmail);
+            string json = _factory.GetBoardService().JoinBoard(_userEmail, 1);
+            return !json.Contains("\"ErrorMessage\":null");
+
+        }
+
+        public bool checkUserBoardIdList()
+        {
+            _factory.GetBoardService().CreateBoard(_boardName, _userEmail);
+            string json = _factory.GetBoardService().GetUserBoards(_userEmail);
+            return !json.Contains("\"ErrorMessage\":null");
+
+        }
+        public bool checkUserBoardIdList_userWithoutBoards()
+        {
+            _factory.GetUserService().Register(_userEmail,"Aa123456");
+            string json = _factory.GetBoardService().GetUserBoards(_userEmail);
+            return !json.Contains("\"ErrorMessage\":null");
+
+        }
+
+
         public void RunAll()
         {
             Console.WriteLine("🔹 CreateBoardWithValidValues: " + CreateBoardWithValidValues());
@@ -55,5 +91,7 @@ namespace IntroSE.Kanban.BackendTests.Testings
             Console.WriteLine("🔹 DeleteBoard: " + DeleteBoard());
             Console.WriteLine("🔹 DeleteNonExistentBoard: " + DeleteNonExistentBoard());
         }
+
+
     }
 }
