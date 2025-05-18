@@ -1,4 +1,4 @@
-﻿using log4net;
+using log4net;
 using System;
 using System.Collections.Generic;
 using System.Reflection;
@@ -10,13 +10,15 @@ namespace IntroSE.Kanban.Backend.BuisnessLayer.BoardPackage
         internal readonly string Owner;
         internal readonly string Name;
         internal readonly List<ColumnBL> Columns;
+        internal int Id;
         private static readonly ILog Log = LogManager.GetLogger(MethodBase.GetCurrentMethod().DeclaringType);
 
-        internal BoardBL(string name, string owner)
+        internal BoardBL(string name, string owner, int id)
         {
             Name = name;
             Columns = new List<ColumnBL> { new(0), new(1), new(2) };
             Owner = owner;
+            Id = id;
         }
 
         internal TaskBL AddTask(string title, DateTime due, string description, DateTime creationTime, int id, int column)
@@ -31,12 +33,12 @@ namespace IntroSE.Kanban.Backend.BuisnessLayer.BoardPackage
             TaskBL task = GetTaskByIdAndColumn(id, column);
             if (task == null)
             {
-                Log.Error("task " + id + " for " + email + " doesn't exist in " + Name + "'s " + Columns[column].GetColumnName());
-                throw new KeyNotFoundException("task doesn't exist");
+                Log.Error("Task id" + id + " for " + email + " doesn't exist in " + Name + "'s " + Columns[column].GetName() + " column.");
+                throw new KeyNotFoundException("Task id" + id + " for " + email + " doesn't exist in " + Name + "'s " + Columns[column].GetName() + " column.");
             }
             Columns[column + 1].Add(task, email);
             Columns[column].Delete(task, email);
-            Log.Info("task " + task.Id + " moved from " + Columns[column].GetColumnName() + " to " + Columns[column + 1].GetColumnName() + " for " + email);
+            Log.Info("Task id " + task.Id + " moved from " + Columns[column].GetName() + " to " + Columns[column + 1].GetName() + " for " + email + " in board " + Name + ".");
         }
 
         internal void UpdateTask(string title, DateTime? due, string description, int id, string email, int column)
@@ -46,7 +48,7 @@ namespace IntroSE.Kanban.Backend.BuisnessLayer.BoardPackage
 
         internal TaskBL GetTaskByIdAndColumn(int id, int column)
         {
-            return Columns[column].GetTaskByIdAndColumn(id);
+            return Columns[column].GetTaskById(id);
         }
 
         internal void LimitColumn(int column, int limit, string email)
@@ -56,43 +58,47 @@ namespace IntroSE.Kanban.Backend.BuisnessLayer.BoardPackage
 
         internal List<TaskBL> GetColumn(int columnOrdinal)
         {
-            return Columns[columnOrdinal].GetColumn();
+            return Columns[columnOrdinal].GetTasks();
         }
 
         internal int GetColumnLimit(int columnOrdinal)
         {
-            return Columns[columnOrdinal].GetColumnLimit();
+            return Columns[columnOrdinal].GetLimit();
         }
 
         internal string GetColumnName(int columnOrdinal)
         {
-            return Columns[columnOrdinal].GetColumnName();
+            return Columns[columnOrdinal].GetName();
+        }
+
+        internal void AssignTask(int column, int id, string AssigneEmail)
+        {
+            Columns[column].AssignTask(id, AssigneEmail);
         }
 
         internal string GetUserBoards(string email)
         {
             throw new NotImplementedException();
         }
+
         internal string JoinBoard(string email, int boardID)
         {
             throw new NotImplementedException();
         }
+
         internal string LeaveBoard(string email, int boardID)
         {
             throw new NotImplementedException();
         }
-        internal string AssignTask(string email, string boardName, int columnOrdinal, int taskID, string emailAssignee)
-        {
-            throw new NotImplementedException();
-        }
+
         internal string GetBoardName(int boardId)
         {
             throw new NotImplementedException();
         }
+
         internal string TransferOwnership(string currentOwnerEmail, string newOwnerEmail, string boardName)
         {
             throw new NotImplementedException();
         }
-
     }
 }

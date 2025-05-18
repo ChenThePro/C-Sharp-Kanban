@@ -155,6 +155,70 @@ namespace IntroSE.Kanban.BackendTests.Testings
             return json.Contains("\"ErrorMessage\"") && !json.Contains("\"ErrorMessage\":null");
         }
 
+
+        // m2
+        public bool AssignTask_InvalidEmail()
+        {
+            string json = _factory.GetTaskService().AssignTask("wrong@example.com", _boardName, 0, 1, _userEmail);
+            return json.Contains("\"ErrorMessage\"") && !json.Contains("\"ErrorMessage\":null");
+        }
+
+        public bool AssignTask_InvalidBoard()
+        {
+            string json = _factory.GetTaskService().AssignTask(_userEmail, "FakeBoard", 0, 1, _userEmail);
+            return json.Contains("\"ErrorMessage\"") && !json.Contains("\"ErrorMessage\":null");
+        }
+
+        public bool AssignTask_InvalidColumn()
+        {
+            string json = _factory.GetTaskService().AssignTask(_userEmail, _boardName, 1, 1, _userEmail);
+            return json.Contains("\"ErrorMessage\"") && !json.Contains("\"ErrorMessage\":null");
+        }
+
+        public bool AssignTask_InvalidColumnOutOfRange()
+        {
+            string json = _factory.GetTaskService().AssignTask(_userEmail, _boardName, 3, 1, _userEmail);
+            return json.Contains("\"ErrorMessage\"") && !json.Contains("\"ErrorMessage\":null");
+        }
+
+        public bool AssignTask_InvalidTaskId()
+        {
+            string json = _factory.GetTaskService().AssignTask(_userEmail, _boardName, 0, -1, _userEmail);
+            return json.Contains("\"ErrorMessage\"") && !json.Contains("\"ErrorMessage\":null");
+        }
+
+        public bool AssignTask_InvalidAssigneeEmail()
+        {
+            string json = _factory.GetTaskService().AssignTask(_userEmail, _boardName, 0, 1, "notamember@example.com");
+            return json.Contains("\"ErrorMessage\"") && !json.Contains("\"ErrorMessage\":null");
+        }
+
+        public bool AssignTask_AssigneeAlreadySet()
+        {
+            string createJson = _factory.GetTaskService().AddTask(_boardName, "Task", DateTime.MaxValue, "Desc", DateTime.Today, _userEmail);
+            if (!createJson.Contains("\"ErrorMessage\":null"))
+                return false;
+
+            string assignJson = _factory.GetTaskService().AssignTask(_userEmail, _boardName, 0, 1, _userEmail);
+            if (!assignJson.Contains("\"ErrorMessage\":null"))
+                return false;
+
+
+            string reassignJson = _factory.GetTaskService().AssignTask(_userEmail, _boardName, 0, 1, "another@example.com");
+            return reassignJson.Contains("\"ErrorMessage\"") && !reassignJson.Contains("\"ErrorMessage\":null");
+        }
+
+        public bool AssignTask_Valid()
+        {
+            string createJson = _factory.GetTaskService().AddTask(_boardName, "Task", DateTime.MaxValue, "Desc", DateTime.Today, _userEmail);
+            if (!createJson.Contains("\"ErrorMessage\":null"))
+                return false;
+
+            string assignJson = _factory.GetTaskService().AssignTask(_userEmail, _boardName, 0, 1, _userEmail);
+            return assignJson.Contains("\"ErrorMessage\":null");
+        }
+
+
         public void RunAll()
         {
             Console.WriteLine("🔹 TestAddTaskSuccessfully: " + TestAddTaskSuccessfully());
@@ -180,6 +244,18 @@ namespace IntroSE.Kanban.BackendTests.Testings
             Console.WriteLine("🔹 UpdateTask_TitleTooLong: " + UpdateTask_TitleTooLong());
             Console.WriteLine("🔹 UpdateTask_DescriptionTooLong: " + UpdateTask_DescriptionTooLong());
             Console.WriteLine("🔹 UpdateTask_PastDueDate: " + UpdateTask_PastDueDate());
+
+
+            Console.WriteLine("🔹 AssignTask_ValidAssignment: " + AssignTask_Valid());
+            Console.WriteLine("🔹 AssignTask_AlreadyAssigned: " + AssignTask_AssigneeAlreadySet());
+            Console.WriteLine("🔹 AssignTask_TaskNotFound: " + AssignTask_InvalidEmail());
+            Console.WriteLine("🔹 AssignTask_InvalidUser: " + AssignTask_InvalidBoard());
+            Console.WriteLine("🔹 AssignTask_InvalidBoard: " + AssignTask_InvalidBoard());
+            Console.WriteLine("🔹 AssignTask_NotInBacklog: " + AssignTask_InvalidColumn());
+            Console.WriteLine("🔹 AssignTask_NotInBacklog: " + AssignTask_InvalidColumnOutOfRange());
+            Console.WriteLine("🔹 AssignTask_NotInBacklog: " + AssignTask_InvalidTaskId());
+            Console.WriteLine("🔹 AssignTask_NotInBacklog: " + AssignTask_InvalidAssigneeEmail());
+
         }
     }
 }

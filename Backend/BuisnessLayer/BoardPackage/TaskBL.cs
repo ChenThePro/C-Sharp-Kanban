@@ -1,4 +1,4 @@
-﻿using log4net;
+using log4net;
 using System;
 using System.Reflection;
 
@@ -12,6 +12,7 @@ namespace IntroSE.Kanban.Backend.BuisnessLayer.BoardPackage
         internal readonly DateTime CreationTime;
         internal readonly int Id;
         private static readonly ILog Log = LogManager.GetLogger(MethodBase.GetCurrentMethod().DeclaringType);
+        internal string Assigne;
 
         internal TaskBL(string title, DateTime due, string description, DateTime creationTime, int id)
         {
@@ -20,6 +21,7 @@ namespace IntroSE.Kanban.Backend.BuisnessLayer.BoardPackage
             Description = description;
             CreationTime = creationTime;
             Id = id;
+            Assigne = null;
         }
 
         internal void Update(string title, DateTime? due, string description, string email)
@@ -27,17 +29,23 @@ namespace IntroSE.Kanban.Backend.BuisnessLayer.BoardPackage
             if (due.HasValue)
                 if (((DateTime)due).CompareTo(CreationTime) < 0)
                 {
-                    Log.Error("due can't be before creation");
-                    throw new InvalidOperationException("due can't be before creation");
+                    Log.Error("Due date cannot be earlier than the creation date.");
+                    throw new ArgumentOutOfRangeException("Due date cannot be earlier than the creation date.");
                 }
             Title = title ?? Title;
             Description = description ?? Description;
             Due = due ?? Due;
-            Log.Info("task updated");
+            Log.Info("Task updated successfuly.");
         }
-        public string AssignTask(string email, string boardName, int columnOrdinal, int taskID, string emailAssignee)
+
+        internal void AssignTask(string AssigneEmail)
         {
-            throw new NotImplementedException();
+            if (Assigne != null)
+            {
+                Log.Error("Task already assigned");
+                throw new InvalidOperationException("Task already assigned");
+            }
+            Assigne = AssigneEmail;
         }
     }
 }

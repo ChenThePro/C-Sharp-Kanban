@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Text.Json;
 using IntroSE.Kanban.Backend.BuisnessLayer.BoardPackage;
 
@@ -7,11 +7,12 @@ namespace IntroSE.Kanban.Backend.ServiceLayer
     public class TaskService
     {
         private readonly BoardFacade _boardFacade;
-        private static int _id = 1;
+        private static int _id;
 
         internal TaskService(BoardFacade boardFacade)
         {
             _boardFacade = boardFacade;
+            _id = -1;
         }
 
         /// <summary>
@@ -97,6 +98,7 @@ namespace IntroSE.Kanban.Backend.ServiceLayer
                 return JsonSerializer.Serialize(new Response(ex.Message, null));
             }
         }
+      
         /// <summary>
         /// Assigns a task to another user.
         /// </summary>
@@ -106,11 +108,11 @@ namespace IntroSE.Kanban.Backend.ServiceLayer
         /// <param name="taskID"></param>
         /// <param name="emailAssignee"></param>
         /// <returns></returns>
-        public string AssignTask(string email, string boardName, int columnOrdinal, int taskID, string emailAssignee)
+        public string AssignTask(string email, string boardName, int column, int id, string AssigneEmail)
         {
             try
             {
-                _boardFacade.AssignTask(email, boardName, columnOrdinal, taskID, emailAssignee);
+                _boardFacade.AssignTask(email, boardName, column, id, AssigneEmail);
                 return JsonSerializer.Serialize(new Response(null, null));
             }
             catch (Exception ex)
@@ -118,6 +120,5 @@ namespace IntroSE.Kanban.Backend.ServiceLayer
                 return JsonSerializer.Serialize(new Response(ex.Message, null));
             }
         }
-    
     }
 }
