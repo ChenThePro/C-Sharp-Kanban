@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Text.Json;
 using IntroSE.Kanban.Backend.BuisnessLayer.BoardPackage;
 
@@ -97,9 +97,19 @@ namespace IntroSE.Kanban.Backend.ServiceLayer
                 return JsonSerializer.Serialize(new Response(ex.Message, null));
             }
         }
-        public string AssignTask(string email, string boardName, int columnOrdinal, int taskID, string emailAssignee)
+ tests_m2
+        public string AssignTask(string email, string boardName, int column, int id, string AssigneEmail)
         {
-            throw new NotImplementedException();
+            try
+            {
+                _boardFacade.AssignTask(boardName, column, id, email);
+                return JsonSerializer.Serialize(new Response(null, null));
+            }
+            catch (Exception ex)
+            {
+                return JsonSerializer.Serialize(new Response(ex.Message, null));
+            }
+ develop
         }
     }
 }

@@ -1,4 +1,4 @@
-﻿using log4net;
+using log4net;
 using System;
 using System.Reflection;
 
@@ -12,6 +12,7 @@ namespace IntroSE.Kanban.Backend.BuisnessLayer.BoardPackage
         internal readonly DateTime CreationTime;
         internal readonly int Id;
         private static readonly ILog Log = LogManager.GetLogger(MethodBase.GetCurrentMethod().DeclaringType);
+        internal string Assigne;
 
         internal TaskBL(string title, DateTime due, string description, DateTime creationTime, int id)
         {
@@ -20,6 +21,7 @@ namespace IntroSE.Kanban.Backend.BuisnessLayer.BoardPackage
             Description = description;
             CreationTime = creationTime;
             Id = id;
+            Assigne = null;
         }
 
         internal void Update(string title, DateTime? due, string description, string email)
@@ -35,9 +37,17 @@ namespace IntroSE.Kanban.Backend.BuisnessLayer.BoardPackage
             Due = due ?? Due;
             Log.Info("task updated");
         }
-        public string AssignTask(string email, string boardName, int columnOrdinal, int taskID, string emailAssignee)
+tests_m2
+
+        internal void AssignTask( string email)
         {
-            throw new NotImplementedException();
+            if(Assigne != null)
+            {
+                Log.Error("task already assigned");
+                throw new InvalidOperationException("task already assigned");
+            }
+            Assigne = email;
+ develop
         }
     }
 }
