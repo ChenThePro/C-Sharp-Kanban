@@ -1,4 +1,4 @@
-﻿using log4net;
+using log4net;
 using System;
 using System.Collections.Generic;
 using System.Reflection;
@@ -71,6 +71,11 @@ namespace IntroSE.Kanban.Backend.BuisnessLayer.BoardPackage
             return Columns[columnOrdinal].GetColumnName();
         }
 
+ tests_m2
+        internal void AssignTask(int column, int id, string email)
+        {
+            Columns[column].AssignTask(id, email);
+        }
         internal string GetUserBoards(string email)
         {
             throw new NotImplementedException();
@@ -83,10 +88,6 @@ namespace IntroSE.Kanban.Backend.BuisnessLayer.BoardPackage
         {
             throw new NotImplementedException();
         }
-        internal string AssignTask(string email, string boardName, int columnOrdinal, int taskID, string emailAssignee)
-        {
-            throw new NotImplementedException();
-        }
         internal string GetBoardName(int boardId)
         {
             throw new NotImplementedException();
@@ -95,5 +96,6 @@ namespace IntroSE.Kanban.Backend.BuisnessLayer.BoardPackage
         {
             throw new NotImplementedException();
         }
+
     }
 }
