@@ -97,9 +97,27 @@ namespace IntroSE.Kanban.Backend.ServiceLayer
                 return JsonSerializer.Serialize(new Response(ex.Message, null));
             }
         }
+        /// <summary>
+        /// Assigns a task to another user.
+        /// </summary>
+        /// <param name="email"></param>
+        /// <param name="boardName"></param>
+        /// <param name="columnOrdinal"></param>
+        /// <param name="taskID"></param>
+        /// <param name="emailAssignee"></param>
+        /// <returns></returns>
         public string AssignTask(string email, string boardName, int columnOrdinal, int taskID, string emailAssignee)
         {
-            throw new NotImplementedException();
+            try
+            {
+                _boardFacade.AssignTask(email, boardName, columnOrdinal, taskID, emailAssignee);
+                return JsonSerializer.Serialize(new Response(null, null));
+            }
+            catch (Exception ex)
+            {
+                return JsonSerializer.Serialize(new Response(ex.Message, null));
+            }
         }
+    
     }
 }

@@ -183,26 +183,98 @@ namespace IntroSE.Kanban.Backend.ServiceLayer
                 return JsonSerializer.Serialize(new Response(ex.Message, null));
             }
         }
+        /// <summary>
+        /// Allows a user to join an existing board by its ID.
+        /// </summary>
+        /// <param name="email">The email of the user who wants to join.</param>
+        /// <param name="boardID">The ID of the board.</param>
+        /// <returns>Response indicating success or failure.</returns>
         public string JoinBoard(string email, int boardID)
         {
-            throw new NotImplementedException();
+            try
+            {
+                _boardFacade.JoinBoard(email, boardID);
+                return JsonSerializer.Serialize(new Response(null, null));
+            }
+            catch (Exception ex)
+            {
+                return JsonSerializer.Serialize(new Response(ex.Message, null));
+            }
         }
 
+        /// <summary>
+        /// returns a list of IDs of all user's boards.
+        /// </summary>
+        /// <param name="email">The email of the user.</param>
+        /// <returns>Response containing a list of board names.</returns>
         public string GetUserBoards(string email)
         {
-            throw new NotImplementedException();
+            try
+            {
+                string boardsStr = _boardFacade.GetUserBoards(email);
+                return JsonSerializer.Serialize(new Response(null, boardsStr));
+            }
+            catch (Exception ex)
+            {
+                return JsonSerializer.Serialize(new Response(ex.Message, null));
+            }
         }
+
+        /// <summary>
+        /// Allows a user to leave a board they are a member of and removes him from members list of a board.
+        /// </summary>
+        /// <param name="email">The email of the user.</param>
+        /// <param name="boardID">The ID of the board.</param>
+        /// <returns>Response indicating success or failure.</returns>
         public string LeaveBoard(string email, int boardID)
         {
-            throw new NotImplementedException();
+            try
+            {
+                _boardFacade.LeaveBoard(email, boardID);
+                return JsonSerializer.Serialize(new Response(null, null));
+            }
+            catch (Exception ex)
+            {
+                return JsonSerializer.Serialize(new Response(ex.Message, null));
+            }
         }
+
+        /// <summary>
+        /// Gets the name of a board by its ID.
+        /// </summary>
+        /// <param name="boardId">The ID of the board.</param>
+        /// <returns>Response containing the board name.</returns>
         public string GetBoardName(int boardId)
         {
-            throw new NotImplementedException();
+            try
+            {
+                string boardName = _boardFacade.GetBoardName(boardId);
+                return JsonSerializer.Serialize(new Response(null, boardName));
+            }
+            catch (Exception ex)
+            {
+                return JsonSerializer.Serialize(new Response(ex.Message, null));
+            }
         }
+
+        /// <summary>
+        /// Transfers ownership of a board to another user.
+        /// </summary>
+        /// <param name="currentOwnerEmail">The email of the current board owner.</param>
+        /// <param name="newOwnerEmail">The email of the new board owner.</param>
+        /// <param name="boardName">The name of the board.</param>
+        /// <returns>Response indicating success or failure.</returns>
         public string TransferOwnership(string currentOwnerEmail, string newOwnerEmail, string boardName)
         {
-            throw new NotImplementedException();
+            try
+            {
+                _boardFacade.TransferOwnership(currentOwnerEmail, newOwnerEmail, boardName);
+                return JsonSerializer.Serialize(new Response(null, null));
+            }
+            catch (Exception ex)
+            {
+                return JsonSerializer.Serialize(new Response(ex.Message, null));
+            }
         }
 
 

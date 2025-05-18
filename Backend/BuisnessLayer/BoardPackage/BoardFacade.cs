@@ -337,5 +337,29 @@ namespace IntroSE.Kanban.Backend.BuisnessLayer.BoardPackage
             UserBL user = _userfacade.GetUser(email);
             return user.InProgressTasks();
         }
+        internal string GetUserBoards(string email)
+        {
+            throw new NotImplementedException();
+        }
+        internal string JoinBoard(string email, int boardID)
+        {
+            throw new NotImplementedException();
+        }
+        internal string LeaveBoard(string email, int boardID)
+        {
+            throw new NotImplementedException();
+        }
+        internal string AssignTask(string email, string boardName, int columnOrdinal, int taskID, string emailAssignee)
+        {
+            throw new NotImplementedException();
+        }
+        internal string GetBoardName(int boardId)
+        {
+            throw new NotImplementedException();
+        }
+        internal string TransferOwnership(string currentOwnerEmail, string newOwnerEmail, string boardName)
+        {
+            throw new NotImplementedException();
+        }
     }
 }
