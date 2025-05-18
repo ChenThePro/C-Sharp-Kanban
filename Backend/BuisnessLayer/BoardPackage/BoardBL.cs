@@ -1,4 +1,4 @@
-﻿using log4net;
+using log4net;
 using System;
 using System.Collections.Generic;
 using System.Reflection;
@@ -10,13 +10,16 @@ namespace IntroSE.Kanban.Backend.BuisnessLayer.BoardPackage
         internal readonly string Owner;
         internal readonly string Name;
         internal readonly List<ColumnBL> Columns;
+        internal int Id;
         private static readonly ILog Log = LogManager.GetLogger(MethodBase.GetCurrentMethod().DeclaringType);
 
-        internal BoardBL(string name, string owner)
+
+        internal BoardBL(string name, string owner, int id)
         {
             Name = name;
             Columns = new List<ColumnBL> { new(0), new(1), new(2) };
             Owner = owner;
+            Id = id;
         }
 
         internal TaskBL AddTask(string title, DateTime due, string description, DateTime creationTime, int id, int column)
@@ -69,9 +72,32 @@ namespace IntroSE.Kanban.Backend.BuisnessLayer.BoardPackage
             return Columns[columnOrdinal].GetColumnName();
         }
 
+ tests_m2
         internal void AssignTask(int column, int id, string email)
         {
             Columns[column].AssignTask(id, email);
         }
+        internal string GetUserBoards(string email)
+        {
+            throw new NotImplementedException();
+        }
+        internal string JoinBoard(string email, int boardID)
+        {
+            throw new NotImplementedException();
+        }
+        internal string LeaveBoard(string email, int boardID)
+        {
+            throw new NotImplementedException();
+        }
+        internal string GetBoardName(int boardId)
+        {
+            throw new NotImplementedException();
+        }
+        internal string TransferOwnership(string currentOwnerEmail, string newOwnerEmail, string boardName)
+        {
+            throw new NotImplementedException();
+        }
+
+ develop
     }
 }

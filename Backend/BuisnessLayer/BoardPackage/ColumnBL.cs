@@ -1,4 +1,4 @@
-﻿using log4net;
+using log4net;
 using System;
 using System.Collections.Generic;
 using System.Reflection;
@@ -94,6 +94,7 @@ namespace IntroSE.Kanban.Backend.BuisnessLayer.BoardPackage
         {
             return _name;
         }
+ tests_m2
 
         internal void AssignTask(int id, string email)
         {
@@ -104,6 +105,7 @@ namespace IntroSE.Kanban.Backend.BuisnessLayer.BoardPackage
                 throw new KeyNotFoundException("task doesn't exist");
             }
             task.AssignTask(email);
+develop
         }
     }
 }

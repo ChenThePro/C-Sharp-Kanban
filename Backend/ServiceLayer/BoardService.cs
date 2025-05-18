@@ -9,6 +9,7 @@ namespace IntroSE.Kanban.Backend.ServiceLayer
     public class BoardService
     {
         private readonly BoardFacade _boardFacade;
+        private int id;
 
         internal BoardService(BoardFacade boardFacade)
         {
@@ -29,7 +30,8 @@ namespace IntroSE.Kanban.Backend.ServiceLayer
         {
             try
             {
-                BoardBL board = _boardFacade.CreateBoard(boardName, email);
+                BoardBL board = _boardFacade.CreateBoard(boardName, email, id);
+                id = id + 1;
                 return JsonSerializer.Serialize(new Response(null, null));
             }
             catch (Exception ex)
@@ -183,5 +185,28 @@ namespace IntroSE.Kanban.Backend.ServiceLayer
                 return JsonSerializer.Serialize(new Response(ex.Message, null));
             }
         }
+        public string JoinBoard(string email, int boardID)
+        {
+            throw new NotImplementedException();
+        }
+
+        public string GetUserBoards(string email)
+        {
+            throw new NotImplementedException();
+        }
+        public string LeaveBoard(string email, int boardID)
+        {
+            throw new NotImplementedException();
+        }
+        public string GetBoardName(int boardId)
+        {
+            throw new NotImplementedException();
+        }
+        public string TransferOwnership(string currentOwnerEmail, string newOwnerEmail, string boardName)
+        {
+            throw new NotImplementedException();
+        }
+
+
     }
 }

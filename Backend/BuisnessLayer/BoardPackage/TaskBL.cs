@@ -1,4 +1,4 @@
-﻿using log4net;
+using log4net;
 using System;
 using System.Reflection;
 
@@ -37,6 +37,7 @@ namespace IntroSE.Kanban.Backend.BuisnessLayer.BoardPackage
             Due = due ?? Due;
             Log.Info("task updated");
         }
+tests_m2
 
         internal void AssignTask( string email)
         {
@@ -46,6 +47,7 @@ namespace IntroSE.Kanban.Backend.BuisnessLayer.BoardPackage
                 throw new InvalidOperationException("task already assigned");
             }
             Assigne = email;
+ develop
         }
     }
 }
