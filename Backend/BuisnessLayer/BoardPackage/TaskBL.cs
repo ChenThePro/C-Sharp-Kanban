@@ -27,13 +27,13 @@ namespace IntroSE.Kanban.Backend.BuisnessLayer.BoardPackage
             if (due.HasValue)
                 if (((DateTime)due).CompareTo(CreationTime) < 0)
                 {
-                    Log.Error("due can't be before creation");
-                    throw new InvalidOperationException("due can't be before creation");
+                    Log.Error("Due date cannot be earlier than the creation date.");
+                    throw new ArgumentOutOfRangeException("Due date cannot be earlier than the creation date.");
                 }
             Title = title ?? Title;
             Description = description ?? Description;
             Due = due ?? Due;
-            Log.Info("task updated");
+            Log.Info("Task updated successfuly.");
         }
         public string AssignTask(string email, string boardName, int columnOrdinal, int taskID, string emailAssignee)
         {

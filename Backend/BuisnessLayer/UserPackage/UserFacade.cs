@@ -19,6 +19,58 @@ namespace IntroSE.Kanban.Backend.BuisnessLayer.UserPackage
             _emails = new Dictionary<string, UserBL>();
         }
 
+        private void ValidateEmail(string email)
+        {
+            if (_emails.ContainsKey(email))
+            {
+                Log.Error("Email already exists.");
+                throw new InvalidOperationException("Email already exists.");
+            }
+            if (!Regex.IsMatch(email, @"^[^@\s]+@[^@\s]+\.[^@\s]+$"))
+            {
+                Log.Error("Email format is not valid.");
+                throw new FormatException("Email format is not valid.");
+            }
+        }
+
+        private void VaildatePassword(string password)
+        {
+            if (password.Length < 6 || password.Length > 20)
+            {
+                Log.Error("Password must be between 6 and 20 characters.");
+                throw new ArgumentOutOfRangeException("Password must be between 6 and 20 characters.");
+            }
+            if (!Regex.IsMatch(password, @"[A-Z]"))
+            {
+                Log.Error("Password must contain at least one uppercase letter.");
+                throw new ArgumentException("Password must contain at least one uppercase letter.");
+            }
+            if (!Regex.IsMatch(password, @"[a-z]"))
+            {
+                Log.Error("Password must contain at least one lowercase letter.");
+                throw new ArgumentException("Password must contain at least one lowercase letter.");
+            }
+            if (!Regex.IsMatch(password, @"\d"))
+            {
+                Log.Error("Password must contain at least one number.");
+                throw new ArgumentException("Password must contain at least one number.");
+            }
+            if (!Regex.IsMatch(password, @"^[a-zA-Z0-9]+$"))
+            {
+                Log.Error("Password must not contain special characters.");
+                throw new ArgumentException("Password must not contain special characters.");
+            }
+        }
+
+        private void AuthenticateUser(string email)
+        {
+            if (!_emails.ContainsKey(email))
+            {
+                Log.Error("Email doesn't exist.");
+                throw new KeyNotFoundException("Email doesn't exist.");
+            }
+        }
+
         /// <summary>
         /// Attempts to log in a user with the provided email and password.
         /// </summary>
@@ -31,11 +83,7 @@ namespace IntroSE.Kanban.Backend.BuisnessLayer.UserPackage
         /// <postcondition>User is marked as logged in if credentials are valid.</postcondition>
         internal UserBL Login(string email, string password)
         {
-            if (!_emails.ContainsKey(email))
-            {
-                Log.Error("email doesn't exist");
-                throw new KeyNotFoundException("email doesn't exist");
-            }
+            AuthenticateUser(email);
             return _emails[email].Login(password);
         }
 
@@ -49,11 +97,7 @@ namespace IntroSE.Kanban.Backend.BuisnessLayer.UserPackage
         /// <postcondition>User is marked as logged out.</postcondition>
         internal void Logout(string email)
         {
-            if (!_emails.ContainsKey(email))
-            {
-                Log.Error("email doesn't exist");
-                throw new KeyNotFoundException("email doesn't exist");
-            }
+            AuthenticateUser(email);
             _emails[email].Logout();
         }
 
@@ -70,39 +114,11 @@ namespace IntroSE.Kanban.Backend.BuisnessLayer.UserPackage
         /// <postcondition>User is added to the system and marked as logged in.</postcondition>
         internal UserBL Register(string email, string password)
         {
-            if (_emails.ContainsKey(email)) 
-            {
-                Log.Error("email already exists");
-                throw new InvalidOperationException("email already exists");
-            }
-            if (!Regex.IsMatch(email, @"^[^@\s]+@[^@\s]+\.[^@\s]+$"))
-            {
-                Log.Error("email format is not valid");
-                throw new FormatException("email format is not valid");
-            }
-            if (password.Length < 6 || password.Length > 20)
-            {
-                Log.Error("password must be between 6 and 20 characters");
-                throw new ArgumentException("password must be between 6 and 20 characters");
-            }
-            if (!Regex.IsMatch(password, @"[A-Z]"))
-            {
-                Log.Error("password must contain at least one uppercase letter");
-                throw new ArgumentException("password must contain at least one uppercase letter");
-            }
-            if (!Regex.IsMatch(password, @"[a-z]"))
-            {
-                Log.Error("password must contain at least one lowercase letter");
-                throw new ArgumentException("password must contain at least one lowercase letter");
-            }
-            if (!Regex.IsMatch(password, @"\d"))
-            {
-                Log.Error("password must contain at least one number");
-                throw new ArgumentException("password must contain at least one number");
-            }
+            ValidateEmail(email);
+            VaildatePassword(password);
             UserBL newUser = new UserBL(email, password);
             _emails[email] = newUser;
-            Log.Info("new user " + email + " created");
+            Log.Info("New user " + email + " created.");
             return newUser;
         }
 

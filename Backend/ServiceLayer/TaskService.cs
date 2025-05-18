@@ -7,11 +7,12 @@ namespace IntroSE.Kanban.Backend.ServiceLayer
     public class TaskService
     {
         private readonly BoardFacade _boardFacade;
-        private static int _id = 1;
+        private static int _id;
 
         internal TaskService(BoardFacade boardFacade)
         {
             _boardFacade = boardFacade;
+            _id = -1;
         }
 
         /// <summary>

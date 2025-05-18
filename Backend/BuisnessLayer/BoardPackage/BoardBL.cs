@@ -13,7 +13,6 @@ namespace IntroSE.Kanban.Backend.BuisnessLayer.BoardPackage
         internal int Id;
         private static readonly ILog Log = LogManager.GetLogger(MethodBase.GetCurrentMethod().DeclaringType);
 
-
         internal BoardBL(string name, string owner, int id)
         {
             Name = name;
@@ -34,12 +33,12 @@ namespace IntroSE.Kanban.Backend.BuisnessLayer.BoardPackage
             TaskBL task = GetTaskByIdAndColumn(id, column);
             if (task == null)
             {
-                Log.Error("task " + id + " for " + email + " doesn't exist in " + Name + "'s " + Columns[column].GetColumnName());
-                throw new KeyNotFoundException("task doesn't exist");
+                Log.Error("Task id" + id + " for " + email + " doesn't exist in " + Name + "'s " + Columns[column].GetColumnName() + " column.");
+                throw new KeyNotFoundException("Task id" + id + " for " + email + " doesn't exist in " + Name + "'s " + Columns[column].GetColumnName() + " column.");
             }
             Columns[column + 1].Add(task, email);
             Columns[column].Delete(task, email);
-            Log.Info("task " + task.Id + " moved from " + Columns[column].GetColumnName() + " to " + Columns[column + 1].GetColumnName() + " for " + email);
+            Log.Info("Task id " + task.Id + " moved from " + Columns[column].GetColumnName() + " to " + Columns[column + 1].GetColumnName() + " for " + email + " in board " + Name + ".");
         }
 
         internal void UpdateTask(string title, DateTime? due, string description, int id, string email, int column)
@@ -96,6 +95,5 @@ namespace IntroSE.Kanban.Backend.BuisnessLayer.BoardPackage
         {
             throw new NotImplementedException();
         }
-
     }
 }

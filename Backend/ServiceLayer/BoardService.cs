@@ -9,11 +9,12 @@ namespace IntroSE.Kanban.Backend.ServiceLayer
     public class BoardService
     {
         private readonly BoardFacade _boardFacade;
-        private int id;
+        private int _id;
 
         internal BoardService(BoardFacade boardFacade)
         {
             _boardFacade = boardFacade;
+            _id = 1;
         }
 
         /// <summary>
@@ -24,14 +25,16 @@ namespace IntroSE.Kanban.Backend.ServiceLayer
         /// <returns>Response containing the created BoardSL object.</returns>
         /// <exception cref="ArgumentNullException">If boardName or email is null or empty.</exception>
         /// <exception cref="InvalidOperationException">If boardName exists.</exception>
+        /// <exception cref="ArgumentOutOfRangeException"></exception>
+        /// <exception cref="KeyNotFoundException"></exception>
         /// <precondition>boardName and email must be non-empty strings.</precondition>
         /// <postcondition>A new board is created and associated with the user.</postcondition>
         public string CreateBoard(string boardName, string email)
         {
             try
             {
-                BoardBL board = _boardFacade.CreateBoard(boardName, email, id);
-                id = id + 1;
+                BoardBL board = _boardFacade.CreateBoard(boardName, email, _id);
+                _id++;
                 return JsonSerializer.Serialize(new Response(null, null));
             }
             catch (Exception ex)
@@ -46,7 +49,7 @@ namespace IntroSE.Kanban.Backend.ServiceLayer
         /// <param name="boardName">The name of the board to delete.</param>
         /// <param name="email">The user's email who owns the board.</param>
         /// <returns>An empty Response indicating success or failure.</returns>
-        /// <exception cref="ArgumentNullException">If boardName or email is null or empty.</exception>
+        /// <exception cref="InvalidOperationException">.</exception>
         /// <exception cref="KeyNotFoundException">If boardName doesn't exist.</exception>
         /// <precondition>The board must exist and be owned by the user.</precondition>
         /// <postcondition>The board is removed from the system.</postcondition>
@@ -71,7 +74,7 @@ namespace IntroSE.Kanban.Backend.ServiceLayer
         /// <param name="limit">The new limit for the column (must be non-negative).</param>
         /// <param name="email">The user's email.</param>
         /// <returns>An empty Response indicating success or failure.</returns>
-        /// <exception cref="ArgumentException">If limit is negative.</exception>
+        /// <exception cref="ArgumentOutOfRangeException">If limit is negative.</exception>
         /// <exception cref="InvalidOperationException">If column is not valid or number of existing tasks in the column larger than limit.</exception>
         /// <exception cref="KeyNotFoundException">If boardname doexn't exist.</exception>
         /// <precondition>Board and column must exist and belong to the user.</precondition>
@@ -96,7 +99,7 @@ namespace IntroSE.Kanban.Backend.ServiceLayer
         /// <param name="boardName">The name of the board.</param>
         /// <param name="columnOrdinal">The index of the column.</param>
         /// <returns>Response containing a list of TaskBL objects in the column.</returns>
-        /// <exception cref="ArgumentNullException">If any input is null or empty.</exception>
+        /// <exception cref="InvalidOperationException"></exception>
         /// <exception cref="ArgumentOutOfRangeException">If columnOrdinal is invalid.</exception>
         /// <exception cref="KeyNotFoundException">If the board does not exist or is not accessible by the user.</exception>
         /// <precondition>The user must own the board and the column must exist.</precondition>
@@ -121,7 +124,7 @@ namespace IntroSE.Kanban.Backend.ServiceLayer
         /// <param name="boardName">The name of the board.</param>
         /// <param name="columnOrdinal">The index of the column.</param>
         /// <returns>Response containing the column's task limit.</returns>
-        /// <exception cref="ArgumentNullException">If any input is null or empty.</exception>
+        /// <exception cref="InvalidOperationException">If any input is null or empty.</exception>
         /// <exception cref="ArgumentOutOfRangeException">If columnOrdinal is out of range.</exception>
         /// <exception cref="KeyNotFoundException">If the board does not exist or is not owned by the user.</exception>
         /// <precondition>The specified column exists in the user's board.</precondition>
@@ -146,7 +149,7 @@ namespace IntroSE.Kanban.Backend.ServiceLayer
         /// <param name="boardName">The name of the board.</param>
         /// <param name="columnOrdinal">The index of the column.</param>
         /// <returns>Response containing the name of the column.</returns>
-        /// <exception cref="ArgumentNullException">If any input is null or empty.</exception>
+        /// <exception cref="InvalidOperationException">If any input is null or empty.</exception>
         /// <exception cref="ArgumentOutOfRangeException">If columnOrdinal is out of range.</exception>
         /// <exception cref="KeyNotFoundException">If the board does not exist or is not owned by the user.</exception>
         /// <precondition>The specified column exists in the user's board.</precondition>
@@ -169,7 +172,7 @@ namespace IntroSE.Kanban.Backend.ServiceLayer
         /// </summary>
         /// <param name="email">The user's email address.</param>
         /// <returns>Response containing a list of in-progress TaskBL objects.</returns>
-        /// <exception cref="ArgumentNullException">If email is null or empty.</exception>
+        /// <exception cref="InvalidOperationException">If email is null or empty.</exception>
         /// <exception cref="KeyNotFoundException">If no tasks are found or user is invalid.</exception>
         /// <precondition>The user must be registered and have at least one in-progress task.</precondition>
         /// <postcondition>A list of in-progress tasks is returned.</postcondition>

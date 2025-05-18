@@ -26,16 +26,16 @@ namespace IntroSE.Kanban.Backend.BuisnessLayer.UserPackage
         {
             if (_password != password)
             {
-                Log.Error("password incorrect");
-                throw new UnauthorizedAccessException("password incorrect");
+                Log.Error("Password incorrect.");
+                throw new UnauthorizedAccessException("Password incorrect.");
             }
             if (LoggedIn)
             {
-                Log.Error("already logged in");
-                throw new InvalidOperationException("already logged in");
+                Log.Error("Already logged in");
+                throw new InvalidOperationException("Already logged in.");
             }
             LoggedIn = true;
-            Log.Info("user logged in successfully");
+            Log.Info("User logged in successfully.");
             return this;
         }
 
@@ -43,11 +43,11 @@ namespace IntroSE.Kanban.Backend.BuisnessLayer.UserPackage
         {
             if (!LoggedIn)
             {
-                Log.Error("user not logged in");
-                throw new InvalidOperationException("user not logged in");
+                Log.Error("User not logged in.");
+                throw new InvalidOperationException("User not logged in.");
             }
             LoggedIn = false;
-            Log.Info("user logged out");
+            Log.Info("User logged out.");
         }
 
         internal BoardBL GetBoard(string boardName)
@@ -55,8 +55,8 @@ namespace IntroSE.Kanban.Backend.BuisnessLayer.UserPackage
             foreach (BoardBL board in _boards)
                 if (board.Name.ToLower() == boardName.ToLower())
                     return board;
-            Log.Error("boardname doesn't exist in user");
-            throw new KeyNotFoundException("boardname doesn't exist in user");
+            Log.Error("Boardname doesn't exist in user.");
+            throw new KeyNotFoundException("Boardname doesn't exist in user.");
         }
 
         internal bool BoardExists(string boardName)

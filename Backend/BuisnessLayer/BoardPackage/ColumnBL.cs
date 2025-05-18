@@ -37,17 +37,17 @@ namespace IntroSE.Kanban.Backend.BuisnessLayer.BoardPackage
         {
             if (_limit != -1 && _limit == _tasks.Count)
             {
-                Log.Error("exceeds column's limit");
-                throw new InvalidOperationException("exceeds column's limit");
+                Log.Error("Add a task will exceed column's limit.");
+                throw new InvalidOperationException("Add a task will exceed column's limit.");
             }
-            Log.Info(email + " task added succesfully");
+            Log.Info("Task added succesfully for " + email + ".");
             _tasks.Add(task);
         }
 
         internal void Delete(TaskBL task, string email)
         {
             _tasks.Remove(task);
-            Log.Info(email + " task removed succesfully");
+            Log.Info("Task removed succesfully " + email + ".");
         }
 
         internal void UpdateTask(string title, DateTime? due, string description, int id, string email)
@@ -58,8 +58,8 @@ namespace IntroSE.Kanban.Backend.BuisnessLayer.BoardPackage
                     task.Update(title, due, description, email);
                     return;
                 }
-            Log.Error("task doensn't exist");
-            throw new KeyNotFoundException("task doensn't exist");
+            Log.Error("Task doensn't exist.");
+            throw new KeyNotFoundException("Task doensn't exist.");
         }
 
         internal TaskBL GetTaskByIdAndColumn(int id)
@@ -74,8 +74,8 @@ namespace IntroSE.Kanban.Backend.BuisnessLayer.BoardPackage
         {
             if (limit != -1 && limit < _tasks.Count)
             {
-                Log.Error("limit too low");
-                throw new InvalidOperationException("limit too low");
+                Log.Error("Limit lower than current tasks in " + _name + ".");
+                throw new InvalidOperationException("Limit lower than current tasks in " + _name + ".");
             }
             _limit = limit;
         }
