@@ -1,10 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace IntroSE.Kanban.Backend.DAL
+﻿namespace IntroSE.Kanban.Backend.DAL
 {
     internal class UserDAL
     {
@@ -14,8 +8,8 @@ namespace IntroSE.Kanban.Backend.DAL
 
         public UserDAL(string email, string password)
         {
-            this.Email = email;
-            this.Password = password;
+            Email = email;
+            Password = password;
         }
     }
 }

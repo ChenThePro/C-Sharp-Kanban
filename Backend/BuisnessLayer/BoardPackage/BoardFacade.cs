@@ -319,21 +319,14 @@ namespace IntroSE.Kanban.Backend.BuisnessLayer.BoardPackage
             return user.InProgressTasks();
         }
 
-        internal void AssignTask(string boardName, int column, int id, string email)
+        internal void AssignTask(string email, string boardName, int column, int id, string AssigneEmail)
         {
-            if (!UserExistsAndLoggedIn(email))
-            {
-                Log.Error("user is not logged in or doesn't exist");
-                throw new InvalidOperationException("user is not logged in or doesn't exist");
-            }
-            if (column > 2 || column < 0)
-            {
-                Log.Error("invalid column");
-                throw new InvalidOperationException("invalid column");
-            }
-                UserBL user = _userfacade.GetUser(email);
+            AuthenticateUser(email);
+            AuthenticateColumn(column, 2);
+            AuthenticateInteger(id, "Id");
+            UserBL user = _userfacade.GetUser(email);
             BoardBL board = user.GetBoard(boardName);
-            board.AssignTask(column, id, email);
+            board.AssignTask(column, id, AssigneEmail);
         }
     }
 }

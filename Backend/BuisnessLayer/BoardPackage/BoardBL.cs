@@ -33,12 +33,12 @@ namespace IntroSE.Kanban.Backend.BuisnessLayer.BoardPackage
             TaskBL task = GetTaskByIdAndColumn(id, column);
             if (task == null)
             {
-                Log.Error("Task id" + id + " for " + email + " doesn't exist in " + Name + "'s " + Columns[column].GetColumnName() + " column.");
-                throw new KeyNotFoundException("Task id" + id + " for " + email + " doesn't exist in " + Name + "'s " + Columns[column].GetColumnName() + " column.");
+                Log.Error("Task id" + id + " for " + email + " doesn't exist in " + Name + "'s " + Columns[column].GetName() + " column.");
+                throw new KeyNotFoundException("Task id" + id + " for " + email + " doesn't exist in " + Name + "'s " + Columns[column].GetName() + " column.");
             }
             Columns[column + 1].Add(task, email);
             Columns[column].Delete(task, email);
-            Log.Info("Task id " + task.Id + " moved from " + Columns[column].GetColumnName() + " to " + Columns[column + 1].GetColumnName() + " for " + email + " in board " + Name + ".");
+            Log.Info("Task id " + task.Id + " moved from " + Columns[column].GetName() + " to " + Columns[column + 1].GetName() + " for " + email + " in board " + Name + ".");
         }
 
         internal void UpdateTask(string title, DateTime? due, string description, int id, string email, int column)
@@ -48,7 +48,7 @@ namespace IntroSE.Kanban.Backend.BuisnessLayer.BoardPackage
 
         internal TaskBL GetTaskByIdAndColumn(int id, int column)
         {
-            return Columns[column].GetTaskByIdAndColumn(id);
+            return Columns[column].GetTaskById(id);
         }
 
         internal void LimitColumn(int column, int limit, string email)
@@ -58,44 +58,47 @@ namespace IntroSE.Kanban.Backend.BuisnessLayer.BoardPackage
 
         internal List<TaskBL> GetColumn(int columnOrdinal)
         {
-            return Columns[columnOrdinal].GetColumn();
+            return Columns[columnOrdinal].GetTasks();
         }
 
         internal int GetColumnLimit(int columnOrdinal)
         {
-            return Columns[columnOrdinal].GetColumnLimit();
+            return Columns[columnOrdinal].GetLimit();
         }
 
         internal string GetColumnName(int columnOrdinal)
         {
-            return Columns[columnOrdinal].GetColumnName();
+            return Columns[columnOrdinal].GetName();
         }
 
- tests_m2
-        internal void AssignTask(int column, int id, string email)
+        internal void AssignTask(int column, int id, string AssigneEmail)
         {
-            Columns[column].AssignTask(id, email);
+            Columns[column].AssignTask(id, AssigneEmail);
         }
+
         internal string GetUserBoards(string email)
         {
             throw new NotImplementedException();
         }
+
         internal string JoinBoard(string email, int boardID)
         {
             throw new NotImplementedException();
         }
+
         internal string LeaveBoard(string email, int boardID)
         {
             throw new NotImplementedException();
         }
+
         internal string GetBoardName(int boardId)
         {
             throw new NotImplementedException();
         }
+
         internal string TransferOwnership(string currentOwnerEmail, string newOwnerEmail, string boardName)
         {
             throw new NotImplementedException();
         }
-
     }
 }

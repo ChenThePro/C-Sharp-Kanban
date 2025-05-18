@@ -37,17 +37,15 @@ namespace IntroSE.Kanban.Backend.BuisnessLayer.BoardPackage
             Due = due ?? Due;
             Log.Info("Task updated successfuly.");
         }
-tests_m2
 
-        internal void AssignTask( string email)
+        internal void AssignTask(string AssigneEmail)
         {
-            if(Assigne != null)
+            if (Assigne != null)
             {
-                Log.Error("task already assigned");
-                throw new InvalidOperationException("task already assigned");
+                Log.Error("Task already assigned");
+                throw new InvalidOperationException("Task already assigned");
             }
-            Assigne = email;
- develop
+            Assigne = AssigneEmail;
         }
     }
 }

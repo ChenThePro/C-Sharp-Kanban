@@ -1,11 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using log4net;
-using System.Xml.Linq;
-using IntroSE.Kanban.Backend.ServiceLayer;
 
 namespace IntroSE.Kanban.Backend.DAL
 {
@@ -29,9 +23,9 @@ namespace IntroSE.Kanban.Backend.DAL
                     Name = "done";
                     break;
             }
-            this.Limit = -1 ;
+            Limit = -1 ;
             Tasks = new List<TaskDAL>();
-            this.BoardId = boardId;
+            BoardId = boardId;
 
         }
         public void AddTask(TaskDAL task, string email)

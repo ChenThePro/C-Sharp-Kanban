@@ -98,19 +98,18 @@ namespace IntroSE.Kanban.Backend.ServiceLayer
                 return JsonSerializer.Serialize(new Response(ex.Message, null));
             }
         }
- tests_m2
+
         public string AssignTask(string email, string boardName, int column, int id, string AssigneEmail)
         {
             try
             {
-                _boardFacade.AssignTask(boardName, column, id, email);
+                _boardFacade.AssignTask(email, boardName, column, id, AssigneEmail);
                 return JsonSerializer.Serialize(new Response(null, null));
             }
             catch (Exception ex)
             {
                 return JsonSerializer.Serialize(new Response(ex.Message, null));
             }
- develop
         }
     }
 }
