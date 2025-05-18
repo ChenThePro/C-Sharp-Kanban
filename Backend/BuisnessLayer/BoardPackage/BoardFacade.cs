@@ -93,7 +93,7 @@ namespace IntroSE.Kanban.Backend.BuisnessLayer.BoardPackage
         /// <returns>The created <see cref="BoardBL"/> instance.</returns>
         /// <exception cref="ArgumentNullException">Thrown if boardName or email is null or empty.</exception>
         /// <exception cref="InvalidOperationException">Thrown if a board with the given name already exists.</exception>
-        internal BoardBL CreateBoard(string boardName, string email)
+        internal BoardBL CreateBoard(string boardName, string email, int id)
         {
             if (!UserExistsAndLoggedIn(email))
             {
@@ -111,7 +111,8 @@ namespace IntroSE.Kanban.Backend.BuisnessLayer.BoardPackage
                 Log.Error("board already exists");
                 throw new InvalidOperationException("board already exists");
             }
-            BoardBL board = new BoardBL(boardName, email);
+            BoardBL board = new BoardBL(boardName, email, id);
+          
             user.CreateBoard(board);
             Log.Info("new board created " + boardName + " for " + email);
             return board;
