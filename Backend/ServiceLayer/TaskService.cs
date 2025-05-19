@@ -12,7 +12,7 @@ namespace IntroSE.Kanban.Backend.ServiceLayer
         internal TaskService(BoardFacade boardFacade)
         {
             _boardFacade = boardFacade;
-            _id = -1;
+            _id = 1;
         }
 
         /// <summary>

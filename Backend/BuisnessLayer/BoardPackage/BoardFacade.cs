@@ -108,7 +108,7 @@ namespace IntroSE.Kanban.Backend.BuisnessLayer.BoardPackage
             AuthenticateTitleLength(title);
             AuthenticateDescription(description);
             AuthenticateInteger(id, "Id");
-            AuthenticateInteger(due.CompareTo(creationTime), "");
+            AuthenticateInteger(due.CompareTo(creationTime), "", true);
             AuthenticateUser(email);
             UserBL user = _userfacade.GetUser(email);
             BoardBL board = user.GetBoard(boardName);

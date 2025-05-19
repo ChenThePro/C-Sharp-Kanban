@@ -15,7 +15,7 @@ namespace IntroSE.Kanban.BackendTests.Testings
 
         public bool TestNoUsernameRegister()
         {
-            string json = _factory.GetUserService().Register(null!, "Password1");
+            string json = _factory.GetUserService().Register(null, "Password1");
             return !json.Contains("\"ErrorMessage\":null");
         }
 

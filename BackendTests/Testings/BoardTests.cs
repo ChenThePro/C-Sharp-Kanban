@@ -31,7 +31,7 @@ namespace IntroSE.Kanban.BackendTests.Testings
 
         public bool CreateBoard_CaseInsensitiveName()
         {
-            string json = _factory.GetBoardService().CreateBoard(_boardName, _userEmail);
+            string json = _factory.GetBoardService().CreateBoard("my first board", _userEmail);
             return !json.Contains("\"ErrorMessage\":null");
         }
 
@@ -47,40 +47,30 @@ namespace IntroSE.Kanban.BackendTests.Testings
             return !json.Contains("\"ErrorMessage\":null");
         }
 
-
-        public bool CheckOwnership()
-        {
-            _factory.GetBoardService().CreateBoard(_boardName, _userEmail);
-            string json = _factory.GetBoardService().TransferOwnership(_userEmail,"noa@gmail.com", _boardName);
-            return !json.Contains("\"ErrorMessage\":null");
-        }
-        /// <summary>
-        /// to change the id to the board id!!!!!!!!!!!!!!!!
-        /// </summary>
-        /// <returns></returns>
         public bool CheckJoiningToANewBoard()
         {
             _factory.GetBoardService().CreateBoard(_boardName, _userEmail);
-            string json = _factory.GetBoardService().JoinBoard(_userEmail, 1);
+            string json = _factory.GetBoardService().JoinBoard("kuku@gmail.com", 3);
             return !json.Contains("\"ErrorMessage\":null");
+        }
 
+        public bool CheckOwnership()
+        {
+            string json = _factory.GetBoardService().TransferOwnership(_userEmail, "kuku@gmail.com", _boardName);
+            return !json.Contains("\"ErrorMessage\":null");
         }
 
         public bool checkUserBoardIdList()
         {
-            _factory.GetBoardService().CreateBoard(_boardName, _userEmail);
             string json = _factory.GetBoardService().GetUserBoards(_userEmail);
             return !json.Contains("\"ErrorMessage\":null");
-
         }
         public bool checkUserBoardIdList_userWithoutBoards()
         {
-            _factory.GetUserService().Register(_userEmail,"Aa123456");
-            string json = _factory.GetBoardService().GetUserBoards(_userEmail);
+            _factory.GetUserService().Register("noa@gmail.com", "Aa123456");
+            string json = _factory.GetBoardService().GetUserBoards("noa@gmail.com");
             return !json.Contains("\"ErrorMessage\":null");
-
         }
-
 
         public void RunAll()
         {
@@ -90,8 +80,10 @@ namespace IntroSE.Kanban.BackendTests.Testings
             Console.WriteLine("🔹 CreateBoard_CaseInsensitiveName: " + CreateBoard_CaseInsensitiveName());
             Console.WriteLine("🔹 DeleteBoard: " + DeleteBoard());
             Console.WriteLine("🔹 DeleteNonExistentBoard: " + DeleteNonExistentBoard());
+            Console.WriteLine("🔹 CheckJoiningToANewBoard: " + CheckJoiningToANewBoard());
+            Console.WriteLine("🔹 CheckOwnership: " + CheckOwnership());
+            Console.WriteLine("🔹 checkUserBoardIdList: " + checkUserBoardIdList());
+            Console.WriteLine("🔹 checkUserBoardIdList_userWithoutBoards: " + checkUserBoardIdList_userWithoutBoards());
         }
-
-
     }
 }

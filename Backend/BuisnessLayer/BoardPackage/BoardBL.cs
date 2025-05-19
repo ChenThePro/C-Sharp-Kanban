@@ -33,7 +33,7 @@ namespace IntroSE.Kanban.Backend.BuisnessLayer.BoardPackage
             TaskBL task = GetTaskByIdAndColumn(id, column);
             if (task == null)
             {
-                Log.Error("Task id" + id + " for " + email + " doesn't exist in " + Name + "'s " + Columns[column].GetName() + " column.");
+                Log.Error("Task id " + id + " for " + email + " doesn't exist in " + Name + "'s " + Columns[column].GetName() + " column.");
                 throw new KeyNotFoundException("Task id" + id + " for " + email + " doesn't exist in " + Name + "'s " + Columns[column].GetName() + " column.");
             }
             Columns[column + 1].Add(task, email);

@@ -21,6 +21,11 @@ namespace IntroSE.Kanban.Backend.BuisnessLayer.UserPackage
 
         private void ValidateEmail(string email)
         {
+            if (string.IsNullOrWhiteSpace(email))
+            {
+                Log.Error("Email cannot be empty");
+                throw new ArgumentNullException("Email cannot be empty");
+            }
             if (_emails.ContainsKey(email))
             {
                 Log.Error("Email already exists.");
