@@ -334,11 +334,6 @@ namespace IntroSE.Kanban.Backend.BuisnessLayer.BoardPackage
             throw new NotImplementedException();
         }
       
-        internal string AssignTask(string email, string boardName, int columnOrdinal, int taskID, string emailAssignee)
-        {
-            throw new NotImplementedException();
-        }
-      
         internal string GetBoardName(int boardId)
         {
             throw new NotImplementedException();
