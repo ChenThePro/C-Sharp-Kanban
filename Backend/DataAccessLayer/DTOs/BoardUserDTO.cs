@@ -2,7 +2,7 @@
 
 namespace IntroSE.Kanban.Backend.DataAccessLayer.DTOs
 {
-    internal class BoardUserDTO
+    internal class BoardUserDTO : IDTO
     {
         internal const string BOARD_ID_COLUMN_NAME = "id";
         internal const string BOARD_USER_EMAIL_COLUMN_NAME = "email";
@@ -15,7 +15,7 @@ namespace IntroSE.Kanban.Backend.DataAccessLayer.DTOs
         internal string Email
         {
             get => _email;
-            set { _controller.Update(_id, value, BOARD_USER_EMAIL_COLUMN_NAME); _email = value; }
+            set { _controller.Update(BOARD_ID_COLUMN_NAME, _id, BOARD_USER_EMAIL_COLUMN_NAME, value); _email = value; }
         }
 
         internal BoardUserDTO(string email, int id)
@@ -24,5 +24,8 @@ namespace IntroSE.Kanban.Backend.DataAccessLayer.DTOs
             _id = id;
             _email = email;
         }
+
+        public string[] GetColumnNames() => new[] { BOARD_ID_COLUMN_NAME, BOARD_USER_EMAIL_COLUMN_NAME };
+        public object[] GetColumnValues() => new object[] { Email, Id };
     }
 }

@@ -2,7 +2,7 @@
 
 namespace IntroSE.Kanban.Backend.DataAccessLayer.DTOs
 {
-    internal class UserDTO
+    internal class UserDTO : IDTO
     {
         internal const string USER_EMAIL_COLUMN_NAME = "email";
         internal const string USER_PASSWORD_COLUMN_NAME = "password";
@@ -13,13 +13,13 @@ namespace IntroSE.Kanban.Backend.DataAccessLayer.DTOs
         internal string Email 
         { 
             get => _email; 
-            set { _controller.Update(_email, value, USER_EMAIL_COLUMN_NAME); _email = value; } 
+            set { _controller.Update(USER_EMAIL_COLUMN_NAME, _email, USER_EMAIL_COLUMN_NAME, value); _email = value; } 
         }
 
         internal string Password 
         { 
             get => _password; 
-            set { _controller.Update(_password, value, USER_PASSWORD_COLUMN_NAME); _password = value; } 
+            set { _controller.Update(USER_EMAIL_COLUMN_NAME, _email, USER_PASSWORD_COLUMN_NAME, value); _password = value; } 
         }
 
         internal UserDTO(string email, string password)
@@ -28,5 +28,8 @@ namespace IntroSE.Kanban.Backend.DataAccessLayer.DTOs
             Password = password;
             _controller = new UserController();
         }
+
+        public string[] GetColumnNames() => new[] { USER_EMAIL_COLUMN_NAME, USER_PASSWORD_COLUMN_NAME };
+        public object[] GetColumnValues() => new object[] { Email, Password };
     }
 }

@@ -3,7 +3,7 @@ using System;
 
 namespace IntroSE.Kanban.Backend.DataAccessLayer.DTOs
 {
-    internal class TaskDTO
+    internal class TaskDTO : IDTO
     {
         internal const string TASK_TITLE_COLUMN_NAME = "title";
         internal const string TASK_DESC_COLUMN_NAME = "description";
@@ -24,19 +24,19 @@ namespace IntroSE.Kanban.Backend.DataAccessLayer.DTOs
         internal string Title
         {
             get => _title;
-            set { _controller.Update(_id, value, TASK_TITLE_COLUMN_NAME); _title = value; }
+            set { _controller.Update(TASK_ID_COLUMN_NAME, _id, TASK_TITLE_COLUMN_NAME, value); _title = value; }
         }
 
         internal string Description
         {
             get => _description;
-            set { _controller.Update(_id, value, TASK_DESC_COLUMN_NAME); _description = value; }
+            set { _controller.Update(TASK_ID_COLUMN_NAME, _id, TASK_DESC_COLUMN_NAME, value); _description = value; }
         }
 
         internal DateTime Due
         {
             get => _due;
-            set { _controller.Update(_id, value.ToString("o"), TASK_DUE_COLUMN_NAME); _due = value; }
+            set { _controller.Update(TASK_ID_COLUMN_NAME, _id, TASK_DUE_COLUMN_NAME, value.ToUniversalTime().ToString("o")); _due = value; }
         }
 
         internal DateTime CreationTime => _creationTime;
@@ -48,7 +48,7 @@ namespace IntroSE.Kanban.Backend.DataAccessLayer.DTOs
         internal int Column
         {
             get => _column;
-            set { _controller.Update(_id, value, TASK_COLUMN_COLUMN_NAME); _column = value; }
+            set { _controller.Update(TASK_ID_COLUMN_NAME, _id, TASK_COLUMN_COLUMN_NAME, value); _column = value; }
         }
 
         internal TaskDTO(string title, DateTime due, string description, DateTime creationTime, int id, int boardId, int column)
@@ -67,5 +67,8 @@ namespace IntroSE.Kanban.Backend.DataAccessLayer.DTOs
         {
             _controller.Insert(this);
         }
+
+        public string[] GetColumnNames() => new[] { TASK_TITLE_COLUMN_NAME, TASK_BOARD_ID_COLUMN_NAME, TASK_COLUMN_COLUMN_NAME, TASK_CREATE_COLUMN_NAME, TASK_DESC_COLUMN_NAME, TASK_DUE_COLUMN_NAME, TASK_ID_COLUMN_NAME };
+        public object[] GetColumnValues() => new object[] { Title, Description, Due, CreationTime, Id, BoardId, Column };
     }
 }

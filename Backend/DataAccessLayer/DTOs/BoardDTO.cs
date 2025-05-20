@@ -4,7 +4,7 @@ using System.Collections.Generic;
 
 namespace IntroSE.Kanban.Backend.DataAccessLayer.DTOs
 {
-    internal class BoardDTO
+    internal class BoardDTO : IDTO
     {
         internal const string BOARD_ID_COLUMN_NAME = "id";
         internal const string BOARD_NAME_COLUMN_NAME = "name";
@@ -25,13 +25,13 @@ namespace IntroSE.Kanban.Backend.DataAccessLayer.DTOs
         internal string Name
         {
             get => _name;
-            set { _controller.Update(_id, value, BOARD_NAME_COLUMN_NAME); _name = value; }
+            set { _controller.Update(BOARD_ID_COLUMN_NAME, _id, BOARD_NAME_COLUMN_NAME, value); _name = value; }
         }
 
         internal string Owner
         {
             get => _owner;
-            set { _controller.Update(_id, value, BOARD_OWNER_COLUMN_NAME); _owner = value; }
+            set { _controller.Update(BOARD_ID_COLUMN_NAME, _id, BOARD_OWNER_COLUMN_NAME, value); _owner = value; }
         }
 
         internal BoardDTO(string name, string owner, int id, int limit_0, int limit_1, int limit_2)
@@ -54,18 +54,21 @@ namespace IntroSE.Kanban.Backend.DataAccessLayer.DTOs
             switch (column)
             {
                 case 0:
-                    _controller.Update(_id, limit, BOARD_LIMIT0_COLUMN_NAME);
+                    _controller.Update(BOARD_ID_COLUMN_NAME, _id, BOARD_LIMIT0_COLUMN_NAME, limit);
                     _columns[0]._limit = limit;
                     break;
                 case 1:
-                    _controller.Update(_id, limit, BOARD_LIMIT1_COLUMN_NAME);
+                    _controller.Update(BOARD_ID_COLUMN_NAME, _id, BOARD_LIMIT1_COLUMN_NAME, limit);
                     _columns[1]._limit = limit;
                     break;
                 case 2:
-                    _controller.Update(_id, limit, BOARD_LIMIT2_COLUMN_NAME);
+                    _controller.Update(BOARD_ID_COLUMN_NAME, _id, BOARD_LIMIT2_COLUMN_NAME, limit);
                     _columns[2]._limit = limit;
                     break;
             }
         }
+
+        public string[] GetColumnNames() => new[] { BOARD_NAME_COLUMN_NAME, BOARD_OWNER_COLUMN_NAME, BOARD_ID_COLUMN_NAME };
+        public object[] GetColumnValues() => new object[] { Name, Owner, Id, Columns };
     }
 }
