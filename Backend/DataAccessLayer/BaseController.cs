@@ -25,17 +25,13 @@ namespace IntroSE.Kanban.Backend.DataAccessLayer
         {
             var columns = dto.GetColumnNames();
             var values = dto.GetColumnValues();
-
             var columnList = string.Join(", ", columns);
             var paramList = string.Join(", ", columns.Select(c => $"@{c}"));
-
             using var connection = new SqliteConnection(_connectionString);
             using var command = connection.CreateCommand();
-
             command.CommandText = $"INSERT INTO {TableName} ({columnList}) VALUES ({paramList});";
             for (int i = 0; i < columns.Length; i++)
                 command.Parameters.AddWithValue($"@{columns[i]}", values[i]);
-
             try
             {
                 connection.Open();
@@ -52,10 +48,8 @@ namespace IntroSE.Kanban.Backend.DataAccessLayer
         {
             using var connection = new SqliteConnection(_connectionString);
             using var command = connection.CreateCommand();
-
             command.CommandText = $"DELETE FROM {TableName} WHERE {keyColumn} = @Key;";
             command.Parameters.AddWithValue("@Key", key);
-
             try
             {
                 connection.Open();
@@ -72,11 +66,9 @@ namespace IntroSE.Kanban.Backend.DataAccessLayer
         {
             using var connection = new SqliteConnection(_connectionString);
             using var command = connection.CreateCommand();
-
             command.CommandText = $"UPDATE {TableName} SET {column} = @Value WHERE {keyColumn} = @Key;";
             command.Parameters.AddWithValue("@Value", newValue);
             command.Parameters.AddWithValue("@Key", key);
-
             try
             {
                 connection.Open();
@@ -94,9 +86,7 @@ namespace IntroSE.Kanban.Backend.DataAccessLayer
             List<TDTO> results = new();
             using var connection = new SqliteConnection(_connectionString);
             using var command = connection.CreateCommand();
-
             command.CommandText = $"SELECT * FROM {TableName};";
-
             try
             {
                 connection.Open();

@@ -1,10 +1,6 @@
 ﻿using IntroSE.Kanban.Backend.DataAccessLayer;
 using IntroSE.Kanban.Backend.DataAccessLayer.DTOs;
-using log4net;
 using Microsoft.Data.Sqlite;
-using System;
-using System.IO;
-using System.Reflection;
 
 namespace IntroSE.Kanban.Backend.DAL
 {

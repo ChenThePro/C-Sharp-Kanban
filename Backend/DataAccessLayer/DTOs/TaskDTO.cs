@@ -1,5 +1,6 @@
 ﻿using IntroSE.Kanban.Backend.DAL;
 using System;
+using System.Collections.Generic;
 
 namespace IntroSE.Kanban.Backend.DataAccessLayer.DTOs
 {
@@ -21,6 +22,12 @@ namespace IntroSE.Kanban.Backend.DataAccessLayer.DTOs
         private int _column;
         private readonly TaskController _controller;
 
+        internal DateTime CreationTime => _creationTime;
+
+        internal int Id => _id;
+
+        internal int BoardId => _boardId;
+
         internal string Title
         {
             get => _title;
@@ -38,12 +45,6 @@ namespace IntroSE.Kanban.Backend.DataAccessLayer.DTOs
             get => _due;
             set { _controller.Update(TASK_ID_COLUMN_NAME, _id, TASK_DUE_COLUMN_NAME, value.ToUniversalTime().ToString("o")); _due = value; }
         }
-
-        internal DateTime CreationTime => _creationTime;
-
-        internal int Id => _id;
-
-        internal int BoardId => _boardId;
 
         internal int Column
         {
@@ -66,6 +67,16 @@ namespace IntroSE.Kanban.Backend.DataAccessLayer.DTOs
         internal void Insert()
         {
             _controller.Insert(this);
+        }
+
+        internal void Delete()
+        {
+            _controller.Delete(TASK_ID_COLUMN_NAME, Id);
+        }
+
+        internal List<TaskDTO> SelectAll()
+        {
+            return _controller.SelectAll();
         }
 
         public string[] GetColumnNames() => new[] { TASK_TITLE_COLUMN_NAME, TASK_BOARD_ID_COLUMN_NAME, TASK_COLUMN_COLUMN_NAME, TASK_CREATE_COLUMN_NAME, TASK_DESC_COLUMN_NAME, TASK_DUE_COLUMN_NAME, TASK_ID_COLUMN_NAME };

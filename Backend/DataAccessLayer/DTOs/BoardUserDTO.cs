@@ -1,4 +1,5 @@
 ﻿using IntroSE.Kanban.Backend.DAL;
+using System.Collections.Generic;
 
 namespace IntroSE.Kanban.Backend.DataAccessLayer.DTOs
 {
@@ -23,6 +24,21 @@ namespace IntroSE.Kanban.Backend.DataAccessLayer.DTOs
             _controller = new BoardUserController();
             _id = id;
             _email = email;
+        }
+
+        internal void Insert()
+        {
+            _controller.Insert(this);
+        }
+
+        internal void Delete()
+        {
+            _controller.Delete(BOARD_ID_COLUMN_NAME, Id);
+        }
+
+        internal List<BoardUserDTO> SelectAll()
+        {
+            return _controller.SelectAll();
         }
 
         public string[] GetColumnNames() => new[] { BOARD_ID_COLUMN_NAME, BOARD_USER_EMAIL_COLUMN_NAME };

@@ -1,5 +1,4 @@
-﻿using IntroSE.Kanban.Backend.DAL;
-using System;
+﻿using System;
 using System.Collections.Generic;
 
 namespace IntroSE.Kanban.Backend.DataAccessLayer.DTOs
@@ -18,7 +17,7 @@ namespace IntroSE.Kanban.Backend.DataAccessLayer.DTOs
         private readonly List<ColumnDTO> _columns;
         private readonly BoardController _controller;
 
-        internal int Id { get => _id; }
+        internal int Id => _id;
 
         internal List<ColumnDTO> Columns => _columns;
 
@@ -40,13 +39,22 @@ namespace IntroSE.Kanban.Backend.DataAccessLayer.DTOs
             _name = name;
             _owner = owner;
             _id = id;
-            _columns = new List<ColumnDTO> { new ColumnDTO(0, id, limit_0), new ColumnDTO(1, id, limit_1), new ColumnDTO(2, id, limit_2) };
+            _columns = new List<ColumnDTO> { new ColumnDTO(id, limit_0, 0), new ColumnDTO(id, limit_1, 1), new ColumnDTO(id, limit_2, 2) };
         }
 
-        internal void AddTask(string title, string description, DateTime due, string email, int taskId, int columnIndex)
+        internal void AddTask(string title, string description, DateTime due, string email, int taskId)
+        {
+            TaskDTO task = new TaskDTO(title, due, description, DateTime.Today, taskId, _id, 0);
+            task.Insert();
+            _columns[0].AddTask(task);
+        }
+
+        internal void MoveTask(string title, string description, DateTime due, string email, int taskId, int columnIndex)
         {
             TaskDTO task = new TaskDTO(title, due, description, DateTime.Today, taskId, _id, columnIndex);
-            _columns[columnIndex].AddTask(task);
+            task.Column = columnIndex + 1;
+            _columns[columnIndex].RemoveTask(task);
+            _columns[columnIndex + 1].AddTask(task);
         }
 
         internal void LimitColumn(int limit, int column)
@@ -55,17 +63,32 @@ namespace IntroSE.Kanban.Backend.DataAccessLayer.DTOs
             {
                 case 0:
                     _controller.Update(BOARD_ID_COLUMN_NAME, _id, BOARD_LIMIT0_COLUMN_NAME, limit);
-                    _columns[0]._limit = limit;
+                    _columns[0].Limit = limit;
                     break;
                 case 1:
                     _controller.Update(BOARD_ID_COLUMN_NAME, _id, BOARD_LIMIT1_COLUMN_NAME, limit);
-                    _columns[1]._limit = limit;
+                    _columns[1].Limit = limit;
                     break;
                 case 2:
                     _controller.Update(BOARD_ID_COLUMN_NAME, _id, BOARD_LIMIT2_COLUMN_NAME, limit);
-                    _columns[2]._limit = limit;
+                    _columns[2].Limit = limit;
                     break;
             }
+        }
+
+        internal void Insert()
+        {
+            _controller.Insert(this);
+        }
+
+        internal void Delete()
+        {
+            _controller.Delete(BOARD_ID_COLUMN_NAME, Id);
+        }
+
+        internal List<BoardDTO> SelectAll()
+        {
+            return _controller.SelectAll();
         }
 
         public string[] GetColumnNames() => new[] { BOARD_NAME_COLUMN_NAME, BOARD_OWNER_COLUMN_NAME, BOARD_ID_COLUMN_NAME };
