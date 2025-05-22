@@ -21,10 +21,12 @@ namespace IntroSE.Kanban.Backend.DataAccessLayer.DTOs
 
         internal BoardUserDTO(string email, int id)
         {
-            _controller = new BoardUserController();
             _id = id;
             _email = email;
+            _controller = new BoardUserController();
         }
+
+        internal BoardUserDTO() { _controller = new BoardUserController(); }
 
         internal void Insert()
         {

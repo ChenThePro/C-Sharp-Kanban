@@ -10,19 +10,19 @@ namespace IntroSE.Kanban.Backend.ServiceLayer
 {
     public class ServiceFactory
     {
-        private readonly BoardFacade _boardFacade;
-        private readonly UserFacade _userFacade;
         private TaskService _taskService;
         private BoardService _boardService;
         private UserService _userService;
+        private readonly BoardFacade _boardFacade;
+        private readonly UserFacade _userFacade;
 
         public ServiceFactory()
         {
-            _userFacade = new UserFacade();
-            _boardFacade = new BoardFacade(_userFacade);
             _taskService = null;
             _boardService = null;
             _userService = null;
+            _userFacade = new UserFacade();
+            _boardFacade = new BoardFacade(_userFacade);
             var logRepository = LogManager.GetRepository(Assembly.GetEntryAssembly());
             XmlConfigurator.Configure(logRepository, new FileInfo("log4net.config"));
         }

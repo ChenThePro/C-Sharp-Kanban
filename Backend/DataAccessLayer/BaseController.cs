@@ -10,9 +10,9 @@ namespace IntroSE.Kanban.Backend.DataAccessLayer
 {
     internal abstract class BaseController<TDTO> where TDTO : IDTO
     {
+        private static readonly ILog Log = LogManager.GetLogger(MethodBase.GetCurrentMethod().DeclaringType);
         protected readonly string _connectionString;
         protected readonly string TableName;
-        private static readonly ILog Log = LogManager.GetLogger(MethodBase.GetCurrentMethod().DeclaringType);
 
         protected BaseController(string tableName)
         {
@@ -35,7 +35,12 @@ namespace IntroSE.Kanban.Backend.DataAccessLayer
             try
             {
                 connection.Open();
-                return command.ExecuteNonQuery() > 0;
+                if (command.ExecuteNonQuery() > 0)
+                {
+                    Log.Info($"Insert succeeded for table {TableName}.");
+                    return true;
+                }
+                return false;
             }
             catch (Exception ex)
             {
@@ -53,7 +58,12 @@ namespace IntroSE.Kanban.Backend.DataAccessLayer
             try
             {
                 connection.Open();
-                return command.ExecuteNonQuery() > 0;
+                if (command.ExecuteNonQuery() > 0)
+                {
+                    Log.Info($"Delete succeeded on {TableName} for key {key}.");
+                    return true;
+                }
+                return false;
             }
             catch (Exception ex)
             {
@@ -72,7 +82,12 @@ namespace IntroSE.Kanban.Backend.DataAccessLayer
             try
             {
                 connection.Open();
-                return command.ExecuteNonQuery() > 0;
+                if (command.ExecuteNonQuery() > 0)
+                {
+                    Log.Info($"Update succeeded on {TableName} for key {key}.");
+                    return true;
+                }
+                return false;
             }
             catch (Exception ex)
             {
@@ -98,6 +113,7 @@ namespace IntroSE.Kanban.Backend.DataAccessLayer
             {
                 Log.Error($"Select failed on {TableName}.", ex);
             }
+            Log.Info($"Select succeeded on {TableName}.");
             return results;
         }
 

@@ -10,9 +10,9 @@ namespace IntroSE.Kanban.BackendTests
         public static void Main(string[] args)
         {
             Console.WriteLine("🚀 Running all tests!\n");
-            Console.WriteLine("👤 Running user-related tests...");
+            Console.WriteLine("👤 Running registration-related tests...");
             new RegistrationTests().RunAll();
-            Console.WriteLine("👤 Running user-related tests...");
+            Console.WriteLine("\n👤 Running login-related tests...");
             new LoginTests().RunAll();
             Console.WriteLine("\n🧠 Running board-related tests...");
             new BoardTests().RunAll();

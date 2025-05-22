@@ -4,10 +4,10 @@ namespace IntroSE.Kanban.BackendTests.Testings
 {
     public class TaskTests
     {
-        private readonly ServiceFactory _factory = new ServiceFactory();
         private string _userEmail = "user@gmail.com";
         private string _password = "Password1";
         private string _boardName = "board";
+        private readonly ServiceFactory _factory = new ServiceFactory();
 
         public bool TestAddTaskSuccessfully()
         {

@@ -7,10 +7,10 @@ namespace IntroSE.Kanban.Backend.BuisnessLayer.BoardPackage
 {
     internal class ColumnBL
     {
+        private static readonly ILog Log = LogManager.GetLogger(MethodBase.GetCurrentMethod().DeclaringType);
         private int _limit;
         private readonly string _name;
         private readonly List<TaskBL> _tasks;
-        private static readonly ILog Log = LogManager.GetLogger(MethodBase.GetCurrentMethod().DeclaringType);
 
         internal ColumnBL(int num)
         {
@@ -21,8 +21,8 @@ namespace IntroSE.Kanban.Backend.BuisnessLayer.BoardPackage
                 2 => "done",
                 _ => throw new NotImplementedException("Will never reach here"),
             };
-            _tasks = new List<TaskBL>();
             _limit = -1;
+            _tasks = new List<TaskBL>();
         }
 
         internal void Add(TaskBL task, string email)

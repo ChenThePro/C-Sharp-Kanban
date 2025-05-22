@@ -1,5 +1,4 @@
 ﻿using IntroSE.Kanban.Backend.DAL;
-using System;
 using System.Collections.Generic;
 
 namespace IntroSE.Kanban.Backend.DataAccessLayer.DTOs
@@ -20,7 +19,7 @@ namespace IntroSE.Kanban.Backend.DataAccessLayer.DTOs
             Limit = limit;
             _boardId = boardId;
             _controller = new TaskController();
-            _tasks = _controller.SelectAll().FindAll(task => task.Column == index);
+            _tasks = _controller.SelectAll().FindAll(task =>  task.BoardId == BoardId && task.Column == index);
         }
 
         internal void AddTask(TaskDTO task)

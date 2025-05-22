@@ -35,12 +35,14 @@ namespace IntroSE.Kanban.Backend.DataAccessLayer.DTOs
 
         internal BoardDTO(string name, string owner, int id, int limit_0, int limit_1, int limit_2)
         {
-            _controller = new BoardController();
             _name = name;
             _owner = owner;
             _id = id;
-            _columns = new List<ColumnDTO> { new ColumnDTO(id, limit_0, 0), new ColumnDTO(id, limit_1, 1), new ColumnDTO(id, limit_2, 2) };
+            _columns = new List<ColumnDTO> { new(id, limit_0, 0), new(id, limit_1, 1), new(id, limit_2, 2) };
+            _controller = new BoardController();
         }
+
+        internal BoardDTO() { _controller = new BoardController(); }
 
         internal void AddTask(string title, string description, DateTime due, string email, int taskId)
         {

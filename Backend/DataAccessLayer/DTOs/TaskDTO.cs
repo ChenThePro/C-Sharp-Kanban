@@ -54,7 +54,6 @@ namespace IntroSE.Kanban.Backend.DataAccessLayer.DTOs
 
         internal TaskDTO(string title, DateTime due, string description, DateTime creationTime, int id, int boardId, int column)
         {
-            _controller = new TaskController();
             _title = title;
             _description = description;
             _due = due;
@@ -62,7 +61,10 @@ namespace IntroSE.Kanban.Backend.DataAccessLayer.DTOs
             _id = id;
             _boardId = boardId;
             _column = column;
+            _controller = new TaskController();
         }
+
+        internal TaskDTO() { _controller = new TaskController(); }
 
         internal void Insert()
         {

@@ -6,12 +6,12 @@ namespace IntroSE.Kanban.Backend.BuisnessLayer.BoardPackage
 {
     internal class TaskBL
     {
+        private static readonly ILog Log = LogManager.GetLogger(MethodBase.GetCurrentMethod().DeclaringType);
         internal string Title;
         internal DateTime Due;
         internal string Description;
         internal readonly DateTime CreationTime;
         internal readonly int Id;
-        private static readonly ILog Log = LogManager.GetLogger(MethodBase.GetCurrentMethod().DeclaringType);
         internal string Assigne;
 
         internal TaskBL(string title, DateTime due, string description, DateTime creationTime, int id)

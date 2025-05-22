@@ -8,8 +8,8 @@ namespace IntroSE.Kanban.Backend.BuisnessLayer.UserPackage
 {
     internal class UserFacade
     {
-        internal readonly Dictionary<string, UserBL> _emails;
         private static readonly ILog Log = LogManager.GetLogger(MethodBase.GetCurrentMethod().DeclaringType);
+        internal readonly Dictionary<string, UserBL> _emails;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="UserFacade"/> class.
