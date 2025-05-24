@@ -6,8 +6,8 @@ namespace IntroSE.Kanban.Backend.ServiceLayer
 {
     public class TaskService
     {
-        private readonly BoardFacade _boardFacade;
         private static int _id;
+        private readonly BoardFacade _boardFacade;
 
         internal TaskService(BoardFacade boardFacade)
         {

@@ -5,9 +5,9 @@ namespace IntroSE.Kanban.BackendTests.Testings
 {
     public class BoardTests
     {
-        private readonly ServiceFactory _factory = new ServiceFactory();
         private string _userEmail = "test@example.com";
         private string _boardName = "My First Board";
+        private readonly ServiceFactory _factory = new ServiceFactory();
 
         public bool CreateBoardWithValidValues()
         {
@@ -60,12 +60,12 @@ namespace IntroSE.Kanban.BackendTests.Testings
             return !json.Contains("\"ErrorMessage\":null");
         }
 
-        public bool checkUserBoardIdList()
+        public bool CheckUserBoardIdList()
         {
             string json = _factory.GetBoardService().GetUserBoards(_userEmail);
             return !json.Contains("\"ErrorMessage\":null");
         }
-        public bool checkUserBoardIdList_userWithoutBoards()
+        public bool CheckUserBoardIdList_userWithoutBoards()
         {
             _factory.GetUserService().Register("noa@gmail.com", "Aa123456");
             string json = _factory.GetBoardService().GetUserBoards("noa@gmail.com");
@@ -82,8 +82,8 @@ namespace IntroSE.Kanban.BackendTests.Testings
             Console.WriteLine("🔹 DeleteNonExistentBoard: " + DeleteNonExistentBoard());
             Console.WriteLine("🔹 CheckJoiningToANewBoard: " + CheckJoiningToANewBoard());
             Console.WriteLine("🔹 CheckOwnership: " + CheckOwnership());
-            Console.WriteLine("🔹 checkUserBoardIdList: " + checkUserBoardIdList());
-            Console.WriteLine("🔹 checkUserBoardIdList_userWithoutBoards: " + checkUserBoardIdList_userWithoutBoards());
+            Console.WriteLine("🔹 CheckUserBoardIdList: " + CheckUserBoardIdList());
+            Console.WriteLine("🔹 CheckUserBoardIdList_userWithoutBoards: " + CheckUserBoardIdList_userWithoutBoards());
         }
     }
 }

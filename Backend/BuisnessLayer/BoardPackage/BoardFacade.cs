@@ -8,10 +8,10 @@ namespace IntroSE.Kanban.Backend.BuisnessLayer.BoardPackage
 {
     internal class BoardFacade
     {
-        private readonly UserFacade _userfacade;
         private static readonly ILog Log = LogManager.GetLogger(MethodBase.GetCurrentMethod().DeclaringType);
         private const int DESC_MAX = 300;
         private const int TITLE_MAX = 50;
+        private readonly UserFacade _userfacade;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="BoardFacade"/> class.

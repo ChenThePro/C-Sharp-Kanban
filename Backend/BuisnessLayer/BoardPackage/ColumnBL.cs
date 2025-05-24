@@ -7,30 +7,22 @@ namespace IntroSE.Kanban.Backend.BuisnessLayer.BoardPackage
 {
     internal class ColumnBL
     {
+        private static readonly ILog Log = LogManager.GetLogger(MethodBase.GetCurrentMethod().DeclaringType);
         private int _limit;
         private readonly string _name;
         private readonly List<TaskBL> _tasks;
-        private static readonly ILog Log = LogManager.GetLogger(MethodBase.GetCurrentMethod().DeclaringType);
 
         internal ColumnBL(int num)
         {
-            switch (num)
+            _name = num switch
             {
-                case 0:
-                    _name = "backlog";
-                    break;
-                case 1:
-                    _name = "in progress";
-                    break;
-                case 2:
-                    _name = "done";
-                    break;
-                default:
-                    Log.Error("invalid column num");
-                    throw new ArgumentException("invalid column num");
-            }
-            _tasks = new List<TaskBL>();
+                0 => "backlog",
+                1 => "in progress",
+                2 => "done",
+                _ => throw new NotImplementedException("Will never reach here"),
+            };
             _limit = -1;
+            _tasks = new List<TaskBL>();
         }
 
         internal void Add(TaskBL task, string email)

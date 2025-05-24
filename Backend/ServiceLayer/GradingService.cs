@@ -1,6 +1,5 @@
 ﻿using System;
 
-
 namespace IntroSE.Kanban.Backend.ServiceLayer
 {
     /// <summary>
@@ -55,7 +54,6 @@ namespace IntroSE.Kanban.Backend.ServiceLayer
         {
             _serviceFactory = new ServiceFactory();
         }
-
 
         /// <summary>
         /// This method registers a new user to the system.

@@ -8,17 +8,17 @@ namespace IntroSE.Kanban.Backend.BuisnessLayer.UserPackage
 {
     internal class UserBL
     {
+        private static readonly ILog Log = LogManager.GetLogger(MethodBase.GetCurrentMethod().DeclaringType);
         internal bool LoggedIn;
         internal string Email;
         private string _password;
         private readonly List<BoardBL> _boards;
-        private static readonly ILog Log = LogManager.GetLogger(MethodBase.GetCurrentMethod().DeclaringType);
 
         internal UserBL(string email, string password)
         {
             Email = email;
-            _password = password;
             LoggedIn = true;
+            _password = password;
             _boards = new List<BoardBL>();
         }
 

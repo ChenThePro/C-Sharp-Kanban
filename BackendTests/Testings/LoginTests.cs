@@ -4,9 +4,9 @@ namespace IntroSE.Kanban.BackendTests.Testings
 {
     public class LoginTests
     {
-        private readonly ServiceFactory _factory = new ServiceFactory();
         private string _userEmail = "user@email.com";
         private string _password = "Password1";
+        private readonly ServiceFactory _factory = new ServiceFactory();
 
         public bool TestLoggedInAfterRegister()
         {

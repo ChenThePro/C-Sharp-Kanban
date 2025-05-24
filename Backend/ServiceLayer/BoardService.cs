@@ -8,9 +8,8 @@ namespace IntroSE.Kanban.Backend.ServiceLayer
 {
     public class BoardService
     {
-        private readonly BoardFacade _boardFacade;
         private int _id;
-
+        private readonly BoardFacade _boardFacade;
         internal BoardService(BoardFacade boardFacade)
         {
             _boardFacade = boardFacade;
