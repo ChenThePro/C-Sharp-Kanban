@@ -38,12 +38,12 @@ namespace IntroSE.Kanban.Backend.BuisnessLayer.BoardPackage
             Log.Info("Task updated successfuly.");
         }
 
-        internal void AssignTask(string AssigneEmail)
+        internal void AssignTask(string email, string AssigneEmail)
         {
-            if (Assigne != null)
+            if (Assigne != null && Assigne != email)
             {
-                Log.Error("Task already assigned");
-                throw new InvalidOperationException("Task already assigned");
+                Log.Error("Task can be assigned only by the assigne");
+                throw new InvalidOperationException("Task can be assigned only by the assigne");
             }
             Assigne = AssigneEmail;
         }

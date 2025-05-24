@@ -87,7 +87,7 @@ namespace IntroSE.Kanban.Backend.BuisnessLayer.BoardPackage
             return _name;
         }
 
-        internal void AssignTask(int id, string AssigneEmail)
+        internal void AssignTask(string email, int id, string AssigneEmail)
         {
             TaskBL task = GetTaskById(id);
             if (task == null)
@@ -95,7 +95,7 @@ namespace IntroSE.Kanban.Backend.BuisnessLayer.BoardPackage
                 Log.Error("Task id " + id + " for " + AssigneEmail + " doesn't exist in " + _name);
                 throw new KeyNotFoundException("Task id " + id + " for " + AssigneEmail + " doesn't exist in " + _name);
             }
-            task.AssignTask(AssigneEmail);
+            task.AssignTask(email, AssigneEmail);
         }
     }
 }

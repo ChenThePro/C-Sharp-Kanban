@@ -351,7 +351,7 @@ namespace IntroSE.Kanban.Backend.BuisnessLayer.BoardPackage
             AuthenticateInteger(id, "Id");
             UserBL user = _userfacade.GetUser(email);
             BoardBL board = user.GetBoard(boardName);
-            board.AssignTask(column, id, AssigneEmail);
+            board.AssignTask(email, column, id, AssigneEmail);
         }
     }
 }

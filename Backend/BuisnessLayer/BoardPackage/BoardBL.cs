@@ -71,9 +71,9 @@ namespace IntroSE.Kanban.Backend.BuisnessLayer.BoardPackage
             return Columns[columnOrdinal].GetName();
         }
 
-        internal void AssignTask(int column, int id, string AssigneEmail)
+        internal void AssignTask(string email, int column, int id, string AssigneEmail)
         {
-            Columns[column].AssignTask(id, AssigneEmail);
+            Columns[column].AssignTask(email, id, AssigneEmail);
         }
 
         internal string GetUserBoards(string email)
