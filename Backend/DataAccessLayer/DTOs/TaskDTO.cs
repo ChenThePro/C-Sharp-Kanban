@@ -7,7 +7,7 @@ namespace IntroSE.Kanban.Backend.DataAccessLayer.DTOs
     {
         internal const string TASK_ID_COLUMN_NAME = "id";
         internal const string TASK_BOARD_ID_COLUMN_NAME = "board_id";
-        internal const string TASK_CREATE_COLUMN_NAME = "creation_time";
+        internal const string TASK_CREATE_COLUMN_NAME = "created_at";
         internal const string TASK_DUE_COLUMN_NAME = "due";
         internal const string TASK_TITLE_COLUMN_NAME = "title";
         internal const string TASK_DESC_COLUMN_NAME = "description";
@@ -78,11 +78,9 @@ namespace IntroSE.Kanban.Backend.DataAccessLayer.DTOs
             return _controller.SelectAll();
         }
 
-        public string[] GetColumnNames() => new[] { TASK_ID_COLUMN_NAME, 
-            TASK_BOARD_ID_COLUMN_NAME, TASK_DESC_COLUMN_NAME, TASK_CREATE_COLUMN_NAME, 
-            TASK_TITLE_COLUMN_NAME, TASK_DUE_COLUMN_NAME, TASK_COLUMN_COLUMN_NAME };
-        public object[] GetColumnValues() => new object[] { _id, _boardId, _description,
-            _creationTime.ToUniversalTime().ToString("o"), _title, 
-            _due.ToUniversalTime().ToString("o"), _column };
+        public string[] GetColumnNames() => new[] { TASK_ID_COLUMN_NAME, TASK_BOARD_ID_COLUMN_NAME, TASK_DESC_COLUMN_NAME, 
+            TASK_CREATE_COLUMN_NAME, TASK_TITLE_COLUMN_NAME, TASK_DUE_COLUMN_NAME, TASK_COLUMN_COLUMN_NAME };
+        public object[] GetColumnValues() => new object[] { _id, _boardId, _description, 
+            _creationTime.ToUniversalTime().ToString("o"), _title, _due.ToUniversalTime().ToString("o"), _column };
     }
 }

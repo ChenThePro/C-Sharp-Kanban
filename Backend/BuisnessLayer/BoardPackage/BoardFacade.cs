@@ -62,9 +62,9 @@ namespace IntroSE.Kanban.Backend.BuisnessLayer.BoardPackage
             }
         }
 
-        private void AuthenticateColumn(int column, int limit)
+        private void AuthenticateColumn(int columnOrdinal, int limit)
         {
-            if (column > limit || column < 0)
+            if (columnOrdinal > limit || columnOrdinal < 0)
             {
                 Log.Error("Column index is out of valid range.");
                 throw new ArgumentOutOfRangeException("Column index is out of valid range.");
@@ -94,7 +94,7 @@ namespace IntroSE.Kanban.Backend.BuisnessLayer.BoardPackage
         /// <param name="title"></param>
         /// <param name="description"></param>
         /// <param name="due"></param>
-        /// <param name="id"></param>
+        /// <param name="taskID"></param>
         /// <param name="creatinTime"></param>
         /// <param name="email"></param>
         /// <returns></returns>
@@ -102,22 +102,23 @@ namespace IntroSE.Kanban.Backend.BuisnessLayer.BoardPackage
         /// <exception cref="ArgumentOutOfRangeException"></exception>
         /// <exception cref="KeyNotFoundException"></exception>
         /// <exception cref="InvalidOperationException">Thrown when email does not exist or not logged in.</exception>
-        internal TaskBL AddTask(string boardName, string title, DateTime due, string description, DateTime creationTime, int id, string email)
+        internal TaskBL AddTask(string email, string boardName, string title, string description, DateTime dueDate, int taskID)
         {
             AuthenticateString(title, "Title");
             AuthenticateTitleLength(title);
             AuthenticateDescription(description);
-            AuthenticateInteger(id, "Id");
-            AuthenticateInteger(due.CompareTo(creationTime), "", true);
+            AuthenticateInteger(taskID, "Id");
+            DateTime created_at = DateTime.Today;
+            AuthenticateInteger(dueDate.CompareTo(created_at), "", true);
             AuthenticateUser(email);
             UserBL user = _userfacade.GetUser(email);
             BoardBL board = user.GetBoard(boardName);
-            if (board.GetTaskByIdAndColumn(id, 0) != null || board.GetTaskByIdAndColumn(id, 1) != null || board.GetTaskByIdAndColumn(id, 2) != null)
+            if (board.GetTaskByIdAndColumn(0, taskID) != null || board.GetTaskByIdAndColumn(1, taskID) != null || board.GetTaskByIdAndColumn(2, taskID) != null)
             {
                 Log.Error("Task ID is already used in this board.");
                 throw new InvalidOperationException("Task ID is already used in this board.");
             }
-            return board.AddTask(title, due, description, creationTime, id, 0);
+            return board.AddTask(title, description, dueDate, created_at, taskID, 0);
         }
 
         /// <summary>
@@ -130,18 +131,18 @@ namespace IntroSE.Kanban.Backend.BuisnessLayer.BoardPackage
         /// <exception cref="KeyNotFoundException"></exception>
         /// <exception cref="ArgumentOutOfRangeException"></exception>
         /// <exception cref="InvalidOperationException">Thrown if a board with the given name already exists.</exception>
-        internal BoardBL CreateBoard(string boardName, string email, int id)
+        internal BoardBL CreateBoard(string email, string boardName, int taskID)
         {
             AuthenticateUser(email);
             AuthenticateString(boardName, "Board name");
-            AuthenticateInteger(id, "Id");
+            AuthenticateInteger(taskID, "Id");
             UserBL user = _userfacade.GetUser(email);
             if (user.BoardExists(boardName))
             {
                 Log.Error("A board with the given name already exists.");
                 throw new InvalidOperationException("A board with the given name already exists.");
             }
-            BoardBL board = new BoardBL(boardName, email, id);
+            BoardBL board = new BoardBL(email, boardName, taskID);
             user.CreateBoard(board);
             Log.Info($"New board '{boardName}' created for {email}.");
             return board;
@@ -154,7 +155,7 @@ namespace IntroSE.Kanban.Backend.BuisnessLayer.BoardPackage
         /// <param name="email">The user's email.</param>
         /// <exception cref="KeyNotFoundException"></exception>
         /// <exception cref="InvalidOperationException"></exception>
-        internal void DeleteBoard(string boardName, string email)
+        internal void DeleteBoard(string email, string boardName)
         {
             AuthenticateUser(email);
             UserBL user = _userfacade.GetUser(email);
@@ -172,10 +173,10 @@ namespace IntroSE.Kanban.Backend.BuisnessLayer.BoardPackage
         /// <exception cref="InvalidOperationException">Thrown if the column index is invalid.</exception>
         /// <exception cref="KeyNotFoundException">Thrown if the board does not exist.</exception>
         /// <exception cref="ArgumentOutOfRangeException"></exception>
-        internal void LimitColumn(string boardName, int column, int limit, string email)
+        internal void LimitColumn(string email, string boardName, int columnOrdinal, int limit)
         {
             AuthenticateUser(email);
-            AuthenticateColumn(column, 2);
+            AuthenticateColumn(columnOrdinal, 2);
             if (limit != -1)
             {
                 if (limit == 0)
@@ -187,7 +188,7 @@ namespace IntroSE.Kanban.Backend.BuisnessLayer.BoardPackage
             }
             UserBL user = _userfacade.GetUser(email);
             BoardBL board = user.GetBoard(boardName);
-            board.LimitColumn(column, limit, email);
+            board.LimitColumn(email, columnOrdinal, limit);
         }
 
         /// <summary>
@@ -195,19 +196,19 @@ namespace IntroSE.Kanban.Backend.BuisnessLayer.BoardPackage
         /// </summary>
         /// <param name="boardName">The name of the board.</param>
         /// <param name="column">The current column index.</param>
-        /// <param name="id">The task ID.</param>
+        /// <param name="taskID">The task ID.</param>
         /// <param name="email">The user's email.</param>
         /// <exception cref="InvalidOperationException">Thrown if the column index is invalid.</exception>
         /// <exception cref="KeyNotFoundException">Thrown if the board or task does not exist.</exception>
         /// <exception cref="ArgumentOutOfRangeException"></exception>
-        internal void MoveTask(string boardName, int column, int id, string email)
+        internal void AdvanceTask(string email, string boardName, int columnOrdinal, int taskID)
         {
             AuthenticateUser(email);
-            AuthenticateColumn(column, 1);
-            AuthenticateInteger(id, "Id");
+            AuthenticateColumn(columnOrdinal, 1);
+            AuthenticateInteger(taskID, "Id");
             UserBL user = _userfacade.GetUser(email);
             BoardBL board = user.GetBoard(boardName);
-            board.MoveTask(column, id, email);
+            board.AdvanceTask(email, columnOrdinal, taskID);
         }
 
         /// <summary>
@@ -223,9 +224,9 @@ namespace IntroSE.Kanban.Backend.BuisnessLayer.BoardPackage
         /// <exception cref="KeyNotFoundException">Thrown if the board or task does not exist.</exception>
         /// <exception cref="ArgumentOutOfRangeException"></exception>
         /// <exception cref="InvalidOperationException">Thrown if the user doesn't exist or is not logged in ot task id is taken or invalid column.</exception>
-        internal void UpdateTask(string boardName, string title, DateTime? due, string description, int id, string email, int column)
+        internal void UpdateTask(string email, string boardName, int columnOrdinal, int taskID, DateTime? dueDate, string title, string description)
         {
-            if (title == null && description == null && due == null)
+            if (title == null && description == null && dueDate == null)
             {
                 Log.Error("At least one field (title, description, or due date) must be provided for update.");
                 throw new ArgumentNullException("At least one field (title, description, or due date) must be provided for update.");
@@ -241,11 +242,11 @@ namespace IntroSE.Kanban.Backend.BuisnessLayer.BoardPackage
             }
             AuthenticateDescription(description);
             AuthenticateUser(email);
-            AuthenticateColumn(column, 2);
-            AuthenticateInteger(id, "Id");
+            AuthenticateColumn(columnOrdinal, 2);
+            AuthenticateInteger(taskID, "Id");
             UserBL user = _userfacade.GetUser(email);
             BoardBL board = user.GetBoard(boardName);
-            board.UpdateTask(title, due, description, id, email, column);
+            board.UpdateTask(email, columnOrdinal, taskID, dueDate, title, description);
         }
 
         /// <summary>
@@ -253,18 +254,18 @@ namespace IntroSE.Kanban.Backend.BuisnessLayer.BoardPackage
         /// </summary>
         /// <param name="email">The user's email.</param>
         /// <param name="boardName">The board's name.</param>
-        /// <param name="column">The column index.</param>
+        /// <param name="columnOrdinal">The column index.</param>
         /// <exception cref="ArgumentOutOfRangeException"></exception>
         /// <exception cref="KeyNotFoundException"></exception>
         /// <exception cref="InvalidOperationException"></exception>
         /// <returns>A list of <see cref="TaskBL"/>.</returns>
-        internal List<TaskBL> GetColumn(string email, string boardName, int column)
+        internal List<TaskBL> GetColumn(string email, string boardName, int columnOrdinal)
         {
             AuthenticateUser(email);
-            AuthenticateColumn(column, 2);
+            AuthenticateColumn(columnOrdinal, 2);
             UserBL user = _userfacade.GetUser(email);
             BoardBL board = user.GetBoard(boardName);
-            return board.GetColumn(column);
+            return board.GetColumn(columnOrdinal);
         }
 
         /// <summary>
@@ -272,18 +273,18 @@ namespace IntroSE.Kanban.Backend.BuisnessLayer.BoardPackage
         /// </summary>
         /// <param name="email">The user's email.</param>
         /// <param name="boardName">The board's name.</param>
-        /// <param name="column">The column index.</param>
+        /// <param name="columnOrdinal">The column index.</param>
         /// <exception cref="KeyNotFoundException"></exception>
         /// <exception cref="InvalidOperationException"></exception>
         /// <exception cref="ArgumentOutOfRangeException"></exception>
         /// <returns>The task limit.</returns>
-        internal int GetColumnLimit(string email, string boardName, int column)
+        internal int GetColumnLimit(string email, string boardName, int columnOrdinal)
         {
             AuthenticateUser(email);
-            AuthenticateColumn(column, 2);
+            AuthenticateColumn(columnOrdinal, 2);
             UserBL user = _userfacade.GetUser(email);
             BoardBL board = user.GetBoard(boardName);
-            return board.GetColumnLimit(column);
+            return board.GetColumnLimit(columnOrdinal);
         }
 
         /// <summary>
@@ -291,18 +292,18 @@ namespace IntroSE.Kanban.Backend.BuisnessLayer.BoardPackage
         /// </summary>
         /// <param name="email">The email of the requesting user.</param>
         /// <param name="boardName">The name of the board.</param>
-        /// <param name="column">The index of the column.</param>
+        /// <param name="columnOrdinal">The index of the column.</param>
         /// <exception cref="KeyNotFoundException"></exception>
         /// <exception cref="InvalidOperationException"></exception>
         /// <exception cref="ArgumentOutOfRangeException"></exception>
         /// <returns>The name of the column.</returns>
-        internal string GetColumnName(string email, string boardName, int column)
+        internal string GetColumnName(string email, string boardName, int columnOrdinal)
         {
             AuthenticateUser(email);
-            AuthenticateColumn(column, 2);
+            AuthenticateColumn(columnOrdinal, 2);
             UserBL user = _userfacade.GetUser(email);
             BoardBL board = user.GetBoard(boardName);
-            return board.GetColumnName(column);
+            return board.GetColumnName(columnOrdinal);
         }
 
         /// <summary>
@@ -334,7 +335,7 @@ namespace IntroSE.Kanban.Backend.BuisnessLayer.BoardPackage
             throw new NotImplementedException();
         }
       
-        internal string GetBoardName(int boardId)
+        internal string GetBoardName(int boardID)
         {
             throw new NotImplementedException();
         }
@@ -344,14 +345,14 @@ namespace IntroSE.Kanban.Backend.BuisnessLayer.BoardPackage
             throw new NotImplementedException();
         }
 
-        internal void AssignTask(string email, string boardName, int column, int id, string AssigneEmail)
+        internal void AssignTask(string email, string boardName, int columnOrdinal, int taskID, string emailAssignee)
         {
             AuthenticateUser(email);
-            AuthenticateColumn(column, 2);
-            AuthenticateInteger(id, "Id");
+            AuthenticateColumn(columnOrdinal, 2);
+            AuthenticateInteger(taskID, "Id");
             UserBL user = _userfacade.GetUser(email);
             BoardBL board = user.GetBoard(boardName);
-            board.AssignTask(email, column, id, AssigneEmail);
+            board.AssignTask(email, columnOrdinal, taskID, emailAssignee);
         }
     }
 }

@@ -8,52 +8,52 @@ namespace IntroSE.Kanban.Backend.BuisnessLayer.BoardPackage
     internal class BoardBL
     {
         private static readonly ILog Log = LogManager.GetLogger(MethodBase.GetCurrentMethod().DeclaringType);
-        internal int Id;
         internal readonly string Owner;
         internal readonly string Name;
+        internal int Id;
         internal readonly List<ColumnBL> Columns;
 
-        internal BoardBL(string name, string owner, int id)
+        internal BoardBL(string owner, string name, int id)
         {
-            Name = name;
             Owner = owner;
+            Name = name;
             Id = id;
             Columns = new List<ColumnBL> { new(0), new(1), new(2) };
         }
 
-        internal TaskBL AddTask(string title, DateTime due, string description, DateTime creationTime, int id, int column)
+        internal TaskBL AddTask(string title, string description, DateTime dueDate, DateTime created_at, int taskID, int columnOrdinal)
         {
-            TaskBL task = new TaskBL(title, due, description, creationTime, id);
-            Columns[column].Add(task, Owner);
+            TaskBL task = new TaskBL(title, description, dueDate, created_at, taskID);
+            Columns[columnOrdinal].Add(Owner, task);
             return task;
         }
 
-        internal void MoveTask(int column, int id, string email)
+        internal void AdvanceTask(string email, int columnOrdinal, int taskID)
         {
-            TaskBL task = GetTaskByIdAndColumn(id, column);
+            TaskBL task = GetTaskByIdAndColumn(columnOrdinal, taskID);
             if (task == null)
             {
-                Log.Error("Task id " + id + " for " + email + " doesn't exist in " + Name + "'s " + Columns[column].GetName() + " column.");
-                throw new KeyNotFoundException("Task id" + id + " for " + email + " doesn't exist in " + Name + "'s " + Columns[column].GetName() + " column.");
+                Log.Error("Task id " + taskID + " for " + email + " doesn't exist in " + Name + "'s " + Columns[columnOrdinal].GetName() + " column.");
+                throw new KeyNotFoundException("Task id" + taskID + " for " + email + " doesn't exist in " + Name + "'s " + Columns[columnOrdinal].GetName() + " column.");
             }
-            Columns[column + 1].Add(task, email);
-            Columns[column].Delete(task, email);
-            Log.Info("Task id " + task.Id + " moved from " + Columns[column].GetName() + " to " + Columns[column + 1].GetName() + " for " + email + " in board " + Name + ".");
+            Columns[columnOrdinal + 1].Add(email, task);
+            Columns[columnOrdinal].Delete(email, task);
+            Log.Info("Task id " + task.Id + " moved from " + Columns[columnOrdinal].GetName() + " to " + Columns[columnOrdinal + 1].GetName() + " for " + email + " in board " + Name + ".");
         }
 
-        internal void UpdateTask(string title, DateTime? due, string description, int id, string email, int column)
+        internal void UpdateTask(string email, int columnOrdinal, int taskID, DateTime? dueDate, string title, string description)
         {
-            Columns[column].UpdateTask(title, due, description, id, email);
+            Columns[columnOrdinal].UpdateTask(email, taskID, dueDate, title, description);
         }
 
-        internal TaskBL GetTaskByIdAndColumn(int id, int column)
+        internal TaskBL GetTaskByIdAndColumn(int columnOrdinal, int taskID)
         {
-            return Columns[column].GetTaskById(id);
+            return Columns[columnOrdinal].GetTaskById(taskID);
         }
 
-        internal void LimitColumn(int column, int limit, string email)
+        internal void LimitColumn(string email, int columnOrdinal, int limit)
         {
-            Columns[column].LimitColumn(limit, email);
+            Columns[columnOrdinal].LimitColumn(email, limit);
         }
 
         internal List<TaskBL> GetColumn(int columnOrdinal)
@@ -71,9 +71,9 @@ namespace IntroSE.Kanban.Backend.BuisnessLayer.BoardPackage
             return Columns[columnOrdinal].GetName();
         }
 
-        internal void AssignTask(string email, int column, int id, string AssigneEmail)
+        internal void AssignTask(string email, int columnOrdinal, int taskID, string emailAssignee)
         {
-            Columns[column].AssignTask(email, id, AssigneEmail);
+            Columns[columnOrdinal].AssignTask(email, taskID, emailAssignee);
         }
 
         internal string GetUserBoards(string email)

@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Microsoft.VisualBasic;
+using System;
 
 namespace IntroSE.Kanban.Backend.ServiceLayer
 {
@@ -97,7 +98,7 @@ namespace IntroSE.Kanban.Backend.ServiceLayer
         /// <returns>An empty response, unless an error occurs (see <see cref="GradingService"/>)</returns>
         public string LimitColumn(string email, string boardName, int columnOrdinal, int limit)
         {
-            return _serviceFactory.GetBoardService().LimitColumn(boardName, columnOrdinal, limit, email);
+            return _serviceFactory.GetBoardService().LimitColumn(email, boardName, columnOrdinal, limit);
         }
 
         /// <summary>
@@ -135,7 +136,7 @@ namespace IntroSE.Kanban.Backend.ServiceLayer
         /// <returns>An empty response, unless an error occurs (see <see cref="GradingService"/>)</returns>
         public string AddTask(string email, string boardName, string title, string description, DateTime dueDate)
         {
-            return _serviceFactory.GetTaskService().AddTask(boardName, title, dueDate, description, DateTime.Today, email);
+            return _serviceFactory.GetTaskService().AddTask(email, boardName, title, description, dueDate);
         }
 
         /// <summary>
@@ -144,12 +145,12 @@ namespace IntroSE.Kanban.Backend.ServiceLayer
         /// <param name="email">Email of the user. Must be logged in</param>
         /// <param name="boardName">The name of the board</param>
         /// <param name="columnOrdinal">The column ID. The first column is identified by 0, the ID increases by 1 for each column</param>
-        /// <param name="taskId">The task to be updated identified task ID</param>
+        /// <param name="taskID">The task to be updated identified task ID</param>
         /// <param name="dueDate">The new due date of the column</param>
         /// <returns>An empty response, unless an error occurs (see <see cref="GradingService"/>)</returns>
-        public string UpdateTaskDueDate(string email, string boardName, int columnOrdinal, int taskId, DateTime dueDate)
+        public string UpdateTaskDueDate(string email, string boardName, int columnOrdinal, int taskID, DateTime dueDate)
         {
-            return _serviceFactory.GetTaskService().UpdateTask(boardName, null, null, dueDate, taskId, email, columnOrdinal);
+            return _serviceFactory.GetTaskService().UpdateTask(email, boardName, columnOrdinal, taskID, dueDate, null, null);
         }
 
         /// <summary>
@@ -158,12 +159,12 @@ namespace IntroSE.Kanban.Backend.ServiceLayer
         /// <param name="email">Email of user. Must be logged in</param>
         /// <param name="boardName">The name of the board</param>
         /// <param name="columnOrdinal">The column ID. The first column is identified by 0, the ID increases by 1 for each column</param>
-        /// <param name="taskId">The task to be updated identified task ID</param>
+        /// <param name="taskID">The task to be updated identified task ID</param>
         /// <param name="title">New title for the task</param>
         /// <returns>An empty response, unless an error occurs (see <see cref="GradingService"/>)</returns>
-        public string UpdateTaskTitle(string email, string boardName, int columnOrdinal, int taskId, string title)
+        public string UpdateTaskTitle(string email, string boardName, int columnOrdinal, int taskID, string title)
         {
-            return _serviceFactory.GetTaskService().UpdateTask(boardName, title, null, null, taskId, email, columnOrdinal);
+            return _serviceFactory.GetTaskService().UpdateTask(email, boardName, columnOrdinal, taskID, null, title, null);
         }
 
         /// <summary>
@@ -172,12 +173,12 @@ namespace IntroSE.Kanban.Backend.ServiceLayer
         /// <param name="email">Email of user. Must be logged in</param>
         /// <param name="boardName">The name of the board</param>
         /// <param name="columnOrdinal">The column ID. The first column is identified by 0, the ID increases by 1 for each column</param>
-        /// <param name="taskId">The task to be updated identified task ID</param>
+        /// <param name="taskID">The task to be updated identified task ID</param>
         /// <param name="description">New description for the task</param>
         /// <returns>An empty response, unless an error occurs (see <see cref="GradingService"/>)</returns>
-        public string UpdateTaskDescription(string email, string boardName, int columnOrdinal, int taskId, string description)
+        public string UpdateTaskDescription(string email, string boardName, int columnOrdinal, int taskID, string description)
         {
-            return _serviceFactory.GetTaskService().UpdateTask(boardName, null, description, null, taskId, email, columnOrdinal);
+            return _serviceFactory.GetTaskService().UpdateTask(email, boardName, columnOrdinal, taskID, null, null, description);
         }
 
         /// <summary>
@@ -186,33 +187,33 @@ namespace IntroSE.Kanban.Backend.ServiceLayer
         /// <param name="email">Email of user. Must be logged in</param>
         /// <param name="boardName">The name of the board</param>
         /// <param name="columnOrdinal">The column ID. The first column is identified by 0, the ID increases by 1 for each column</param>
-        /// <param name="taskId">The task to be updated identified task ID</param>
+        /// <param name="taskID">The task to be updated identified task ID</param>
         /// <returns>An empty response, unless an error occurs (see <see cref="GradingService"/>)</returns>
-        public string AdvanceTask(string email, string boardName, int columnOrdinal, int taskId)
+        public string AdvanceTask(string email, string boardName, int columnOrdinal, int taskID)
         {
-            return _serviceFactory.GetTaskService().MoveTask(boardName, columnOrdinal, taskId, email);
+            return _serviceFactory.GetTaskService().AdvanceTask(email, boardName, columnOrdinal, taskID);
         }
 
         /// <summary>
         /// This method creates a board for the given user.
         /// </summary>
         /// <param name="email">Email of the user, must be logged in</param>
-        /// <param name="name">The name of the new board</param>
+        /// <param name="boardName">The name of the new board</param>
         /// <returns>An empty response, unless an error occurs (see <see cref="GradingService"/>)</returns>
-        public string CreateBoard(string email, string name)
+        public string CreateBoard(string email, string boardName)
         {
-            return _serviceFactory.GetBoardService().CreateBoard(name, email);
+            return _serviceFactory.GetBoardService().CreateBoard(email, boardName);
         }
 
         /// <summary>
         /// This method deletes a board.
         /// </summary>
         /// <param name="email">Email of the user. Must be logged in and an owner of the board.</param>
-        /// <param name="name">The name of the board</param>
+        /// <param name="boardName">The name of the board</param>
         /// <returns>An empty response, unless an error occurs (see <see cref="GradingService"/>)</returns>
-        public string DeleteBoard(string email, string name)
+        public string DeleteBoard(string email, string boardName)
         {
-            return _serviceFactory.GetBoardService().DeleteBoard(name, email);
+            return _serviceFactory.GetBoardService().DeleteBoard(email, boardName);
         }
 
         /// <summary>

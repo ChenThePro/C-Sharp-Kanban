@@ -28,11 +28,11 @@ namespace IntroSE.Kanban.Backend.ServiceLayer
         /// <exception cref="KeyNotFoundException"></exception>
         /// <precondition>boardName and email must be non-empty strings.</precondition>
         /// <postcondition>A new board is created and associated with the user.</postcondition>
-        public string CreateBoard(string boardName, string email)
+        public string CreateBoard(string email, string boardName)
         {
             try
             {
-                BoardBL board = _boardFacade.CreateBoard(boardName, email, _id);
+                BoardBL board = _boardFacade.CreateBoard(email, boardName, _id);
                 _id++;
                 return JsonSerializer.Serialize(new Response(null, null));
             }
@@ -52,11 +52,11 @@ namespace IntroSE.Kanban.Backend.ServiceLayer
         /// <exception cref="KeyNotFoundException">If boardName doesn't exist.</exception>
         /// <precondition>The board must exist and be owned by the user.</precondition>
         /// <postcondition>The board is removed from the system.</postcondition>
-        public String DeleteBoard(string boardName, string email)
+        public String DeleteBoard(string email, string boardName)
         {
             try
             {
-                _boardFacade.DeleteBoard(boardName, email);
+                _boardFacade.DeleteBoard(email, boardName);
                 return JsonSerializer.Serialize(new Response(null, null));
             }
             catch (Exception ex)
@@ -78,11 +78,11 @@ namespace IntroSE.Kanban.Backend.ServiceLayer
         /// <exception cref="KeyNotFoundException">If boardname doexn't exist.</exception>
         /// <precondition>Board and column must exist and belong to the user.</precondition>
         /// <postcondition>The column's task limit is updated.</postcondition>
-        public string LimitColumn(string boardName, int column, int limit, string email)
+        public string LimitColumn(string email, string boardName, int columnOrdinal, int limit)
         {
             try
             {
-                _boardFacade.LimitColumn(boardName, column, limit, email);
+                _boardFacade.LimitColumn(email, boardName, columnOrdinal, limit);
                 return JsonSerializer.Serialize(new Response(null, null));
             }
             catch (Exception ex)
@@ -107,7 +107,7 @@ namespace IntroSE.Kanban.Backend.ServiceLayer
         {
             try
             {
-                List<TaskSL> lst = _boardFacade.GetColumn(email, boardName, columnOrdinal).Select(task => new TaskSL(task.Title, task.Due, task.Description, task.CreationTime, task.Id)).ToList();
+                List<TaskSL> lst = _boardFacade.GetColumn(email, boardName, columnOrdinal).Select(task => new TaskSL(task.Title, task.Due, task.Description, task.CreatedAt, task.Id)).ToList();
                 return JsonSerializer.Serialize(new Response(null, lst));
             }
             catch (Exception ex)
@@ -179,7 +179,7 @@ namespace IntroSE.Kanban.Backend.ServiceLayer
         {
             try
             {
-                List<TaskSL> lst = _boardFacade.InProgressTasks(email).Select(task => new TaskSL(task.Title, task.Due, task.Description, task.CreationTime, task.Id)).ToList();
+                List<TaskSL> lst = _boardFacade.InProgressTasks(email).Select(task => new TaskSL(task.Title, task.Due, task.Description, task.CreatedAt, task.Id)).ToList();
                 return JsonSerializer.Serialize(new Response(null, lst));
             }
             catch (Exception ex)
@@ -248,11 +248,11 @@ namespace IntroSE.Kanban.Backend.ServiceLayer
         /// </summary>
         /// <param name="boardId">The ID of the board.</param>
         /// <returns>Response containing the board name.</returns>
-        public string GetBoardName(int boardId)
+        public string GetBoardName(int boardID)
         {
             try
             {
-                string boardName = _boardFacade.GetBoardName(boardId);
+                string boardName = _boardFacade.GetBoardName(boardID);
                 return JsonSerializer.Serialize(new Response(null, boardName));
             }
             catch (Exception ex)

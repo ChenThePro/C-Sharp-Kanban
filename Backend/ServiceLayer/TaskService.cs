@@ -31,11 +31,11 @@ namespace IntroSE.Kanban.Backend.ServiceLayer
         /// <exception cref="KeyNotFoundException">If the specified board does not exist.</exception>
         /// <precondition>The board must exist and the task ID must be unique within it.</precondition>
         /// <postcondition>The new task is added to the board's backlog.</postcondition>
-        public string AddTask(string boardName, string title, DateTime due, string description, DateTime creationTime, string email)
+        public string AddTask(string email, string boardName, string title, string description, DateTime dueDate)
         {
             try
             {
-                TaskBL task = _boardFacade.AddTask(boardName, title, due, description, creationTime, _id, email);
+                TaskBL task = _boardFacade.AddTask(email, boardName, title, description, dueDate, _id);
                 _id++;
                 return JsonSerializer.Serialize(new Response(null, null));
             }
@@ -57,11 +57,11 @@ namespace IntroSE.Kanban.Backend.ServiceLayer
         /// <exception cref="KeyNotFoundException">If the board or task does not exist.</exception>
         /// <precondition>The task must exist in the specified column and belong to the user.</precondition>
         /// <postcondition>The task is moved to the next column.</postcondition>
-        public string MoveTask(string boardName, int column, int id, string email)
+        public string AdvanceTask(string email, string boardName, int columnOrdinal, int taskID)
         {
             try
             {
-                _boardFacade.MoveTask(boardName, column, id, email);
+                _boardFacade.AdvanceTask(email, boardName, columnOrdinal, taskID);
                 return JsonSerializer.Serialize(new Response(null, null));
             }
             catch (Exception ex)
@@ -86,11 +86,11 @@ namespace IntroSE.Kanban.Backend.ServiceLayer
         /// <exception cref="ArgumentNullException">Thrown if the title is null or empty.</exception>
         /// <precondition>The task must exist in the given column and belong to the user.</precondition>
         /// <postcondition>The task's title, description, and due date are updated.</postcondition>
-        public string UpdateTask(string boardName, string title, string description, DateTime? due, int id, string email, int column)
+        public string UpdateTask(string email, string boardName, int columnOrdinal, int taskID, DateTime? dueDate, string title, string description)
         {
             try
             {
-                _boardFacade.UpdateTask(boardName, title, due, description, id, email, column);
+                _boardFacade.UpdateTask(email, boardName, columnOrdinal, taskID, dueDate, title, description);
                 return JsonSerializer.Serialize(new Response(null, null));
             }
             catch (Exception ex)
@@ -108,11 +108,11 @@ namespace IntroSE.Kanban.Backend.ServiceLayer
         /// <param name="taskID"></param>
         /// <param name="emailAssignee"></param>
         /// <returns></returns>
-        public string AssignTask(string email, string boardName, int column, int id, string AssigneEmail)
+        public string AssignTask(string email, string boardName, int columnOrdinal, int taskID, string emailAssignee)
         {
             try
             {
-                _boardFacade.AssignTask(email, boardName, column, id, AssigneEmail);
+                _boardFacade.AssignTask(email, boardName, columnOrdinal, taskID, emailAssignee);
                 return JsonSerializer.Serialize(new Response(null, null));
             }
             catch (Exception ex)

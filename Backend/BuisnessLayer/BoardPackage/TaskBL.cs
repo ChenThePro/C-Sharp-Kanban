@@ -8,26 +8,26 @@ namespace IntroSE.Kanban.Backend.BuisnessLayer.BoardPackage
     {
         private static readonly ILog Log = LogManager.GetLogger(MethodBase.GetCurrentMethod().DeclaringType);
         internal string Title;
-        internal DateTime Due;
         internal string Description;
-        internal readonly DateTime CreationTime;
+        internal DateTime Due;
+        internal readonly DateTime CreatedAt;
         internal readonly int Id;
         internal string Assigne;
 
-        internal TaskBL(string title, DateTime due, string description, DateTime creationTime, int id)
+        internal TaskBL(string title, string description, DateTime due, DateTime created_at, int taskID)
         {
             Title = title;
             Due = due;
             Description = description;
-            CreationTime = creationTime;
-            Id = id;
+            CreatedAt = created_at;
+            Id = taskID;
             Assigne = null;
         }
 
-        internal void Update(string title, DateTime? due, string description, string email)
+        internal void Update(string email, DateTime? due, string title, string description)
         {
             if (due.HasValue)
-                if (((DateTime)due).CompareTo(CreationTime) < 0)
+                if (((DateTime)due).CompareTo(CreatedAt) < 0)
                 {
                     Log.Error("Due date cannot be earlier than the creation date.");
                     throw new ArgumentOutOfRangeException("Due date cannot be earlier than the creation date.");
@@ -38,14 +38,14 @@ namespace IntroSE.Kanban.Backend.BuisnessLayer.BoardPackage
             Log.Info("Task updated successfuly.");
         }
 
-        internal void AssignTask(string email, string AssigneEmail)
+        internal void AssignTask(string email, string emailAssignee)
         {
             if (Assigne != null && Assigne != email)
             {
                 Log.Error("Task can be assigned only by the assigne");
                 throw new InvalidOperationException("Task can be assigned only by the assigne");
             }
-            Assigne = AssigneEmail;
+            Assigne = emailAssignee;
         }
     }
 }
