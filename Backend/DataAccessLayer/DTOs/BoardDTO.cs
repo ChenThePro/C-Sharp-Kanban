@@ -6,8 +6,8 @@ namespace IntroSE.Kanban.Backend.DataAccessLayer.DTOs
     internal class BoardDTO : IDTO
     {
         internal const string BOARD_ID_COLUMN_NAME = "id";
-        internal const string BOARD_NAME_COLUMN_NAME = "name";
         internal const string BOARD_OWNER_COLUMN_NAME = "owner";
+        internal const string BOARD_NAME_COLUMN_NAME = "name";
         internal const string BOARD_LIMIT0_COLUMN_NAME = "limit_0";
         internal const string BOARD_LIMIT1_COLUMN_NAME = "limit_1";
         internal const string BOARD_LIMIT2_COLUMN_NAME = "limit_2";
@@ -41,8 +41,6 @@ namespace IntroSE.Kanban.Backend.DataAccessLayer.DTOs
             _columns = new List<ColumnDTO> { new(id, limit_0, 0), new(id, limit_1, 1), new(id, limit_2, 2) };
             _controller = new BoardController();
         }
-
-        internal BoardDTO() { _controller = new BoardController(); }
 
         internal void AddTask(string title, string description, DateTime due, string email, int taskId)
         {
@@ -81,11 +79,13 @@ namespace IntroSE.Kanban.Backend.DataAccessLayer.DTOs
         internal void Insert()
         {
             _controller.Insert(this);
+            new BoardUserDTO(_owner, _id).Insert();
         }
 
         internal void Delete()
         {
-            _controller.Delete(BOARD_ID_COLUMN_NAME, Id);
+            _controller.Delete(BOARD_ID_COLUMN_NAME, _id);
+            new BoardUserDTO(_owner, _id).Delete();
         }
 
         internal List<BoardDTO> SelectAll()
@@ -93,7 +93,11 @@ namespace IntroSE.Kanban.Backend.DataAccessLayer.DTOs
             return _controller.SelectAll();
         }
 
-        public string[] GetColumnNames() => new[] { BOARD_NAME_COLUMN_NAME, BOARD_OWNER_COLUMN_NAME, BOARD_ID_COLUMN_NAME };
-        public object[] GetColumnValues() => new object[] { Name, Owner, Id, Columns };
+        public string[] GetColumnNames() => new[] { BOARD_ID_COLUMN_NAME, 
+            BOARD_OWNER_COLUMN_NAME, BOARD_NAME_COLUMN_NAME, 
+            BOARD_LIMIT0_COLUMN_NAME, BOARD_LIMIT1_COLUMN_NAME, 
+            BOARD_LIMIT2_COLUMN_NAME };
+        public object[] GetColumnValues() => new object[] { _id, _owner, _name, 
+            _columns[0].Limit, _columns[1].Limit, _columns[2].Limit };
     }
 }

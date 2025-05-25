@@ -1,24 +1,23 @@
-﻿using IntroSE.Kanban.Backend.DAL;
-using System;
+﻿using System;
 using System.Collections.Generic;
 
 namespace IntroSE.Kanban.Backend.DataAccessLayer.DTOs
 {
     internal class TaskDTO : IDTO
     {
-        internal const string TASK_TITLE_COLUMN_NAME = "title";
-        internal const string TASK_DESC_COLUMN_NAME = "description";
-        internal const string TASK_DUE_COLUMN_NAME = "due";
-        internal const string TASK_CREATE_COLUMN_NAME = "creation_time";
         internal const string TASK_ID_COLUMN_NAME = "id";
         internal const string TASK_BOARD_ID_COLUMN_NAME = "board_id";
+        internal const string TASK_CREATE_COLUMN_NAME = "creation_time";
+        internal const string TASK_DUE_COLUMN_NAME = "due";
+        internal const string TASK_TITLE_COLUMN_NAME = "title";
+        internal const string TASK_DESC_COLUMN_NAME = "description";
         internal const string TASK_COLUMN_COLUMN_NAME = "column";
-        private string _title;
-        private string _description;
-        private DateTime _due;
-        private DateTime _creationTime;
         private int _id;
         private int _boardId;
+        private readonly DateTime _creationTime;
+        private DateTime _due;
+        private string _title;
+        private string _description;
         private int _column;
         private readonly TaskController _controller;
 
@@ -52,19 +51,17 @@ namespace IntroSE.Kanban.Backend.DataAccessLayer.DTOs
             set { _controller.Update(TASK_ID_COLUMN_NAME, _id, TASK_COLUMN_COLUMN_NAME, value); _column = value; }
         }
 
-        internal TaskDTO(string title, DateTime due, string description, DateTime creationTime, int id, int boardId, int column)
+        internal TaskDTO(int id, int boardId, DateTime creationTime, DateTime due, string title, string description, int column)
         {
-            _title = title;
-            _description = description;
-            _due = due;
-            _creationTime = creationTime;
             _id = id;
             _boardId = boardId;
+            _creationTime = creationTime;
+            _due = due;
+            _title = title;
+            _description = description;
             _column = column;
             _controller = new TaskController();
         }
-
-        internal TaskDTO() { _controller = new TaskController(); }
 
         internal void Insert()
         {
@@ -73,7 +70,7 @@ namespace IntroSE.Kanban.Backend.DataAccessLayer.DTOs
 
         internal void Delete()
         {
-            _controller.Delete(TASK_ID_COLUMN_NAME, Id);
+            _controller.Delete(TASK_ID_COLUMN_NAME, _id);
         }
 
         internal List<TaskDTO> SelectAll()
@@ -81,7 +78,11 @@ namespace IntroSE.Kanban.Backend.DataAccessLayer.DTOs
             return _controller.SelectAll();
         }
 
-        public string[] GetColumnNames() => new[] { TASK_TITLE_COLUMN_NAME, TASK_BOARD_ID_COLUMN_NAME, TASK_COLUMN_COLUMN_NAME, TASK_CREATE_COLUMN_NAME, TASK_DESC_COLUMN_NAME, TASK_DUE_COLUMN_NAME, TASK_ID_COLUMN_NAME };
-        public object[] GetColumnValues() => new object[] { Title, Description, Due, CreationTime, Id, BoardId, Column };
+        public string[] GetColumnNames() => new[] { TASK_ID_COLUMN_NAME, 
+            TASK_BOARD_ID_COLUMN_NAME, TASK_DESC_COLUMN_NAME, TASK_CREATE_COLUMN_NAME, 
+            TASK_TITLE_COLUMN_NAME, TASK_DUE_COLUMN_NAME, TASK_COLUMN_COLUMN_NAME };
+        public object[] GetColumnValues() => new object[] { _id, _boardId, _description,
+            _creationTime.ToUniversalTime().ToString("o"), _title, 
+            _due.ToUniversalTime().ToString("o"), _column };
     }
 }

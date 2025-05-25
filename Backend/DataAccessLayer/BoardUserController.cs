@@ -1,8 +1,7 @@
-﻿using IntroSE.Kanban.Backend.DataAccessLayer;
-using IntroSE.Kanban.Backend.DataAccessLayer.DTOs;
+﻿using IntroSE.Kanban.Backend.DataAccessLayer.DTOs;
 using Microsoft.Data.Sqlite;
 
-namespace IntroSE.Kanban.Backend.DAL
+namespace IntroSE.Kanban.Backend.DataAccessLayer
 {
     internal class BoardUserController : BaseController<BoardUserDTO>
     {
