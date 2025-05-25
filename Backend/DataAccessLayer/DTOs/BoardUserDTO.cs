@@ -18,10 +18,15 @@ namespace IntroSE.Kanban.Backend.DataAccessLayer.DTOs
             set { _controller.Update(BOARD_ID_COLUMN_NAME, _id, BOARD_USER_EMAIL_COLUMN_NAME, value); _email = value; }
         }
 
-        internal BoardUserDTO(string email, int id)
+        internal BoardUserDTO(int id, string email)
         {
             _id = id;
             _email = email;
+            _controller = new BoardUserController();
+        }
+
+        internal BoardUserDTO()
+        {
             _controller = new BoardUserController();
         }
 
@@ -32,7 +37,7 @@ namespace IntroSE.Kanban.Backend.DataAccessLayer.DTOs
 
         internal void Delete()
         {
-            _controller.Delete(BOARD_ID_COLUMN_NAME, Id);
+            _controller.Delete(BOARD_ID_COLUMN_NAME, _id, BOARD_USER_EMAIL_COLUMN_NAME, _email);
         }
 
         internal List<BoardUserDTO> SelectAll()

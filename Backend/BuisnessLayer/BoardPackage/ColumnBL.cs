@@ -8,8 +8,8 @@ namespace IntroSE.Kanban.Backend.BuisnessLayer.BoardPackage
     internal class ColumnBL
     {
         private static readonly ILog Log = LogManager.GetLogger(MethodBase.GetCurrentMethod().DeclaringType);
-        private int _limit;
         private readonly string _name;
+        private int _limit;
         private readonly List<TaskBL> _tasks;
 
         internal ColumnBL(int num)
@@ -25,7 +25,7 @@ namespace IntroSE.Kanban.Backend.BuisnessLayer.BoardPackage
             _tasks = new List<TaskBL>();
         }
 
-        internal void Add(TaskBL task, string email)
+        internal void Add(string email, TaskBL task)
         {
             if (_limit != -1 && _limit == _tasks.Count)
             {
@@ -36,33 +36,33 @@ namespace IntroSE.Kanban.Backend.BuisnessLayer.BoardPackage
             _tasks.Add(task);
         }
 
-        internal void Delete(TaskBL task, string email)
+        internal void Delete(string email, TaskBL task)
         {
             _tasks.Remove(task);
             Log.Info("Task removed succesfully " + email + ".");
         }
 
-        internal void UpdateTask(string title, DateTime? due, string description, int id, string email)
+        internal void UpdateTask(string email, int taskID, DateTime? dueDate, string title, string description)
         {
             foreach (TaskBL task in _tasks)
-                if (task.Id == id)
+                if (task.Id == taskID)
                 {
-                    task.Update(title, due, description, email);
+                    task.Update(email, dueDate, title, description);
                     return;
                 }
             Log.Error("Task doensn't exist.");
             throw new KeyNotFoundException("Task doensn't exist.");
         }
 
-        internal TaskBL GetTaskById(int id)
+        internal TaskBL GetTaskById(int taskID)
         {
             foreach (TaskBL task in _tasks)
-                if (task.Id == id)
+                if (task.Id == taskID)
                     return task;
             return null;
         }
 
-        internal void LimitColumn(int limit, string email)
+        internal void LimitColumn(string email, int limit)
         {
             if (limit != -1 && limit < _tasks.Count)
             {
@@ -87,15 +87,15 @@ namespace IntroSE.Kanban.Backend.BuisnessLayer.BoardPackage
             return _name;
         }
 
-        internal void AssignTask(string email, int id, string AssigneEmail)
+        internal void AssignTask(string email, int taskID, string emailAssignee)
         {
-            TaskBL task = GetTaskById(id);
+            TaskBL task = GetTaskById(taskID);
             if (task == null)
             {
-                Log.Error("Task id " + id + " for " + AssigneEmail + " doesn't exist in " + _name);
-                throw new KeyNotFoundException("Task id " + id + " for " + AssigneEmail + " doesn't exist in " + _name);
+                Log.Error("Task id " + taskID + " for " + emailAssignee + " doesn't exist in " + _name);
+                throw new KeyNotFoundException("Task id " + taskID + " for " + emailAssignee + " doesn't exist in " + _name);
             }
-            task.AssignTask(email, AssigneEmail);
+            task.AssignTask(email, emailAssignee);
         }
     }
 }

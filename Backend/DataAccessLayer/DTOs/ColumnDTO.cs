@@ -15,8 +15,8 @@ namespace IntroSE.Kanban.Backend.DataAccessLayer.DTOs
 
         internal ColumnDTO(int boardId, int limit, int index)
         {
-            Limit = limit;
             _boardId = boardId;
+            Limit = limit;
             _controller = new TaskController();
             _tasks = _controller.SelectAll().FindAll(task =>  task.BoardId == BoardId && task.Column == index);
         }
