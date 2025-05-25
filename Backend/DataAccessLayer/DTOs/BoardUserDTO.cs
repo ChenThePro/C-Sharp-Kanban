@@ -1,5 +1,4 @@
-﻿using IntroSE.Kanban.Backend.DAL;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 
 namespace IntroSE.Kanban.Backend.DataAccessLayer.DTOs
 {
@@ -26,8 +25,6 @@ namespace IntroSE.Kanban.Backend.DataAccessLayer.DTOs
             _controller = new BoardUserController();
         }
 
-        internal BoardUserDTO() { _controller = new BoardUserController(); }
-
         internal void Insert()
         {
             _controller.Insert(this);
@@ -44,6 +41,6 @@ namespace IntroSE.Kanban.Backend.DataAccessLayer.DTOs
         }
 
         public string[] GetColumnNames() => new[] { BOARD_ID_COLUMN_NAME, BOARD_USER_EMAIL_COLUMN_NAME };
-        public object[] GetColumnValues() => new object[] { Email, Id };
+        public object[] GetColumnValues() => new object[] { _id, _email };
     }
 }

@@ -1,5 +1,4 @@
-﻿using IntroSE.Kanban.Backend.DAL;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 
 namespace IntroSE.Kanban.Backend.DataAccessLayer.DTOs
 {

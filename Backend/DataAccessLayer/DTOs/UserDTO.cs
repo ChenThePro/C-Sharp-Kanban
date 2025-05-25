@@ -1,5 +1,4 @@
-﻿using IntroSE.Kanban.Backend.DAL;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 
 namespace IntroSE.Kanban.Backend.DataAccessLayer.DTOs
 {
@@ -30,8 +29,6 @@ namespace IntroSE.Kanban.Backend.DataAccessLayer.DTOs
             _controller = new UserController();
         }
 
-        internal UserDTO() { _controller = new UserController(); }
-
         internal void Insert()
         {
             _controller.Insert(this);
@@ -39,7 +36,7 @@ namespace IntroSE.Kanban.Backend.DataAccessLayer.DTOs
 
         internal void Delete()
         {
-            _controller.Delete(USER_EMAIL_COLUMN_NAME, Email);
+            _controller.Delete(USER_EMAIL_COLUMN_NAME, _email);
         }
 
         internal List<UserDTO> SelectAll()
@@ -48,6 +45,6 @@ namespace IntroSE.Kanban.Backend.DataAccessLayer.DTOs
         }
 
         public string[] GetColumnNames() => new[] { USER_EMAIL_COLUMN_NAME, USER_PASSWORD_COLUMN_NAME };
-        public object[] GetColumnValues() => new object[] { Email, Password };
+        public object[] GetColumnValues() => new object[] { _email, _password };
     }
 }

@@ -12,13 +12,13 @@ namespace IntroSE.Kanban.Backend.DataAccessLayer
     {
         private static readonly ILog Log = LogManager.GetLogger(MethodBase.GetCurrentMethod().DeclaringType);
         protected readonly string _connectionString;
-        protected readonly string TableName;
+        protected readonly string _tableName;
 
         protected BaseController(string tableName)
         {
             string path = Path.GetFullPath(Path.Combine(Directory.GetCurrentDirectory(), "database.db"));
             _connectionString = $"Data Source={path}; Version=3;";
-            TableName = tableName;
+            _tableName = tableName;
         }
 
         internal bool Insert(TDTO dto)
@@ -29,7 +29,7 @@ namespace IntroSE.Kanban.Backend.DataAccessLayer
             var paramList = string.Join(", ", columns.Select(c => $"@{c}"));
             using var connection = new SqliteConnection(_connectionString);
             using var command = connection.CreateCommand();
-            command.CommandText = $"INSERT INTO {TableName} ({columnList}) VALUES ({paramList});";
+            command.CommandText = $"INSERT INTO {_tableName} ({columnList}) VALUES ({paramList});";
             for (int i = 0; i < columns.Length; i++)
                 command.Parameters.AddWithValue($"@{columns[i]}", values[i]);
             try
@@ -37,14 +37,14 @@ namespace IntroSE.Kanban.Backend.DataAccessLayer
                 connection.Open();
                 if (command.ExecuteNonQuery() > 0)
                 {
-                    Log.Info($"Insert succeeded for table {TableName}.");
+                    Log.Info($"Insert succeeded for table {_tableName}.");
                     return true;
                 }
                 return false;
             }
             catch (Exception ex)
             {
-                Log.Error($"Insert failed for table {TableName}.", ex);
+                Log.Error($"Insert failed for table {_tableName}.", ex);
                 return false;
             }
         }
@@ -53,21 +53,21 @@ namespace IntroSE.Kanban.Backend.DataAccessLayer
         {
             using var connection = new SqliteConnection(_connectionString);
             using var command = connection.CreateCommand();
-            command.CommandText = $"DELETE FROM {TableName} WHERE {keyColumn} = @Key;";
+            command.CommandText = $"DELETE FROM {_tableName} WHERE {keyColumn} = @Key;";
             command.Parameters.AddWithValue("@Key", key);
             try
             {
                 connection.Open();
                 if (command.ExecuteNonQuery() > 0)
                 {
-                    Log.Info($"Delete succeeded on {TableName} for key {key}.");
+                    Log.Info($"Delete succeeded on {_tableName} for key {key}.");
                     return true;
                 }
                 return false;
             }
             catch (Exception ex)
             {
-                Log.Error($"Delete failed on {TableName} for key {key}.", ex);
+                Log.Error($"Delete failed on {_tableName} for key {key}.", ex);
                 return false;
             }
         }
@@ -76,7 +76,7 @@ namespace IntroSE.Kanban.Backend.DataAccessLayer
         {
             using var connection = new SqliteConnection(_connectionString);
             using var command = connection.CreateCommand();
-            command.CommandText = $"UPDATE {TableName} SET {column} = @Value WHERE {keyColumn} = @Key;";
+            command.CommandText = $"UPDATE {_tableName} SET {column} = @Value WHERE {keyColumn} = @Key;";
             command.Parameters.AddWithValue("@Value", newValue);
             command.Parameters.AddWithValue("@Key", key);
             try
@@ -84,14 +84,14 @@ namespace IntroSE.Kanban.Backend.DataAccessLayer
                 connection.Open();
                 if (command.ExecuteNonQuery() > 0)
                 {
-                    Log.Info($"Update succeeded on {TableName} for key {key}.");
+                    Log.Info($"Update succeeded on {_tableName} for key {key}.");
                     return true;
                 }
                 return false;
             }
             catch (Exception ex)
             {
-                Log.Error($"Update failed on {TableName} for key {key}.", ex);
+                Log.Error($"Update failed on {_tableName} for key {key}.", ex);
                 return false;
             }
         }
@@ -101,7 +101,7 @@ namespace IntroSE.Kanban.Backend.DataAccessLayer
             List<TDTO> results = new();
             using var connection = new SqliteConnection(_connectionString);
             using var command = connection.CreateCommand();
-            command.CommandText = $"SELECT * FROM {TableName};";
+            command.CommandText = $"SELECT * FROM {_tableName};";
             try
             {
                 connection.Open();
@@ -111,9 +111,9 @@ namespace IntroSE.Kanban.Backend.DataAccessLayer
             }
             catch (Exception ex)
             {
-                Log.Error($"Select failed on {TableName}.", ex);
+                Log.Error($"Select failed on {_tableName}.", ex);
             }
-            Log.Info($"Select succeeded on {TableName}.");
+            Log.Info($"Select succeeded on {_tableName}.");
             return results;
         }
 
