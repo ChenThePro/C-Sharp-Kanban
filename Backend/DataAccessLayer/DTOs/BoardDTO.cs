@@ -21,24 +21,35 @@ namespace IntroSE.Kanban.Backend.DataAccessLayer.DTOs
 
         internal List<ColumnDTO> Columns => _columns;
 
-        internal string Name
-        {
-            get => _name;
-            set { _controller.Update(BOARD_ID_COLUMN_NAME, _id, BOARD_NAME_COLUMN_NAME, value); _name = value; }
-        }
-
         internal string Owner
         {
             get => _owner;
             set { _controller.Update(BOARD_ID_COLUMN_NAME, _id, BOARD_OWNER_COLUMN_NAME, value); _owner = value; }
         }
 
-        internal BoardDTO(int id, string name, string owner, int limit_0, int limit_1, int limit_2)
+        internal string Name
+        {
+            get => _name;
+            set { _controller.Update(BOARD_ID_COLUMN_NAME, _id, BOARD_NAME_COLUMN_NAME, value); _name = value; }
+        }
+
+        internal BoardDTO(int id, string owner, string name, int limit_0, int limit_1, int limit_2)
         {
             _id = id;
-            _name = name;
             _owner = owner;
+            _name = name;
             _columns = new List<ColumnDTO> { new(id, limit_0, 0), new(id, limit_1, 1), new(id, limit_2, 2) };
+            _controller = new BoardController();
+        }
+
+        internal BoardDTO(int id)
+        {
+            _id = id;
+            _controller = new BoardController();
+        }
+
+        internal BoardDTO()
+        {
             _controller = new BoardController();
         }
 
@@ -79,13 +90,13 @@ namespace IntroSE.Kanban.Backend.DataAccessLayer.DTOs
         internal void Insert()
         {
             _controller.Insert(this);
-            new BoardUserDTO(_owner, _id).Insert();
+            new BoardUserDTO(_id, _owner).Insert();
         }
 
         internal void Delete()
         {
             _controller.Delete(BOARD_ID_COLUMN_NAME, _id);
-            new BoardUserDTO(_owner, _id).Delete();
+            new BoardUserDTO(_id, _owner).Delete();
         }
 
         internal List<BoardDTO> SelectAll()

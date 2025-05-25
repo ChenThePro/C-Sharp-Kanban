@@ -21,9 +21,9 @@ namespace IntroSE.Kanban.Backend.DataAccessLayer.DTOs
         private int _column;
         private readonly TaskController _controller;
 
-        internal DateTime CreationTime => _creationTime;
-
         internal int Id => _id;
+
+        internal DateTime CreationTime => _creationTime;
 
         internal int BoardId => _boardId;
 
@@ -60,6 +60,17 @@ namespace IntroSE.Kanban.Backend.DataAccessLayer.DTOs
             _title = title;
             _description = description;
             _column = column;
+            _controller = new TaskController();
+        }
+
+        internal TaskDTO(int id)
+        {
+            _id = id;
+            _controller = new TaskController();
+        }
+
+        internal TaskDTO()
+        {
             _controller = new TaskController();
         }
 

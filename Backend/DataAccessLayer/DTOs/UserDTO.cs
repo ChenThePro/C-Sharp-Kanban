@@ -29,6 +29,17 @@ namespace IntroSE.Kanban.Backend.DataAccessLayer.DTOs
             _controller = new UserController();
         }
 
+        internal UserDTO(string email)
+        {
+            _email = email;
+            _controller = new UserController();
+        }
+
+        internal UserDTO()
+        {
+            _controller = new UserController();
+        }
+
         internal void Insert()
         {
             _controller.Insert(this);
