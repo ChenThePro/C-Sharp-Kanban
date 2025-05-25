@@ -282,7 +282,7 @@ namespace IntroSE.Kanban.Backend.ServiceLayer
         /// <returns>An empty response, unless an error occurs (see <see cref="GradingService"/>)</returns>
         public string AssignTask(string email, string boardName, int columnOrdinal, int taskID, string emailAssignee)
         {
-            throw new NotImplementedException();
+            return _serviceFactory.GetTaskService().AssignTask(email, boardName, columnOrdinal, taskID, emailAssignee);
         }
 
         /// <summary>
