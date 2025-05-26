@@ -21,11 +21,19 @@ namespace IntroSE.Kanban.Backend.DataAccessLayer.DTOs
         private int _column;
         private readonly TaskController _controller;
 
-        internal int Id => _id;
-
         internal DateTime CreationTime => _creationTime;
 
-        internal int BoardId => _boardId;
+        internal int Id
+        {
+            get => _id;
+            set { _controller.Update(TASK_ID_COLUMN_NAME, _id, TASK_ID_COLUMN_NAME, value); _id = value; }
+        }
+
+        internal int BoardId
+        {
+            get => _boardId;
+            set { _controller.Update(TASK_ID_COLUMN_NAME, _id, TASK_BOARD_ID_COLUMN_NAME, value); _boardId = value; }
+        }
 
         internal string Title
         {
