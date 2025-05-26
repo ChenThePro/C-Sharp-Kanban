@@ -84,6 +84,23 @@ namespace IntroSE.Kanban.Backend.BuisnessLayer.UserPackage
                 lst.AddRange(board.GetColumn(1));
             return lst;
         }
+        internal string GetUserBoards(string email)
+        {
+            List<int> boardsID = new List<int>();
+            foreach(BoardBL board in _boards)
+            {
+                boardsID.Add(board.Id);
+            }
+            return boardsID.ToString();
+        }
+        internal string JoinBoard(string email, int boardID)
+        {
+            throw new NotImplementedException();
+        }
+        internal string LeaveBoard(string email, int boardID)
+        {
+            throw new NotImplementedException();
+        }
         internal string AssignTask(string email, string boardName, int columnOrdinal, int taskID, string emailAssignee)
         {
             throw new NotImplementedException();

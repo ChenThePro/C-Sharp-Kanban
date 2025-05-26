@@ -78,21 +78,6 @@ namespace IntroSE.Kanban.Backend.BuisnessLayer.BoardPackage
             Columns[columnOrdinal].AssignTask(email, taskID, emailAssignee);
         }
 
-        internal string GetUserBoards(string email)
-        {
-            throw new NotImplementedException();
-        }
-
-        internal string JoinBoard(string email, int boardID)
-        {
-            throw new NotImplementedException();
-        }
-
-        internal string LeaveBoard(string email, int boardID)
-        {
-            throw new NotImplementedException();
-        }
-
         internal string GetBoardName(int boardId)
         {
             throw new NotImplementedException();
