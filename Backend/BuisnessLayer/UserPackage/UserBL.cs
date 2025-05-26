@@ -14,6 +14,7 @@ namespace IntroSE.Kanban.Backend.BuisnessLayer.UserPackage
         private string _password;
         private readonly List<BoardBL> _boards;
 
+
         internal UserBL(string email, string password)
         {
             Email = email;
