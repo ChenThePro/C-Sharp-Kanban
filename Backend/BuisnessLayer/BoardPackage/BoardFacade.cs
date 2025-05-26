@@ -131,18 +131,18 @@ namespace IntroSE.Kanban.Backend.BuisnessLayer.BoardPackage
         /// <exception cref="KeyNotFoundException"></exception>
         /// <exception cref="ArgumentOutOfRangeException"></exception>
         /// <exception cref="InvalidOperationException">Thrown if a board with the given name already exists.</exception>
-        internal BoardBL CreateBoard(string email, string boardName, int taskID)
+        internal BoardBL CreateBoard(string email, string boardName, int BoardID)
         {
             AuthenticateUser(email);
             AuthenticateString(boardName, "Board name");
-            AuthenticateInteger(taskID, "Id");
+            AuthenticateInteger(BoardID, "Id");
             UserBL user = _userfacade.GetUser(email);
             if (user.BoardExists(boardName))
             {
                 Log.Error("A board with the given name already exists.");
                 throw new InvalidOperationException("A board with the given name already exists.");
             }
-            BoardBL board = new BoardBL(email, boardName, taskID);
+            BoardBL board = new BoardBL(email, boardName, BoardID);
             user.CreateBoard(board);
             Log.Info($"New board '{boardName}' created for {email}.");
             return board;
@@ -348,7 +348,11 @@ namespace IntroSE.Kanban.Backend.BuisnessLayer.BoardPackage
       
         internal string TransferOwnership(string currentOwnerEmail, string newOwnerEmail, string boardName)
         {
-            throw new NotImplementedException();
+            AuthenticateUser(currentOwnerEmail);
+            AuthenticateUser(newOwnerEmail);
+            UserBL user = _userfacade.GetUser(currentOwnerEmail);
+            BoardBL board = user.GetBoard(boardName);
+            return board.TransferOwnership(currentOwnerEmail, newOwnerEmail);
         }
 
         internal void AssignTask(string email, string boardName, int columnOrdinal, int taskID, string emailAssignee)

@@ -1,3 +1,4 @@
+using IntroSE.Kanban.Backend.BuisnessLayer.UserPackage;
 using log4net;
 using System;
 using System.Collections.Generic;
@@ -8,10 +9,11 @@ namespace IntroSE.Kanban.Backend.BuisnessLayer.BoardPackage
     internal class BoardBL
     {
         private static readonly ILog Log = LogManager.GetLogger(MethodBase.GetCurrentMethod().DeclaringType);
-        internal readonly string Owner;
+        internal string Owner;
         internal readonly string Name;
         internal int Id;
         internal readonly List<ColumnBL> Columns;
+        internal readonly List<String> _members;
 
         internal BoardBL(string owner, string name, int id)
         {
@@ -19,6 +21,8 @@ namespace IntroSE.Kanban.Backend.BuisnessLayer.BoardPackage
             Name = name;
             Id = id;
             Columns = new List<ColumnBL> { new(0), new(1), new(2) };
+            _members = new List<String>();
+            _members.Add(owner);
         }
 
         internal TaskBL AddTask(string title, string description, DateTime dueDate, DateTime created_at, int taskID, int columnOrdinal)
@@ -83,9 +87,21 @@ namespace IntroSE.Kanban.Backend.BuisnessLayer.BoardPackage
             throw new NotImplementedException();
         }
 
-        internal string TransferOwnership(string currentOwnerEmail, string newOwnerEmail, string boardName)
+        internal string TransferOwnership(string currentOwnerEmail, string newOwnerEmail)
         {
-            throw new NotImplementedException();
+            if (Owner != currentOwnerEmail)
+            {
+                Log.Error("Only the owner can transfer ownership.");
+                throw new InvalidOperationException("Only the owner can transfer ownership.");
+            }
+            if (!_members.Contains(newOwnerEmail))
+            {
+                Log.Error("New owner must be a member of the board.");
+                throw new InvalidOperationException("New owner must be a member of the board.");
+            }
+            Owner = newOwnerEmail;
+            return null;
+
         }
     }
 }
