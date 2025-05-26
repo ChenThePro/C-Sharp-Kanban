@@ -75,12 +75,6 @@ namespace IntroSE.Kanban.Backend.BuisnessLayer.BoardPackage
         {
             Columns[columnOrdinal].AssignTask(email, taskID, emailAssignee);
         }
-
-        internal string GetBoardName(int boardId)
-        {
-            throw new NotImplementedException();
-        }
-
         internal string TransferOwnership(string currentOwnerEmail, string newOwnerEmail, string boardName)
         {
             throw new NotImplementedException();

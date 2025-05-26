@@ -1,7 +1,9 @@
 using IntroSE.Kanban.Backend.BuisnessLayer.UserPackage;
+using IntroSE.Kanban.Backend.ServiceLayer;
 using log4net;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Reflection;
 
 namespace IntroSE.Kanban.Backend.BuisnessLayer.BoardPackage
@@ -12,6 +14,7 @@ namespace IntroSE.Kanban.Backend.BuisnessLayer.BoardPackage
         private const int DESC_MAX = 300;
         private const int TITLE_MAX = 50;
         private readonly UserFacade _userfacade;
+        private readonly Dictionary<int,BoardBL> _boardNameByID = new Dictionary<int ,BoardBL>();
 
         /// <summary>
         /// Initializes a new instance of the <see cref="BoardFacade"/> class.
@@ -131,19 +134,20 @@ namespace IntroSE.Kanban.Backend.BuisnessLayer.BoardPackage
         /// <exception cref="KeyNotFoundException"></exception>
         /// <exception cref="ArgumentOutOfRangeException"></exception>
         /// <exception cref="InvalidOperationException">Thrown if a board with the given name already exists.</exception>
-        internal BoardBL CreateBoard(string email, string boardName, int taskID)
+        internal BoardBL CreateBoard(string email, string boardName, int BoardID)
         {
             AuthenticateUser(email);
             AuthenticateString(boardName, "Board name");
-            AuthenticateInteger(taskID, "Id");
+            AuthenticateInteger(BoardID, "Id");
             UserBL user = _userfacade.GetUser(email);
             if (user.BoardExists(boardName))
             {
                 Log.Error("A board with the given name already exists.");
                 throw new InvalidOperationException("A board with the given name already exists.");
             }
-            BoardBL board = new BoardBL(email, boardName, taskID);
+            BoardBL board = new BoardBL(email, boardName, BoardID);
             user.CreateBoard(board);
+            _boardNameByID.Add(board.Id, board);
             Log.Info($"New board '{boardName}' created for {email}.");
             return board;
         }
@@ -159,7 +163,9 @@ namespace IntroSE.Kanban.Backend.BuisnessLayer.BoardPackage
         {
             AuthenticateUser(email);
             UserBL user = _userfacade.GetUser(email);
+            BoardBL board = user.GetBoard(boardName);
             user.DeleteBoard(boardName);
+            _boardNameByID.Remove(board.Id);
             Log.Info($"Board '{boardName}' deleted for {email}.");
         }
 
@@ -343,7 +349,15 @@ namespace IntroSE.Kanban.Backend.BuisnessLayer.BoardPackage
       
         internal string GetBoardName(int boardID)
         {
-            throw new NotImplementedException();
+            _boardNameByID.TryGetValue(boardID, out var board);
+            if (board != null)
+            {
+                return board.Name;
+            }
+            else
+            {
+                throw new KeyNotFoundException("boardId not found");
+            }
         }
       
         internal string TransferOwnership(string currentOwnerEmail, string newOwnerEmail, string boardName)
