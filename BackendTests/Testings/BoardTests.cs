@@ -12,44 +12,44 @@ namespace IntroSE.Kanban.BackendTests.Testings
         public bool CreateBoardWithValidValues()
         {
             _factory.GetUserService().Register(_userEmail, "Password1");
-            string json = _factory.GetBoardService().CreateBoard(_boardName, _userEmail);
+            string json = _factory.GetBoardService().CreateBoard(_userEmail, _boardName);
             return json.Contains("\"ErrorMessage\":null");
         }
 
         public bool CreateBoardWithTheSameNmaeForDifferentUsers()
         {
             _factory.GetUserService().Register("kuku@gmail.com", "Password1");
-            string json = _factory.GetBoardService().CreateBoard(_boardName, "kuku@gmail.com");
+            string json = _factory.GetBoardService().CreateBoard("kuku@gmail.com", _boardName);
             return json.Contains("\"ErrorMessage\":null");
         }
 
         public bool CreateBoardWithOccupiedName()
         {
-            string json = _factory.GetBoardService().CreateBoard(_boardName, _userEmail);
+            string json = _factory.GetBoardService().CreateBoard(_userEmail, _boardName);
             return !json.Contains("\"ErrorMessage\":null");
         }
 
         public bool CreateBoard_CaseInsensitiveName()
         {
-            string json = _factory.GetBoardService().CreateBoard("my first board", _userEmail);
+            string json = _factory.GetBoardService().CreateBoard(_userEmail, "my first board");
             return !json.Contains("\"ErrorMessage\":null");
         }
 
         public bool DeleteBoard()
         {
-            string json = _factory.GetBoardService().DeleteBoard(_boardName, _userEmail);
+            string json = _factory.GetBoardService().DeleteBoard(_userEmail, _boardName);
             return json.Contains("\"ErrorMessage\":null");
         }
 
         public bool DeleteNonExistentBoard()
         {
-            string json = _factory.GetBoardService().DeleteBoard("NonExistentBoard", _userEmail);
+            string json = _factory.GetBoardService().DeleteBoard(_userEmail, "NonExistentBoard");
             return !json.Contains("\"ErrorMessage\":null");
         }
 
         public bool CheckJoiningToANewBoard()
         {
-            _factory.GetBoardService().CreateBoard(_boardName, _userEmail);
+            _factory.GetBoardService().CreateBoard(_userEmail, _boardName);
             string json = _factory.GetBoardService().JoinBoard("kuku@gmail.com", 3);
             return !json.Contains("\"ErrorMessage\":null");
         }
