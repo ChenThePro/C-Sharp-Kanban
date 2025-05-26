@@ -6,20 +6,24 @@ namespace IntroSE.Kanban.Backend.DataAccessLayer.DTOs
     internal class BoardDTO : IDTO
     {
         private const string BOARD_ID_COLUMN_NAME = "id";
-        private const string BOARD_NAME_COLUMN_NAME = "name";
         private const string BOARD_OWNER_COLUMN_NAME = "owner";
+        private const string BOARD_NAME_COLUMN_NAME = "name";
         private const string BOARD_LIMIT0_COLUMN_NAME = "limit_0";
         private const string BOARD_LIMIT1_COLUMN_NAME = "limit_1";
         private const string BOARD_LIMIT2_COLUMN_NAME = "limit_2";
         private int _id;
-        private string _name;
         private string _owner;
+        private string _name;
         private readonly List<ColumnDTO> _columns;
         private readonly BoardController _controller;
 
-        internal int Id => _id;
-
         internal List<ColumnDTO> Columns => _columns;
+
+        internal int Id
+        {
+            get => _id;
+            set { _controller.Update(BOARD_ID_COLUMN_NAME, _id, BOARD_ID_COLUMN_NAME, value); _id = value; }
+        }
 
         internal string Owner
         {

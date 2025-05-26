@@ -33,7 +33,8 @@ namespace IntroSE.Kanban.Backend.BuisnessLayer.BoardPackage
             TaskBL task = GetTaskByIdAndColumn(columnOrdinal, taskID);
             if (task == null)
             {
-                Log.Error("Task id " + taskID + " for " + email + " doesn't exist in " + Name + "'s " + Columns[columnOrdinal].GetName() + " column.");
+                Log.Error("Task id " + taskID + " for " + email + " doesn't exist in " + Name + "'s " + 
+                    Columns[columnOrdinal].GetName() + " column.");
                 throw new KeyNotFoundException("Task id" + taskID + " for " + email + " doesn't exist in " + Name + "'s " + Columns[columnOrdinal].GetName() + " column.");
             }
             Columns[columnOrdinal + 1].Add(email, task);
@@ -41,7 +42,8 @@ namespace IntroSE.Kanban.Backend.BuisnessLayer.BoardPackage
             Log.Info("Task id " + task.Id + " moved from " + Columns[columnOrdinal].GetName() + " to " + Columns[columnOrdinal + 1].GetName() + " for " + email + " in board " + Name + ".");
         }
 
-        internal void UpdateTask(string email, int columnOrdinal, int taskID, DateTime? dueDate, string title, string description)
+        internal void UpdateTask(string email, int columnOrdinal, int taskID, DateTime? dueDate, string title, 
+            string description)
         {
             Columns[columnOrdinal].UpdateTask(email, taskID, dueDate, title, description);
         }

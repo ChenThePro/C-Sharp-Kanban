@@ -10,12 +10,18 @@ namespace IntroSE.Kanban.Backend.DataAccessLayer.DTOs
         private string _email;
         private readonly BoardUserController _controller;
 
-        internal int Id => _id;
+        internal int Id
+        {
+            get => _id;
+            set { _controller.Update(BOARD_ID_COLUMN_NAME, _id, BOARD_USER_EMAIL_COLUMN_NAME, _email, BOARD_ID_COLUMN_NAME,
+                value); _id = value; }
+        }
 
         internal string Email
         {
             get => _email;
-            set { _controller.Update(BOARD_ID_COLUMN_NAME, _id, BOARD_USER_EMAIL_COLUMN_NAME, value); _email = value; }
+            set { _controller.Update(BOARD_ID_COLUMN_NAME, _id, BOARD_USER_EMAIL_COLUMN_NAME, _email, 
+                BOARD_USER_EMAIL_COLUMN_NAME, value); _email = value; }
         }
 
         internal BoardUserDTO(int id, string email)
