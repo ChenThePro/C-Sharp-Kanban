@@ -293,7 +293,7 @@ namespace IntroSE.Kanban.Backend.ServiceLayer
         /// <returns>A response with the board's name, unless an error occurs (see <see cref="GradingService"/>)</returns>
         public string GetBoardName(int boardId)
         {
-            throw new NotImplementedException();
+            return _serviceFactory.GetBoardService().GetBoardName(boardId);
         }
 
         /// <summary>

@@ -81,13 +81,16 @@ namespace IntroSE.Kanban.Backend.BuisnessLayer.BoardPackage
         {
             Columns[columnOrdinal].AssignTask(email, taskID, emailAssignee);
         }
+ boards2
 
         internal string GetBoardName(int boardId)
         {
             throw new NotImplementedException();
         }
 
-        internal string TransferOwnership(string currentOwnerEmail, string newOwnerEmail)
+        
+        internal string TransferOwnership(string currentOwnerEmail, string newOwnerEmail, string boardName)
+ develop
         {
             if (Owner != currentOwnerEmail)
             {
