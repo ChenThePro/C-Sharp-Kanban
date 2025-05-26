@@ -322,17 +322,23 @@ namespace IntroSE.Kanban.Backend.BuisnessLayer.BoardPackage
       
         internal string GetUserBoards(string email)
         {
-            throw new NotImplementedException();
+            AuthenticateUser(email);
+            UserBL user = _userfacade.GetUser(email);
+            return user.GetUserBoards(email);
         }
       
         internal string JoinBoard(string email, int boardID)
         {
-            throw new NotImplementedException();
+            AuthenticateUser(email);
+            UserBL user = _userfacade.GetUser(email);
+            return user.JoinBoard(email, boardID);
         }
       
         internal string LeaveBoard(string email, int boardID)
         {
-            throw new NotImplementedException();
+            AuthenticateUser(email);
+            UserBL user = _userfacade.GetUser(email);
+            return user.LeaveBoard(email, boardID);
         }
       
         internal string GetBoardName(int boardID)
