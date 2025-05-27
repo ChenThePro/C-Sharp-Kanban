@@ -83,7 +83,7 @@ namespace IntroSE.Kanban.Backend.BuisnessLayer.UserPackage
             List<TaskBL> lst = new List<TaskBL>();
             foreach (BoardBL board in _boards)
                 lst.AddRange(board.GetColumn(1));
-            return lst;
+            return lst.FindAll(task => task.Assigne == Email); ;
         }
         internal List<int> GetUserBoards(string email)
         {

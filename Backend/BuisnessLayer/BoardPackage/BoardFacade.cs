@@ -266,7 +266,7 @@ namespace IntroSE.Kanban.Backend.BuisnessLayer.BoardPackage
             }
             AuthenticateDescription(description);
             AuthenticateUser(email);
-            AuthenticateColumn(columnOrdinal, 2);
+            AuthenticateColumn(columnOrdinal, 1);
             AuthenticateInteger(taskID, "Id");
             UserBL user = _userfacade.GetUser(email);
             BoardBL board = user.GetBoard(boardName);
