@@ -13,7 +13,7 @@ namespace IntroSE.Kanban.Backend.BuisnessLayer.BoardPackage
         internal readonly string Name;
         internal int Id;
         internal readonly List<ColumnBL> Columns;
-        internal readonly List<String> _members;
+        internal readonly List<String> Members;
 
 
         internal BoardBL(string owner, string name, int id)
@@ -22,8 +22,8 @@ namespace IntroSE.Kanban.Backend.BuisnessLayer.BoardPackage
             Name = name;
             Id = id;
             Columns = new List<ColumnBL> { new(0), new(1), new(2) };
-            _members = new List<String>();
-            _members.Add(owner);
+            Members = new List<String>();
+            Members.Add(owner);
         }
 
         internal TaskBL AddTask(string title, string description, DateTime dueDate, DateTime created_at, int taskID, int columnOrdinal)
@@ -80,7 +80,7 @@ namespace IntroSE.Kanban.Backend.BuisnessLayer.BoardPackage
 
         internal void AssignTask(string email, int columnOrdinal, int taskID, string emailAssignee)
         {
-            if (!_members.Contains(email))
+            if (!Members.Contains(email))
             {
                 Log.Error("User " + email + " is not a member of the board.");
                 throw new InvalidOperationException("User " + email + " is not a member of the board.");
@@ -95,7 +95,7 @@ namespace IntroSE.Kanban.Backend.BuisnessLayer.BoardPackage
                 Log.Error("Only the owner can transfer ownership.");
                 throw new InvalidOperationException("Only the owner can transfer ownership.");
             }
-            if (!_members.Contains(newOwnerEmail))
+            if (!Members.Contains(newOwnerEmail))
             {
                 Log.Error("New owner must be a member of the board.");
                 throw new InvalidOperationException("New owner must be a member of the board.");
@@ -112,7 +112,7 @@ namespace IntroSE.Kanban.Backend.BuisnessLayer.BoardPackage
                 Log.Error("Owner cannot leave the board. Transfer ownership first.");
                 throw new InvalidOperationException("Owner cannot leave the board. Transfer ownership first.");
             }
-            if (!_members.Contains(email))
+            if (!Members.Contains(email))
             {
                 Log.Error("User is not a member of the board.");
                 throw new InvalidOperationException("User is not a member of the board.");
@@ -129,7 +129,21 @@ namespace IntroSE.Kanban.Backend.BuisnessLayer.BoardPackage
                     }
                 }
             }
-            _members.Remove(email); 
+            Members.Remove(email); 
+        }
+
+        internal void CheckDelete(string email)
+        {
+            if (Owner != email)
+            {
+                Log.Error("Only the owner can delete the board.");
+                throw new InvalidOperationException("Only the owner can delete the board.");
+            }
+            Log.Info("Board " + Name + " deleted by owner " + email + ".");
+            
+            
+                
+            
         }
 
         internal void JoinBoard(string email)

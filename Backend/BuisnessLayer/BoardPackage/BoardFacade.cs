@@ -176,7 +176,13 @@ namespace IntroSE.Kanban.Backend.BuisnessLayer.BoardPackage
             AuthenticateUser(email);
             UserBL user = _userfacade.GetUser(email);
             BoardBL board = user.GetBoard(boardName);
-            user.DeleteBoard(boardName);
+            board.CheckDelete(email);
+            UserBL memberUser;
+            foreach (string member in board.Members)
+            {
+                memberUser = _userfacade.GetUser(member);
+                memberUser.DeleteBoard(board.Name);
+            }
             _boards.Remove(board.Id);
             Log.Info($"Board '{boardName}' deleted for {email}.");
         }
