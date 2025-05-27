@@ -98,9 +98,14 @@ namespace IntroSE.Kanban.Backend.BuisnessLayer.UserPackage
         {
             throw new NotImplementedException();
         }
-        internal string LeaveBoard(string email, int boardID)
+        internal void LeaveBoard(BoardBL board)
         {
-            throw new NotImplementedException();
+            if (!_boards.Contains(board))
+            {
+                Log.Error("Board does not exist in user's boards.");
+                throw new KeyNotFoundException("Board does not exist in user's boards.");
+            }
+            _boards.Remove(board);  
         }
     }
 }
