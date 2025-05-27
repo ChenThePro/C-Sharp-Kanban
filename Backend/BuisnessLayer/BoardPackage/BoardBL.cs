@@ -81,7 +81,6 @@ namespace IntroSE.Kanban.Backend.BuisnessLayer.BoardPackage
         {
             Columns[columnOrdinal].AssignTask(email, taskID, emailAssignee);
         }
-
         internal string GetBoardName(int boardId)
         {
             throw new NotImplementedException();

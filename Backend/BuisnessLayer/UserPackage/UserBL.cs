@@ -14,6 +14,7 @@ namespace IntroSE.Kanban.Backend.BuisnessLayer.UserPackage
         private string _password;
         private readonly List<BoardBL> _boards;
 
+
         internal UserBL(string email, string password)
         {
             Email = email;
@@ -98,14 +99,6 @@ namespace IntroSE.Kanban.Backend.BuisnessLayer.UserPackage
             throw new NotImplementedException();
         }
         internal string LeaveBoard(string email, int boardID)
-        {
-            throw new NotImplementedException();
-        }
-        internal string AssignTask(string email, string boardName, int columnOrdinal, int taskID, string emailAssignee)
-        {
-            throw new NotImplementedException();
-        }
-        internal string TransferOwnership(string currentOwnerEmail, string newOwnerEmail, string boardName)
         {
             throw new NotImplementedException();
         }
