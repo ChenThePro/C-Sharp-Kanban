@@ -336,7 +336,7 @@ namespace IntroSE.Kanban.Backend.BuisnessLayer.BoardPackage
             return user.InProgressTasks();
         }
       
-        internal string GetUserBoards(string email)
+        internal List<int> GetUserBoards(string email)
         {
             AuthenticateUser(email);
             UserBL user = _userfacade.GetUser(email);

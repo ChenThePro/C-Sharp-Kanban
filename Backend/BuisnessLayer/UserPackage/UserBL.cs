@@ -85,14 +85,14 @@ namespace IntroSE.Kanban.Backend.BuisnessLayer.UserPackage
                 lst.AddRange(board.GetColumn(1));
             return lst;
         }
-        internal string GetUserBoards(string email)
+        internal List<int> GetUserBoards(string email)
         {
             List<int> boardsID = new List<int>();
             foreach(BoardBL board in _boards)
             {
                 boardsID.Add(board.Id);
             }
-            return boardsID.ToString();
+            return boardsID;
         }
         internal string JoinBoard(string email, int boardID)
         {

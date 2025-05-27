@@ -215,8 +215,8 @@ namespace IntroSE.Kanban.Backend.ServiceLayer
         {
             try
             {
-                string boardsStr = _boardFacade.GetUserBoards(email);
-                return JsonSerializer.Serialize(new Response(null, boardsStr));
+                List<int> boardsID = _boardFacade.GetUserBoards(email);
+                return JsonSerializer.Serialize(new Response(null, boardsID));
             }
             catch (Exception ex)
             {
