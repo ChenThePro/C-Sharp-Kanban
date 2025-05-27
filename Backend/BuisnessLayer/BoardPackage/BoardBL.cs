@@ -80,6 +80,11 @@ namespace IntroSE.Kanban.Backend.BuisnessLayer.BoardPackage
 
         internal void AssignTask(string email, int columnOrdinal, int taskID, string emailAssignee)
         {
+            if (!_members.Contains(email))
+            {
+                Log.Error("User " + email + " is not a member of the board.");
+                throw new InvalidOperationException("User " + email + " is not a member of the board.");
+            }
             Columns[columnOrdinal].AssignTask(email, taskID, emailAssignee);
         }
 
@@ -111,6 +116,18 @@ namespace IntroSE.Kanban.Backend.BuisnessLayer.BoardPackage
             {
                 Log.Error("User is not a member of the board.");
                 throw new InvalidOperationException("User is not a member of the board.");
+            }
+            Log.Info("User " + email + " left the board " + Name + ".");
+            for (int i = 0; i < Columns.Count - 1; i++)
+            {
+                List<TaskBL> tasks = Columns[i].GetTasks();
+                foreach (TaskBL task in tasks)
+                {
+                    if (task.Assigne == email)
+                    {
+                        task.AssignTask(email, null);
+                    }
+                }
             }
             _members.Remove(email); 
         }
