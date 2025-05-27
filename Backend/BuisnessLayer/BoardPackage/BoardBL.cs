@@ -15,6 +15,7 @@ namespace IntroSE.Kanban.Backend.BuisnessLayer.BoardPackage
         internal readonly List<ColumnBL> Columns;
         internal readonly List<String> _members;
 
+
         internal BoardBL(string owner, string name, int id)
         {
             Owner = owner;
@@ -101,6 +102,21 @@ namespace IntroSE.Kanban.Backend.BuisnessLayer.BoardPackage
             Owner = newOwnerEmail;
             
 
+        }
+
+        internal void LeaveBoard(string email)
+        {
+            if (Owner == email)
+            {
+                Log.Error("Owner cannot leave the board. Transfer ownership first.");
+                throw new InvalidOperationException("Owner cannot leave the board. Transfer ownership first.");
+            }
+            if (!_members.Contains(email))
+            {
+                Log.Error("User is not a member of the board.");
+                throw new InvalidOperationException("User is not a member of the board.");
+            }
+            _members.Remove(email); 
         }
     }
 }
