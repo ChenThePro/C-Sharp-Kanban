@@ -42,6 +42,11 @@ namespace IntroSE.Kanban.Backend.BuisnessLayer.BoardPackage
                     Columns[columnOrdinal].GetName() + " column.");
                 throw new KeyNotFoundException("Task id" + taskID + " for " + email + " doesn't exist in " + Name + "'s " + Columns[columnOrdinal].GetName() + " column.");
             }
+            if (task.Assigne != email)
+            {
+                Log.Error("Task id " + taskID + " for " + email + " is not assigned to the user.");
+                throw new InvalidOperationException("Task id " + taskID + " for " + email + " is not assigned to the user.");
+            }
             Columns[columnOrdinal + 1].Add(email, task);
             Columns[columnOrdinal].Delete(email, task);
             Log.Info("Task id " + task.Id + " moved from " + Columns[columnOrdinal].GetName() + " to " + Columns[columnOrdinal + 1].GetName() + " for " + email + " in board " + Name + ".");
