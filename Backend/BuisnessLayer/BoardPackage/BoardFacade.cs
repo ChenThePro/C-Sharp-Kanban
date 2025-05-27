@@ -346,13 +346,17 @@ namespace IntroSE.Kanban.Backend.BuisnessLayer.BoardPackage
             throw new NotImplementedException();
         }
       
-        internal string TransferOwnership(string currentOwnerEmail, string newOwnerEmail, string boardName)
+        internal void TransferOwnership(string currentOwnerEmail, string newOwnerEmail, string boardName)
         {
             AuthenticateUser(currentOwnerEmail);
-            AuthenticateUser(newOwnerEmail);
+            if (!_userfacade._emails.ContainsKey(newOwnerEmail))
+            {
+                Log.Error("New ownerUser doesn't exist.");
+                throw new KeyNotFoundException("New ownerUser doesn't exist.");
+            }
             UserBL user = _userfacade.GetUser(currentOwnerEmail);
             BoardBL board = user.GetBoard(boardName);
-            return board.TransferOwnership(currentOwnerEmail, newOwnerEmail);
+            board.TransferOwnership(currentOwnerEmail, newOwnerEmail);
         }
 
         internal void AssignTask(string email, string boardName, int columnOrdinal, int taskID, string emailAssignee)

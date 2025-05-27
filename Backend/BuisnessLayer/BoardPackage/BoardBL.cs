@@ -87,7 +87,7 @@ namespace IntroSE.Kanban.Backend.BuisnessLayer.BoardPackage
             throw new NotImplementedException();
         }
 
-        internal string TransferOwnership(string currentOwnerEmail, string newOwnerEmail)
+        internal void TransferOwnership(string currentOwnerEmail, string newOwnerEmail)
         {
             if (Owner != currentOwnerEmail)
             {
@@ -100,7 +100,7 @@ namespace IntroSE.Kanban.Backend.BuisnessLayer.BoardPackage
                 throw new InvalidOperationException("New owner must be a member of the board.");
             }
             Owner = newOwnerEmail;
-            return null;
+            
 
         }
     }
