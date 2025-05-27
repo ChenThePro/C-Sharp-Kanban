@@ -32,6 +32,11 @@ namespace IntroSE.Kanban.Backend.BuisnessLayer.BoardPackage
                     Log.Error("Due date cannot be earlier than the creation date.");
                     throw new ArgumentOutOfRangeException("Due date cannot be earlier than the creation date.");
                 }
+            if (email != Assigne)
+            {
+                Log.Error("Task can be updated only by the assignee.");
+                throw new InvalidOperationException("Task can be updated only by the assignee.");
+            }
             Title = title ?? Title;
             Description = description ?? Description;
             Due = due ?? Due;
