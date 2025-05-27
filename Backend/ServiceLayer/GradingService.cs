@@ -305,7 +305,7 @@ namespace IntroSE.Kanban.Backend.ServiceLayer
         /// <returns>An empty response, unless an error occurs (see <see cref="GradingService"/>)</returns>
         public string TransferOwnership(string currentOwnerEmail, string newOwnerEmail, string boardName)
         {
-            throw new NotImplementedException();
+            return _serviceFactory.GetBoardService().TransferOwnership(currentOwnerEmail, newOwnerEmail, boardName);
         }
 
         ///<summary>This method loads all persisted data.

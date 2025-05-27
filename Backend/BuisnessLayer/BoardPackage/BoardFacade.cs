@@ -1,9 +1,7 @@
 using IntroSE.Kanban.Backend.BuisnessLayer.UserPackage;
-using IntroSE.Kanban.Backend.ServiceLayer;
 using log4net;
 using System;
 using System.Collections.Generic;
-using System.IO;
 using System.Reflection;
 
 namespace IntroSE.Kanban.Backend.BuisnessLayer.BoardPackage
@@ -14,7 +12,6 @@ namespace IntroSE.Kanban.Backend.BuisnessLayer.BoardPackage
         private const int DESC_MAX = 300;
         private const int TITLE_MAX = 50;
         private readonly UserFacade _userfacade;
-        private readonly Dictionary<int,BoardBL> _boardNameByID = new Dictionary<int ,BoardBL>();
 
         /// <summary>
         /// Initializes a new instance of the <see cref="BoardFacade"/> class.
@@ -147,7 +144,6 @@ namespace IntroSE.Kanban.Backend.BuisnessLayer.BoardPackage
             }
             BoardBL board = new BoardBL(email, boardName, BoardID);
             user.CreateBoard(board);
-            _boardNameByID.Add(board.Id, board);
             Log.Info($"New board '{boardName}' created for {email}.");
             return board;
         }
@@ -163,9 +159,7 @@ namespace IntroSE.Kanban.Backend.BuisnessLayer.BoardPackage
         {
             AuthenticateUser(email);
             UserBL user = _userfacade.GetUser(email);
-            BoardBL board = user.GetBoard(boardName);
             user.DeleteBoard(boardName);
-            _boardNameByID.Remove(board.Id);
             Log.Info($"Board '{boardName}' deleted for {email}.");
         }
 
@@ -349,20 +343,20 @@ namespace IntroSE.Kanban.Backend.BuisnessLayer.BoardPackage
       
         internal string GetBoardName(int boardID)
         {
-            _boardNameByID.TryGetValue(boardID, out var board);
-            if (board != null)
-            {
-                return board.Name;
-            }
-            else
-            {
-                throw new KeyNotFoundException("boardId not found");
-            }
+            throw new NotImplementedException();
         }
       
-        internal string TransferOwnership(string currentOwnerEmail, string newOwnerEmail, string boardName)
+        internal void TransferOwnership(string currentOwnerEmail, string newOwnerEmail, string boardName)
         {
-            throw new NotImplementedException();
+            AuthenticateUser(currentOwnerEmail);
+            if (!_userfacade._emails.ContainsKey(newOwnerEmail))
+            {
+                Log.Error("New ownerUser doesn't exist.");
+                throw new KeyNotFoundException("New ownerUser doesn't exist.");
+            }
+            UserBL user = _userfacade.GetUser(currentOwnerEmail);
+            BoardBL board = user.GetBoard(boardName);
+            board.TransferOwnership(currentOwnerEmail, newOwnerEmail);
         }
 
         internal void AssignTask(string email, string boardName, int columnOrdinal, int taskID, string emailAssignee)
