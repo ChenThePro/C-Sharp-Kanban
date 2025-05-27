@@ -94,9 +94,14 @@ namespace IntroSE.Kanban.Backend.BuisnessLayer.UserPackage
             }
             return boardsID;
         }
-        internal string JoinBoard(string email, int boardID)
+        internal void JoinBoard(BoardBL board)
         {
-            throw new NotImplementedException();
+            if (_boards.Contains(board))
+            {
+                Log.Error("Board already exists in user's boards.");
+                throw new InvalidOperationException("Board already exists in user's boards.");
+            }
+            _boards.Add(board);
         }
         internal void LeaveBoard(BoardBL board)
         {

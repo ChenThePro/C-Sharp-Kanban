@@ -258,7 +258,7 @@ namespace IntroSE.Kanban.Backend.ServiceLayer
         /// <returns>An empty response, unless an error occurs (see <see cref="GradingService"/>)</returns>
         public string JoinBoard(string email, int boardID)
         {
-            throw new NotImplementedException();
+            return _serviceFactory.GetBoardService().JoinBoard(email, boardID);
         }
 
         /// <summary>
@@ -269,7 +269,7 @@ namespace IntroSE.Kanban.Backend.ServiceLayer
         /// <returns>An empty response, unless an error occurs (see <see cref="GradingService"/>)</returns>
         public string LeaveBoard(string email, int boardID)
         {
-            throw new NotImplementedException();
+            return _serviceFactory.GetBoardService().LeaveBoard(email, boardID);
         }
 
         /// <summary>
