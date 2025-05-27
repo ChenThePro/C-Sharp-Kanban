@@ -26,8 +26,13 @@ namespace IntroSE.Kanban.Backend.BuisnessLayer.BoardPackage
             Members.Add(owner);
         }
 
-        internal TaskBL AddTask(string title, string description, DateTime dueDate, DateTime created_at, int taskID, int columnOrdinal)
+        internal TaskBL AddTask(string email, string title, string description, DateTime dueDate, DateTime created_at, int taskID, int columnOrdinal)
         {
+            if (!Members.Contains(email))
+            {
+                Log.Error("User " + email + " is not a member of the board.");
+                throw new InvalidOperationException("User " + email + " is not a member of the board.");
+            }
             TaskBL task = new TaskBL(title, description, dueDate, created_at, taskID);
             Columns[columnOrdinal].Add(Owner, task);
             return task;

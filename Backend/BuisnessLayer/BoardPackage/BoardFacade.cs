@@ -132,7 +132,7 @@ namespace IntroSE.Kanban.Backend.BuisnessLayer.BoardPackage
                 Log.Error("Task ID is already used in this board.");
                 throw new InvalidOperationException("Task ID is already used in this board.");
             }
-            return board.AddTask(title, description, dueDate, created_at, taskID, 0);
+            return board.AddTask(email, title, description, dueDate, created_at, taskID, 0);
         }
 
         /// <summary>
