@@ -14,7 +14,7 @@ namespace IntroSE.Kanban.Backend.BuisnessLayer.BoardPackage
         private const int DESC_MAX = 300;
         private const int TITLE_MAX = 50;
         private readonly UserFacade _userfacade;
-        private readonly Dictionary<int, BoardBL> _boards = new Dictionary<int, BoardBL>();
+        private readonly Dictionary<int, BoardBL> _boards;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="BoardFacade"/> class.
@@ -22,6 +22,7 @@ namespace IntroSE.Kanban.Backend.BuisnessLayer.BoardPackage
         internal BoardFacade(UserFacade userfacade)
         {
             _userfacade = userfacade;
+            _boards = new Dictionary<int, BoardBL>();
         }
 
         private void AuthenticateString(string name, string type)
@@ -157,6 +158,7 @@ namespace IntroSE.Kanban.Backend.BuisnessLayer.BoardPackage
             }
             BoardBL board = new BoardBL(email, boardName, BoardID);
             user.CreateBoard(board);
+
             _boards.Add(board.Id, board);
             Log.Info($"New board '{boardName}' created for {email}.");
             return board;
@@ -343,11 +345,13 @@ namespace IntroSE.Kanban.Backend.BuisnessLayer.BoardPackage
             return user.GetUserBoards(email);
         }
       
-        internal string JoinBoard(string email, int boardID)
+        internal void JoinBoard(string email, int boardID)
         {
             AuthenticateUser(email);
             UserBL user = _userfacade.GetUser(email);
-            return user.JoinBoard(email, boardID);
+            BoardBL board = GetBoardById(boardID);
+            board.JoinBoard(email);
+            user.JoinBoard(board);
         }
       
         internal void LeaveBoard(string email, int boardID)

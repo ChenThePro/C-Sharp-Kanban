@@ -82,10 +82,6 @@ namespace IntroSE.Kanban.Backend.BuisnessLayer.BoardPackage
         {
             Columns[columnOrdinal].AssignTask(email, taskID, emailAssignee);
         }
-        internal string GetBoardName(int boardId)
-        {
-            throw new NotImplementedException();
-        }
 
         internal void TransferOwnership(string currentOwnerEmail, string newOwnerEmail)
         {
@@ -117,6 +113,16 @@ namespace IntroSE.Kanban.Backend.BuisnessLayer.BoardPackage
                 throw new InvalidOperationException("User is not a member of the board.");
             }
             _members.Remove(email); 
+        }
+
+        internal void JoinBoard(string email)
+        {
+            if (_members.Contains(email))
+            {
+                Log.Error("User is already a member of the board.");
+                throw new InvalidOperationException("User is already a member of the board.");
+            }
+            _members.Add(email);
         }
     }
 }
