@@ -148,12 +148,12 @@ namespace IntroSE.Kanban.Backend.BuisnessLayer.BoardPackage
 
         internal void JoinBoard(string email)
         {
-            if (_members.Contains(email))
+            if (Members.Contains(email))
             {
                 Log.Error("User is already a member of the board.");
                 throw new InvalidOperationException("User is already a member of the board.");
             }
-            _members.Add(email);
+            Members.Add(email);
         }
     }
 }
