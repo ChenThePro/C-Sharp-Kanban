@@ -11,8 +11,8 @@ namespace IntroSE.Kanban.Backend.DataAccessLayer
 
         protected override TaskDTO ConvertReaderToDTO(SqliteDataReader reader)
         {
-            return new TaskDTO(reader.GetInt32(0), reader.GetInt32(1), DateTime.Parse(reader.GetString(2)), 
-                DateTime.Parse(reader.GetString(3)), reader.GetString(4), reader.GetString(5), reader.GetInt32(6));
+            return new TaskDTO(reader.GetInt32(0), reader.GetInt32(1), reader.GetString(2), DateTime.Parse(reader.GetString(3)), 
+                DateTime.Parse(reader.GetString(4)), reader.GetString(5), reader.GetString(6), reader.GetInt32(7));
         }
     }
 }

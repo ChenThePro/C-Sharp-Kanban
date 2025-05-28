@@ -43,7 +43,7 @@ namespace IntroSE.Kanban.Backend.BuisnessLayer.BoardPackage
         }
 
         private List<TaskBL> ConvertTasks(List<TaskDTO> dtos) =>
-    dtos.ConvertAll(t => new TaskBL(t.Title, t.Description, t.DueDate, t.CreationTime, t.Id, t.BoardId, t.Column, t.Assignee));
+    dtos.ConvertAll(t => new TaskBL(t));
 
 
         internal TaskBL AddTask(string email, string title, string description, DateTime dueDate, DateTime created_at, int taskID, int columnOrdinal)
