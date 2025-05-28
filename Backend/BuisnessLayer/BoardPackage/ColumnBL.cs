@@ -12,7 +12,7 @@ namespace IntroSE.Kanban.Backend.BuisnessLayer.BoardPackage
         private int _limit;
         private readonly List<TaskBL> _tasks;
 
-        internal ColumnBL(int num)
+        internal ColumnBL(int num, int limit, List<TaskBL> tasks)
         {
             _name = num switch
             {
@@ -21,8 +21,8 @@ namespace IntroSE.Kanban.Backend.BuisnessLayer.BoardPackage
                 2 => "done",
                 _ => throw new NotImplementedException("Will never reach here"),
             };
-            _limit = -1;
-            _tasks = new List<TaskBL>();
+            _limit = limit;
+            _tasks = tasks;
         }
 
         internal void Add(string email, TaskBL task)

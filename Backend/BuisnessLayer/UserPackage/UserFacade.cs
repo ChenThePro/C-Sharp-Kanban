@@ -1,3 +1,4 @@
+using IntroSE.Kanban.Backend.DataAccessLayer.DTOs;
 using log4net;
 using System;
 using System.Collections.Generic;
@@ -17,6 +18,13 @@ namespace IntroSE.Kanban.Backend.BuisnessLayer.UserPackage
         internal UserFacade()
         {
             _emails = new Dictionary<string, UserBL>();
+            List<UserDTO> users = new UserDTO().SelectAll();
+            UserBL user;
+            foreach (UserDTO userDTO in users)
+            {
+                user = new UserBL(userDTO);
+                _emails.Add(user.Email, user);
+            }
         }
 
         private void ValidateEmail(string email)
