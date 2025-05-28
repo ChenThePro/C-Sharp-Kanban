@@ -117,6 +117,54 @@ namespace IntroSE.Kanban.Backend.DataAccessLayer
             return results;
         }
 
+        internal bool DeleteAll()
+        {
+            using var connection = new SqliteConnection(_connectionString);
+            using var command = connection.CreateCommand();
+            command.CommandText = $"DELETE FROM {_tableName};";
+            try
+            {
+                connection.Open();
+                int rowsAffected = command.ExecuteNonQuery();
+                Log.Info($"DeleteAll succeeded on {_tableName}. {rowsAffected} rows deleted.");
+                return true;
+            }
+            catch (Exception ex)
+            {
+                Log.Error($"DeleteAll failed on {_tableName}.", ex);
+                return false;
+            }
+        }
+
+        internal bool DeleteAllAndResetAutoIncrement()
+        {
+            using var connection = new SqliteConnection(_connectionString);
+            try
+            {
+                connection.Open();
+                using var transaction = connection.BeginTransaction();
+
+                using var deleteCommand = connection.CreateCommand();
+                deleteCommand.CommandText = $"DELETE FROM {_tableName};";
+                deleteCommand.Transaction = transaction;
+                int rowsAffected = deleteCommand.ExecuteNonQuery();
+
+                using var resetCommand = connection.CreateCommand();
+                resetCommand.CommandText = $"DELETE FROM sqlite_sequence WHERE name = '{_tableName}';";
+                resetCommand.Transaction = transaction;
+                resetCommand.ExecuteNonQuery();
+
+                transaction.Commit();
+                Log.Info($"DeleteAllAndResetAutoIncrement succeeded on {_tableName}. {rowsAffected} rows deleted and auto-increment reset.");
+                return true;
+            }
+            catch (Exception ex)
+            {
+                Log.Error($"DeleteAllAndResetAutoIncrement failed on {_tableName}.", ex);
+                return false;
+            }
+        }
+
         protected abstract TDTO ConvertReaderToDTO(SqliteDataReader reader);
     }
 }
