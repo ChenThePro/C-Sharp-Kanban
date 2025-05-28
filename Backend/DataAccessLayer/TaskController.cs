@@ -15,4 +15,5 @@ namespace IntroSE.Kanban.Backend.DataAccessLayer
                 DateTime.Parse(reader.GetString(4)), reader.GetString(5), reader.GetString(6), reader.GetInt32(7));
         }
     }
+
 }

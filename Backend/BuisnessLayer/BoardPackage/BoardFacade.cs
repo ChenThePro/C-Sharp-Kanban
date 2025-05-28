@@ -6,6 +6,7 @@ using System.Collections.Generic;
 using System.Reflection;
 using System.IO;
 using IntroSE.Kanban.Backend.DataAccessLayer.DTOs;
+using IntroSE.Kanban.Backend.DataAccessLayer;
 
 namespace IntroSE.Kanban.Backend.BuisnessLayer.BoardPackage
 {
@@ -408,6 +409,15 @@ namespace IntroSE.Kanban.Backend.BuisnessLayer.BoardPackage
                 board = new BoardBL(boardDTO);
                 _boards.Add(board.Id, board);
             }
+        }
+
+        internal void DeleteData()
+        {
+            new TaskController().DeleteAllAndResetAutoIncrement();
+            new BoardUserController().DeleteAll();
+            new BoardController().DeleteAllAndResetAutoIncrement();
+            new UserController().DeleteAll();
+
         }
     }
 }

@@ -282,7 +282,7 @@ namespace IntroSE.Kanban.Backend.ServiceLayer
             }
         }
 
-        public string loadData()
+        public string LoadData()
         {
             try
             {
@@ -294,6 +294,18 @@ namespace IntroSE.Kanban.Backend.ServiceLayer
                 return JsonSerializer.Serialize(new Response(ex.Message, null));
             }
 
+        }
+        public string DeleteData()
+        {
+            try
+            {
+                _boardFacade.DeleteData();
+                return JsonSerializer.Serialize(new Response(null, null));
+            }
+            catch (Exception ex)
+            {
+                return JsonSerializer.Serialize(new Response(ex.Message, null));
+            }
         }
     
 

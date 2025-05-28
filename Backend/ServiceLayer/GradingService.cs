@@ -317,7 +317,7 @@ namespace IntroSE.Kanban.Backend.ServiceLayer
         /// <returns>An empty response, unless an error occurs (see <see cref="GradingService"/>)</returns>
         public string LoadData()
         {
-            return _serviceFactory.loadData();
+            return _serviceFactory.GetBoardService().LoadData();
             
         }
 
@@ -330,7 +330,7 @@ namespace IntroSE.Kanban.Backend.ServiceLayer
         ///<returns>An empty response, unless an error occurs (see <see cref="GradingService"/>)</returns>
         public string DeleteData()
         {
-            throw new NotImplementedException();
+            return _serviceFactory.GetBoardService().DeleteData();  
         }
     }
 }
