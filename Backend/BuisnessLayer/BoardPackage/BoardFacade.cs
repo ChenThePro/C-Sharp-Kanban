@@ -24,13 +24,6 @@ namespace IntroSE.Kanban.Backend.BuisnessLayer.BoardPackage
         {
             _userfacade = userfacade;
             _boards = new Dictionary<int, BoardBL>();
-            List<BoardDTO> boards = new BoardDTO().SelectAll();
-            BoardBL board;
-            foreach (BoardDTO boardDTO in boards)
-            {
-                board = new BoardBL(boardDTO);
-                _boards.Add(board.Id, board);
-            }
         }
 
         private void AuthenticateString(string name, string type)
@@ -351,14 +344,14 @@ namespace IntroSE.Kanban.Backend.BuisnessLayer.BoardPackage
             UserBL user = _userfacade.GetUser(email);
             return user.InProgressTasks();
         }
-      
+
         internal List<int> GetUserBoards(string email)
         {
             AuthenticateUser(email);
             UserBL user = _userfacade.GetUser(email);
             return user.GetUserBoards(email);
         }
-      
+
         internal void JoinBoard(string email, int boardID)
         {
             AuthenticateUser(email);
@@ -367,7 +360,7 @@ namespace IntroSE.Kanban.Backend.BuisnessLayer.BoardPackage
             board.JoinBoard(email);
             user.JoinBoard(board);
         }
-      
+
         internal void LeaveBoard(string email, int boardID)
         {
             AuthenticateUser(email);
@@ -376,12 +369,12 @@ namespace IntroSE.Kanban.Backend.BuisnessLayer.BoardPackage
             board.LeaveBoard(email);
             user.LeaveBoard(board);
         }
-      
+
         internal string GetBoardName(int boardID)
         {
             return GetBoardById(boardID).Name;
         }
-      
+
         internal void TransferOwnership(string currentOwnerEmail, string newOwnerEmail, string boardName)
         {
             AuthenticateUser(currentOwnerEmail);
@@ -403,6 +396,18 @@ namespace IntroSE.Kanban.Backend.BuisnessLayer.BoardPackage
             UserBL user = _userfacade.GetUser(email);
             BoardBL board = user.GetBoard(boardName);
             board.AssignTask(email, columnOrdinal, taskID, emailAssignee);
+        }
+
+        public void LoadData()
+        {
+            _userfacade.LoadData();
+            List<BoardDTO> boards = new BoardDTO().SelectAll();
+            BoardBL board;
+            foreach (BoardDTO boardDTO in boards)
+            {
+                board = new BoardBL(boardDTO);
+                _boards.Add(board.Id, board);
+            }
         }
     }
 }
