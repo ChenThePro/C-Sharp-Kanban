@@ -54,6 +54,8 @@ namespace IntroSE.Kanban.Backend.BuisnessLayer.BoardPackage
             }
             Columns[columnOrdinal + 1].Add(email, task);
             Columns[columnOrdinal].Delete(email, task);
+            if (columnOrdinal + 1 == 2)
+                task.AssignTask(email, null);
             Log.Info("Task id " + task.Id + " moved from " + Columns[columnOrdinal].GetName() + " to " + Columns[columnOrdinal + 1].GetName() + " for " + email + " in board " + Name + ".");
         }
 
