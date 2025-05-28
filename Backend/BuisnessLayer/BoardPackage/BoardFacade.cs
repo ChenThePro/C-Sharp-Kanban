@@ -5,6 +5,7 @@ using System;
 using System.Collections.Generic;
 using System.Reflection;
 using System.IO;
+using IntroSE.Kanban.Backend.DataAccessLayer.DTOs;
 
 namespace IntroSE.Kanban.Backend.BuisnessLayer.BoardPackage
 {
@@ -23,6 +24,13 @@ namespace IntroSE.Kanban.Backend.BuisnessLayer.BoardPackage
         {
             _userfacade = userfacade;
             _boards = new Dictionary<int, BoardBL>();
+            List<BoardDTO> boards = new BoardDTO().SelectAll();
+            BoardBL board;
+            foreach (BoardDTO boardDTO in boards)
+            {
+                board = new BoardBL(boardDTO);
+                _boards.Add(board.Id, board);
+            }
         }
 
         private void AuthenticateString(string name, string type)
@@ -176,7 +184,7 @@ namespace IntroSE.Kanban.Backend.BuisnessLayer.BoardPackage
             AuthenticateUser(email);
             UserBL user = _userfacade.GetUser(email);
             BoardBL board = user.GetBoard(boardName);
-            board.CheckDelete(email);
+            board.Delete(email);
             UserBL memberUser;
             foreach (string member in board.Members)
             {

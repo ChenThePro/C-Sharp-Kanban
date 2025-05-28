@@ -1,6 +1,7 @@
 ﻿using IntroSE.Kanban.Backend.DataAccessLayer.DTOs;
 using Microsoft.Data.Sqlite;
 using System;
+using System.Collections.Generic;
 
 namespace IntroSE.Kanban.Backend.DataAccessLayer
 {
@@ -56,6 +57,50 @@ namespace IntroSE.Kanban.Backend.DataAccessLayer
                 Log.Error($"Update failed on {_tableName} for keys {key1}, {key2}.", ex);
                 return false;
             }
+        }
+
+        internal List<string> GetParticipants(string keyColumn, int key)
+        {
+            List<string> results = new();
+            using var connection = new SqliteConnection(_connectionString);
+            using var command = connection.CreateCommand();
+            command.CommandText = $"SELECT * FROM {_tableName} WHERE {keyColumn} = @key;";
+            command.Parameters.AddWithValue("@key", key);
+            try
+            {
+                connection.Open();
+                using var reader = command.ExecuteReader();
+                while (reader.Read())
+                    results.Add(reader.GetString(1));
+            }
+            catch (Exception ex)
+            {
+                Log.Error($"Select failed on {_tableName}.", ex);
+            }
+            Log.Info($"Select succeeded on {_tableName}.");
+            return results;
+        }
+
+        internal List<int> GetBoards(string keyColumn, string key)
+        {
+            List<int> results = new();
+            using var connection = new SqliteConnection(_connectionString);
+            using var command = connection.CreateCommand();
+            command.CommandText = $"SELECT * FROM {_tableName} WHERE {keyColumn} = @key;";
+            command.Parameters.AddWithValue("@key", key);
+            try
+            {
+                connection.Open();
+                using var reader = command.ExecuteReader();
+                while (reader.Read())
+                    results.Add(reader.GetInt32(0));
+            }
+            catch (Exception ex)
+            {
+                Log.Error($"Select failed on {_tableName}.", ex);
+            }
+            Log.Info($"Select succeeded on {_tableName}.");
+            return results;
         }
 
         protected override BoardUserDTO ConvertReaderToDTO(SqliteDataReader reader)

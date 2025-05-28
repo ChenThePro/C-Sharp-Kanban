@@ -1,4 +1,4 @@
-﻿using System;
+﻿using IntroSE.Kanban.Backend.BuisnessLayer.BoardPackage;
 using System.Collections.Generic;
 
 namespace IntroSE.Kanban.Backend.DataAccessLayer.DTOs
@@ -57,19 +57,19 @@ namespace IntroSE.Kanban.Backend.DataAccessLayer.DTOs
             _controller = new BoardController();
         }
 
-        internal void AddTask(int taskId, DateTime due, string title, string description, string email)
+        internal void AddTask(TaskBL task, string email)
         {
-            TaskDTO task = new TaskDTO(taskId, _id, DateTime.Today, due, title, description, 0);
-            task.Insert();
-            _columns[0].AddTask(task);
+            TaskDTO taskDTO = new TaskDTO(task.Id, _id, null, task.CreatedAt, task.DueDate, task.Title, task.Description, 0);
+            taskDTO.Insert();
+            _columns[0].AddTask(taskDTO);
         }
 
-        internal void MoveTask(string title, string description, DateTime due, string email, int taskId, int columnOrdinal)
+        internal void AdvanceTask(TaskBL task, string email, int columnOrdinal)
         {
-            TaskDTO task = new TaskDTO(taskId, _id, DateTime.Today, due, title, description, columnOrdinal);
-            task.Column++;
-            _columns[columnOrdinal].RemoveTask(task);
-            _columns[columnOrdinal + 1].AddTask(task);
+            TaskDTO taskDTO = new TaskDTO(task.Id, _id, email, task.CreatedAt, task.DueDate, task.Title, task.Description, columnOrdinal);
+            taskDTO.Column++;
+            _columns[columnOrdinal].RemoveTask(taskDTO);
+            _columns[columnOrdinal + 1].AddTask(taskDTO);
         }
 
         internal void LimitColumn(int limit, int columnOrdinal)

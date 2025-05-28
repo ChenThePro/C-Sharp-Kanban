@@ -1,4 +1,6 @@
 ﻿using IntroSE.Kanban.Backend.BuisnessLayer.BoardPackage;
+using IntroSE.Kanban.Backend.DataAccessLayer.DTOs;
+using IntroSE.Kanban.Backend.ServiceLayer;
 using log4net;
 using System;
 using System.Collections.Generic;
@@ -13,6 +15,7 @@ namespace IntroSE.Kanban.Backend.BuisnessLayer.UserPackage
         internal string Email;
         private string _password;
         private readonly List<BoardBL> _boards;
+        private readonly UserDTO _userDTO;
 
 
         internal UserBL(string email, string password)
@@ -21,6 +24,20 @@ namespace IntroSE.Kanban.Backend.BuisnessLayer.UserPackage
             LoggedIn = true;
             _password = password;
             _boards = new List<BoardBL>();
+            _userDTO = new UserDTO(email, password);
+            _userDTO.Insert();
+        }
+
+        public UserBL(UserDTO userDTO)
+        {
+            Email = userDTO.Email;
+            _password = userDTO.Password;
+            _boards = new List<BoardBL>();
+            List<int> boardIds = new BoardUserDTO(Email).GetBoards();
+            List<BoardDTO> boards = new BoardDTO().SelectAll().FindAll(board => boardIds.Contains(board.Id));
+            foreach (BoardDTO boardDTO in boards)
+                _boards.Add(new BoardBL(boardDTO));
+            _userDTO = userDTO;
         }
 
         internal UserBL Login(string password)
