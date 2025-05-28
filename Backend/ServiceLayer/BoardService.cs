@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text.Json;
 using IntroSE.Kanban.Backend.BuisnessLayer.BoardPackage;
+using IntroSE.Kanban.Backend.BuisnessLayer.UserPackage;
 
 namespace IntroSE.Kanban.Backend.ServiceLayer
 {
@@ -280,5 +281,21 @@ namespace IntroSE.Kanban.Backend.ServiceLayer
                 return JsonSerializer.Serialize(new Response(ex.Message, null));
             }
         }
+
+        public string loadData()
+        {
+            try
+            {
+                _boardFacade.LoadData();
+                return JsonSerializer.Serialize(new Response(null, null));
+            }
+            catch (Exception ex)
+            {
+                return JsonSerializer.Serialize(new Response(ex.Message, null));
+            }
+
+        }
+    
+
     }
 }

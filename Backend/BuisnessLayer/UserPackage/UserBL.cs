@@ -1,6 +1,12 @@
+<<<<<<< Updated upstream
 ﻿using IntroSE.Kanban.Backend.BuisnessLayer.BoardPackage;
 using IntroSE.Kanban.Backend.DataAccessLayer.DTOs;
 using IntroSE.Kanban.Backend.ServiceLayer;
+=======
+﻿
+
+using IntroSE.Kanban.Backend.BuisnessLayer.BoardPackage;
+>>>>>>> Stashed changes
 using log4net;
 using System;
 using System.Collections.Generic;

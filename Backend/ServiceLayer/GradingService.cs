@@ -317,7 +317,8 @@ namespace IntroSE.Kanban.Backend.ServiceLayer
         /// <returns>An empty response, unless an error occurs (see <see cref="GradingService"/>)</returns>
         public string LoadData()
         {
-            throw new NotImplementedException();
+            return _serviceFactory.loadData();
+            
         }
 
         ///<summary>This method deletes all persisted data.

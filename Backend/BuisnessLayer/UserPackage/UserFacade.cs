@@ -18,13 +18,6 @@ namespace IntroSE.Kanban.Backend.BuisnessLayer.UserPackage
         internal UserFacade()
         {
             _emails = new Dictionary<string, UserBL>();
-            List<UserDTO> users = new UserDTO().SelectAll();
-            UserBL user;
-            foreach (UserDTO userDTO in users)
-            {
-                user = new UserBL(userDTO);
-                _emails.Add(user.Email, user);
-            }
         }
 
         private void ValidateEmail(string email)
@@ -138,6 +131,16 @@ namespace IntroSE.Kanban.Backend.BuisnessLayer.UserPackage
         internal UserBL GetUser(string email)
         {
             return _emails[email];
+        }
+        public void LoadData()
+        {
+            List<UserDTO> users = new UserDTO().SelectAll();
+            UserBL user;
+            foreach (UserDTO userDTO in users)
+            {
+                user = new UserBL(userDTO);
+                _emails.Add(user.Email, user);
+            }
         }
     }
 }
