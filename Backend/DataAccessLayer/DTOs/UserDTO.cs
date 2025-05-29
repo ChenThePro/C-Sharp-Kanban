@@ -6,8 +6,10 @@ namespace IntroSE.Kanban.Backend.DataAccessLayer.DTOs
     {
         internal const string USER_EMAIL_COLUMN_NAME = "email";
         internal const string USER_PASSWORD_COLUMN_NAME = "password";
+        internal const string USER_LOGGED_IN_COLUMN_NAME = "logged_in";
         private string _email;
         private string _password;
+        private bool _loggedIn;
         private readonly UserController _controller;
 
         internal string Email 
@@ -22,10 +24,17 @@ namespace IntroSE.Kanban.Backend.DataAccessLayer.DTOs
             set { _controller.Update(USER_EMAIL_COLUMN_NAME, _email, USER_PASSWORD_COLUMN_NAME, value); _password = value; } 
         }
 
-        internal UserDTO(string email, string password)
+        internal bool LoggedIn
+        {
+            get => _loggedIn;
+            set { _controller.Update(USER_EMAIL_COLUMN_NAME, _email, USER_LOGGED_IN_COLUMN_NAME, value); _loggedIn = value; }
+        }
+
+        internal UserDTO(string email, string password, bool loggedIn)
         {
             _email = email;
             _password = password;
+            _loggedIn = loggedIn;
             _controller = new UserController();
         }
 
@@ -55,7 +64,7 @@ namespace IntroSE.Kanban.Backend.DataAccessLayer.DTOs
             return _controller.SelectAll();
         }
 
-        public string[] GetColumnNames() => new[] { USER_EMAIL_COLUMN_NAME, USER_PASSWORD_COLUMN_NAME };
-        public object[] GetColumnValues() => new object[] { _email, _password };
+        public string[] GetColumnNames() => new[] { USER_EMAIL_COLUMN_NAME, USER_PASSWORD_COLUMN_NAME, USER_LOGGED_IN_COLUMN_NAME };
+        public object[] GetColumnValues() => new object[] { _email, _password, _loggedIn };
     }
 }

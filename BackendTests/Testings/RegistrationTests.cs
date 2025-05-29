@@ -4,30 +4,33 @@ namespace IntroSE.Kanban.BackendTests.Testings
 {
     public class RegistrationTests
     {
-        private readonly ServiceFactory _factory = new ServiceFactory();
+        private ServiceFactory _factory = null!;
+        private const string EMAIL1 = "test1@gmail.com";
+        private const string EMAIL2 = "test2@gmail.com";
+        private const string PASSWORD = "Password1";
 
         public bool TestExistedEmailRegister()
         {
-            _factory.GetUserService().Register("existing@email.com", "Password1");
-            string json = _factory.GetUserService().Register("existing@email.com", "Password2");
+            _factory.GetUserService().Register(EMAIL1, PASSWORD);
+            string json = _factory.GetUserService().Register(EMAIL1, PASSWORD);
             return !json.Contains("\"ErrorMessage\":null");
         }
 
         public bool TestNoUsernameRegister()
         {
-            string json = _factory.GetUserService().Register(null, "Password1");
+            string json = _factory.GetUserService().Register(null, PASSWORD);
             return !json.Contains("\"ErrorMessage\":null");
         }
 
         public bool TestInvalidEmailRegister()
         {
-            string json = _factory.GetUserService().Register("invalidemail", "Password1");
+            string json = _factory.GetUserService().Register("invalidemail", PASSWORD);
             return !json.Contains("\"ErrorMessage\":null");
         }
 
         public bool TestSuccessfullyRegister()
         {
-            string json = _factory.GetUserService().Register("new@email.com", "Password1");
+            string json = _factory.GetUserService().Register(EMAIL2, PASSWORD);
             return json.Contains("\"ErrorMessage\":null");
         }
 
@@ -61,8 +64,9 @@ namespace IntroSE.Kanban.BackendTests.Testings
             return !json.Contains("\"ErrorMessage\":null");
         }
 
-        public void RunAll()
+        public void RunAll(ServiceFactory serviceFactory)
         {
+            _factory = serviceFactory;
             Console.WriteLine("🔹 TestExistedEmailRegister: " + TestExistedEmailRegister());
             Console.WriteLine("🔹 TestNoUsernameRegister: " + TestNoUsernameRegister());
             Console.WriteLine("🔹 TestInvalidEmailRegister: " + TestInvalidEmailRegister());

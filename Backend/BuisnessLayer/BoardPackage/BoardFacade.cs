@@ -160,7 +160,6 @@ namespace IntroSE.Kanban.Backend.BuisnessLayer.BoardPackage
             }
             BoardBL board = new BoardBL(email, boardName, BoardID);
             user.CreateBoard(board);
-
             _boards.Add(board.Id, board);
             Log.Info($"New board '{boardName}' created for {email}.");
             return board;

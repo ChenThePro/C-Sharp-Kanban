@@ -60,15 +60,14 @@ namespace IntroSE.Kanban.Backend.DataAccessLayer.DTOs
 
         internal void AddTask(TaskBL task, string email)
         {
-            TaskDTO taskDTO = new TaskDTO(task.Id, _id, null, task.CreatedAt, task.DueDate, task.Title, task.Description, 0);
-            taskDTO.Insert();
-            _columns[0].AddTask(taskDTO);
+            task.Insert();
+            _columns[0].AddTask(task.TaskDTO);
         }
 
         internal void AdvanceTask(TaskBL task, string email, int columnOrdinal)
         {
             TaskDTO taskDTO = new TaskDTO(task.Id, _id, email, task.CreatedAt, task.DueDate, task.Title, task.Description, columnOrdinal);
-            taskDTO.Column++;
+            taskDTO.Column = taskDTO.Column + 1;
             _columns[columnOrdinal].RemoveTask(taskDTO);
             _columns[columnOrdinal + 1].AddTask(taskDTO);
         }

@@ -10,12 +10,11 @@ namespace IntroSE.Kanban.Backend.BuisnessLayer.UserPackage
     internal class UserBL
     {
         private static readonly ILog Log = LogManager.GetLogger(MethodBase.GetCurrentMethod().DeclaringType);
-        internal bool LoggedIn;
         internal string Email;
         private string _password;
+        internal bool LoggedIn;
         private readonly List<BoardBL> _boards;
         private readonly UserDTO _userDTO;
-
 
         internal UserBL(string email, string password)
         {
@@ -23,7 +22,7 @@ namespace IntroSE.Kanban.Backend.BuisnessLayer.UserPackage
             LoggedIn = true;
             _password = password;
             _boards = new List<BoardBL>();
-            _userDTO = new UserDTO(email, password);
+            _userDTO = new UserDTO(email, password, LoggedIn);
             _userDTO.Insert();
         }
 
@@ -31,6 +30,7 @@ namespace IntroSE.Kanban.Backend.BuisnessLayer.UserPackage
         {
             Email = userDTO.Email;
             _password = userDTO.Password;
+            LoggedIn = userDTO.LoggedIn;
             _boards = new List<BoardBL>();
             List<int> boardIds = new BoardUserDTO(Email).GetBoards();
             List<BoardDTO> boards = new BoardDTO().SelectAll().FindAll(board => boardIds.Contains(board.Id));
@@ -52,6 +52,7 @@ namespace IntroSE.Kanban.Backend.BuisnessLayer.UserPackage
                 throw new InvalidOperationException("Already logged in.");
             }
             LoggedIn = true;
+            _userDTO.LoggedIn = LoggedIn;
             Log.Info("User logged in successfully.");
             return this;
         }
@@ -64,6 +65,7 @@ namespace IntroSE.Kanban.Backend.BuisnessLayer.UserPackage
                 throw new InvalidOperationException("User not logged in.");
             }
             LoggedIn = false;
+            _userDTO.LoggedIn = LoggedIn;
             Log.Info("User logged out.");
         }
 

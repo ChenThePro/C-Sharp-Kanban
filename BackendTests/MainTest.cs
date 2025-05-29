@@ -11,16 +11,17 @@ namespace IntroSE.Kanban.BackendTests
         {
             // new ServiceFactory().GetBoardService().DeleteData();
             // return;
-            SQLitePCL.Batteries_V2.Init();
+            // SQLitePCL.Batteries_V2.Init();
+            ServiceFactory serviceFactory = new ServiceFactory();
             Console.WriteLine("🚀 Running all tests!\n");
             Console.WriteLine("👤 Running registration-related tests...");
-            new RegistrationTests().RunAll();
+            new RegistrationTests().RunAll(serviceFactory);
             Console.WriteLine("\n👤 Running login-related tests...");
-            new LoginTests().RunAll();
+            new LoginTests().RunAll(serviceFactory);
             Console.WriteLine("\n🧠 Running board-related tests...");
-            new BoardTests().RunAll();
+            new BoardTests().RunAll(serviceFactory);
             Console.WriteLine("\n📋 Running task-related tests...");
-            new TaskTests().RunAll();
+            new TaskTests().RunAll(serviceFactory);
             Console.WriteLine("\n✅ All test suites finished.");
         }
     }
