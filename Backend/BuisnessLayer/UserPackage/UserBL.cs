@@ -82,9 +82,11 @@ namespace IntroSE.Kanban.Backend.BuisnessLayer.UserPackage
         {
             foreach (BoardBL board in _boards)
                 if (board.Name.ToLower() == boardName.ToLower())
-                    return true;
-            Log.Error("A board with the given name already exists.");
-            throw new InvalidOperationException("A board with the given name already exists.");
+                {
+                    Log.Error("A board with the given name already exists.");
+                    throw new InvalidOperationException("A board with the given name already exists.");
+                }
+            return true;
         }
 
         internal void CreateBoard(BoardBL board)
