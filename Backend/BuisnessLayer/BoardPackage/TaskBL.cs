@@ -16,6 +16,8 @@ namespace IntroSE.Kanban.Backend.BuisnessLayer.BoardPackage
         internal string Assigne;
         private readonly TaskDTO _taskDTO;
 
+        internal TaskDTO TaskDTO => _taskDTO;
+
         internal TaskBL(string title, string description, DateTime due, DateTime created_at, int taskID, int boardId, int columnOrdinal)
         {
             Title = title;
@@ -25,7 +27,6 @@ namespace IntroSE.Kanban.Backend.BuisnessLayer.BoardPackage
             Id = taskID;
             Assigne = null;
             _taskDTO = new TaskDTO(Id, boardId, null, CreatedAt, DueDate, title, description, columnOrdinal);
-            _taskDTO.Insert();
         }
 
         internal TaskBL(TaskDTO taskDTO)
@@ -78,6 +79,11 @@ namespace IntroSE.Kanban.Backend.BuisnessLayer.BoardPackage
             }
             Assigne = emailAssignee;
             _taskDTO.Assignee = emailAssignee;
+        }
+
+        internal void Insert()
+        {
+            _taskDTO.Insert();
         }
     }
 }

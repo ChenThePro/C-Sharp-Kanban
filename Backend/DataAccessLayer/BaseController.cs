@@ -16,7 +16,7 @@ namespace IntroSE.Kanban.Backend.DataAccessLayer
 
         protected BaseController(string tableName)
         {
-            string path = Path.GetFullPath(Path.Combine(Directory.GetCurrentDirectory(), "database.db"));
+            string path = Path.GetFullPath(Path.Combine(Directory.GetCurrentDirectory(), "kanban.db"));
             _connectionString = $"Data Source={path};";
             _tableName = tableName;
         }
@@ -31,7 +31,7 @@ namespace IntroSE.Kanban.Backend.DataAccessLayer
             using var command = connection.CreateCommand();
             command.CommandText = $"INSERT INTO {_tableName} ({columnList}) VALUES ({paramList});";
             for (int i = 0; i < columns.Length; i++)
-                command.Parameters.AddWithValue($"@{columns[i]}", values[i]);
+                command.Parameters.AddWithValue($"@{columns[i]}", values[i] ?? DBNull.Value);
             try
             {
                 connection.Open();

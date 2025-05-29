@@ -4,37 +4,38 @@ namespace IntroSE.Kanban.BackendTests.Testings
 {
     public class LoginTests
     {
-        private string _userEmail = "user@email.com";
-        private string _password = "Password1";
-        private readonly ServiceFactory _factory = new ServiceFactory();
+        private ServiceFactory _factory = null!;
+        private const string EMAIL1 = "test1@gmail.com";
+        private const string EMAIL2 = "test2@gmail.com";
+        private const string PASSWORD = "Password1";
 
         public bool TestLoggedInAfterRegister()
         {
-            _factory.GetUserService().Register(_userEmail, _password);
-            string json = _factory.GetUserService().Login(_userEmail, _password);
+            string json = _factory.GetUserService().Login(EMAIL1, PASSWORD);
             return !json.Contains("\"ErrorMessage\":null");
         }
 
         public bool TestWrongUsernameLogin()
         {
-            string json = _factory.GetUserService().Login("wrongUser@gmail.com", _password);
+            string json = _factory.GetUserService().Login("wrongUser@gmail.com", PASSWORD);
             return !json.Contains("\"ErrorMessage\":null");
         }
 
         public bool TestWrongPasswordLogin()
         {
-            string json = _factory.GetUserService().Login(_userEmail, "wrongPassword");
+            string json = _factory.GetUserService().Login(EMAIL1, "wrongPassword");
             return !json.Contains("\"ErrorMessage\":null");
         }
 
         public bool TestLogout()
         {
-            string json = _factory.GetUserService().Logout(_userEmail);
+            string json = _factory.GetUserService().Logout(EMAIL2);
             return json.Contains("\"ErrorMessage\":null");
         }
 
-        public void RunAll()
+        public void RunAll(ServiceFactory serviceFactory)
         {
+            _factory = serviceFactory;
             Console.WriteLine("🔹 TestLoggedInAfterRegister: " + TestLoggedInAfterRegister());
             Console.WriteLine("🔹 TestWrongUsernameLogin: " + TestWrongUsernameLogin());
             Console.WriteLine("🔹 TestWrongPasswordLogin: " + TestWrongPasswordLogin());

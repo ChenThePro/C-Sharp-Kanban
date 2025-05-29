@@ -26,7 +26,6 @@ namespace IntroSE.Kanban.Backend.BuisnessLayer.BoardPackage
             Members.Add(owner);
             _boardDTO = new BoardDTO(Id, Owner, Name, -1, -1, -1);
             _boardDTO.Insert();
-            new BoardUserDTO(Id, owner).Insert();
         }
 
         public BoardBL(BoardDTO boardDTO)
