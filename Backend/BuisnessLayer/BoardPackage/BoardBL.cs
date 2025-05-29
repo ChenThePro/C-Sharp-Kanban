@@ -62,7 +62,7 @@ namespace IntroSE.Kanban.Backend.BuisnessLayer.BoardPackage
                     Columns[columnOrdinal].GetName() + " column.");
                 throw new KeyNotFoundException("Task id" + taskID + " for " + email + " doesn't exist in " + Name + "'s " + Columns[columnOrdinal].GetName() + " column.");
             }
-            if (task.Assignee != null && task.Assignee != email) // task.Assignee != null
+            if (task.Assignee != email)
             {
                 Log.Error("Task id " + taskID + " for " + email + " is not assigned to the user.");
                 throw new InvalidOperationException("Task id " + taskID + " for " + email + " is not assigned to the user.");
