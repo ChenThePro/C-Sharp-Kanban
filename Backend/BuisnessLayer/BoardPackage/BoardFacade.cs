@@ -4,7 +4,6 @@ using IntroSE.Kanban.Backend.ServiceLayer;
 using System;
 using System.Collections.Generic;
 using System.Reflection;
-using System.IO;
 using IntroSE.Kanban.Backend.DataAccessLayer.DTOs;
 using IntroSE.Kanban.Backend.DataAccessLayer;
 
@@ -409,7 +408,6 @@ namespace IntroSE.Kanban.Backend.BuisnessLayer.BoardPackage
             new BoardUserController().DeleteAll();
             new BoardController().DeleteAllAndResetAutoIncrement();
             new UserController().DeleteAll();
-
         }
     }
 }

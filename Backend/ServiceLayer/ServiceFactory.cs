@@ -42,7 +42,6 @@ namespace IntroSE.Kanban.Backend.ServiceLayer
         public UserService GetUserService()
         {
             return _userService ??= new UserService(_userFacade);
-        }
-        
+        }   
     }
 }

@@ -3,6 +3,7 @@
     internal interface IDTO
     {
         string[] GetColumnNames();
+        
         object[] GetColumnValues();
     }
 }

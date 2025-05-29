@@ -107,9 +107,7 @@ namespace IntroSE.Kanban.Backend.BuisnessLayer.UserPackage
         {
             List<int> boardsID = new List<int>();
             foreach(BoardBL board in _boards)
-            {
                 boardsID.Add(board.Id);
-            }
             return boardsID;
         }
         internal void JoinBoard(BoardBL board)

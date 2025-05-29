@@ -3,13 +3,13 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text.Json;
 using IntroSE.Kanban.Backend.BuisnessLayer.BoardPackage;
-using IntroSE.Kanban.Backend.BuisnessLayer.UserPackage;
 
 namespace IntroSE.Kanban.Backend.ServiceLayer
 {
     public class BoardService
     {
         private readonly BoardFacade _boardFacade;
+
         internal BoardService(BoardFacade boardFacade)
         {
             _boardFacade = boardFacade;
@@ -185,6 +185,7 @@ namespace IntroSE.Kanban.Backend.ServiceLayer
                 return JsonSerializer.Serialize(new Response(ex.Message, null));
             }
         }
+
         /// <summary>
         /// Allows a user to join an existing board by its ID.
         /// </summary>
@@ -304,7 +305,5 @@ namespace IntroSE.Kanban.Backend.ServiceLayer
                 return JsonSerializer.Serialize(new Response(ex.Message, null));
             }
         }
-    
-
     }
 }

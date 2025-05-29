@@ -1,5 +1,4 @@
 ﻿using IntroSE.Kanban.Backend.BuisnessLayer.BoardPackage;
-using System;
 using System.Collections.Generic;
 
 namespace IntroSE.Kanban.Backend.DataAccessLayer.DTOs
@@ -129,6 +128,7 @@ namespace IntroSE.Kanban.Backend.DataAccessLayer.DTOs
 
         public string[] GetColumnNames() => new[] { BOARD_OWNER_COLUMN_NAME, BOARD_NAME_COLUMN_NAME, 
             BOARD_LIMIT0_COLUMN_NAME, BOARD_LIMIT1_COLUMN_NAME, BOARD_LIMIT2_COLUMN_NAME };
+        
         public object[] GetColumnValues() => new object[] { _owner, _name, _limit_0, _limit_1, _limit_2 };
     }
 }

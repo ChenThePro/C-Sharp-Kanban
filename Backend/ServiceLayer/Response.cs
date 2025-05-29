@@ -7,6 +7,7 @@
     {
         public string ErrorMessage { get; set; }
         public object ReturnValue { get; set; }
+
         public Response(string errorMsg, object retVal)
         {
             ErrorMessage = errorMsg;
