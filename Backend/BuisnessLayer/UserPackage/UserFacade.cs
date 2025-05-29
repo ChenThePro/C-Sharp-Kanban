@@ -61,11 +61,11 @@ namespace IntroSE.Kanban.Backend.BuisnessLayer.UserPackage
                 Log.Error("Password must contain at least one number.");
                 throw new ArgumentException("Password must contain at least one number.");
             }
-            //if (!Regex.IsMatch(password, @"^[a-zA-Z0-9]+$"))
-            //{
-            //    Log.Error("Password must not contain special characters.");
-            //    throw new ArgumentException("Password must not contain special characters.");
-            //}
+            // if (!Regex.IsMatch(password, @"^[a-zA-Z0-9]+$"))
+            // {
+            //     Log.Error("Password must not contain special characters.");
+            //     throw new ArgumentException("Password must not contain special characters.");
+            // }
         }
 
         private void AuthenticateUser(string email)

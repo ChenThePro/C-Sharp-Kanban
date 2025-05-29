@@ -4,7 +4,6 @@ namespace IntroSE.Kanban.Backend.ServiceLayer
 {
     public class TaskSL
     {
-
         public int Id { get; set; }
         public DateTime CreationTime { get; init; }
         public string Title { get; set; }

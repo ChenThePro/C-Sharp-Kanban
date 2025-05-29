@@ -77,7 +77,7 @@ namespace IntroSE.Kanban.Backend.DataAccessLayer
             using var connection = new SqliteConnection(_connectionString);
             using var command = connection.CreateCommand();
             command.CommandText = $"UPDATE {_tableName} SET {column} = @Value WHERE {keyColumn} = @Key;";
-            command.Parameters.AddWithValue("@Value", newValue);
+            command.Parameters.AddWithValue("@Value", newValue ?? DBNull.Value);
             command.Parameters.AddWithValue("@Key", key);
             try
             {
@@ -143,17 +143,14 @@ namespace IntroSE.Kanban.Backend.DataAccessLayer
             {
                 connection.Open();
                 using var transaction = connection.BeginTransaction();
-
                 using var deleteCommand = connection.CreateCommand();
                 deleteCommand.CommandText = $"DELETE FROM {_tableName};";
                 deleteCommand.Transaction = transaction;
                 int rowsAffected = deleteCommand.ExecuteNonQuery();
-
                 using var resetCommand = connection.CreateCommand();
                 resetCommand.CommandText = $"DELETE FROM sqlite_sequence WHERE name = '{_tableName}';";
                 resetCommand.Transaction = transaction;
                 resetCommand.ExecuteNonQuery();
-
                 transaction.Commit();
                 Log.Info($"DeleteAllAndResetAutoIncrement succeeded on {_tableName}. {rowsAffected} rows deleted and auto-increment reset.");
                 return true;

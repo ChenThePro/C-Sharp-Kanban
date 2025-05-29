@@ -1,7 +1,5 @@
 ﻿using IntroSE.Kanban.Backend.ServiceLayer;
 using IntroSE.Kanban.BackendTests.Testings;
-using log4net;
-using System.Text.RegularExpressions;
 
 namespace IntroSE.Kanban.BackendTests
 {
@@ -9,8 +7,7 @@ namespace IntroSE.Kanban.BackendTests
     {
         public static void Main(string[] args)
         {
-            // new ServiceFactory().GetBoardService().DeleteData();
-            // return;
+            // new ServiceFactory().GetBoardService().DeleteData(); return;
             // SQLitePCL.Batteries_V2.Init();
             ServiceFactory serviceFactory = new ServiceFactory();
             Console.WriteLine("🚀 Running all tests!\n");

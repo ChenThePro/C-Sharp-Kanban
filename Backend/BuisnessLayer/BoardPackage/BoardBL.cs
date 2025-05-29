@@ -20,7 +20,9 @@ namespace IntroSE.Kanban.Backend.BuisnessLayer.BoardPackage
         {
             Owner = owner;
             Name = name;
-            Columns = new List<ColumnBL>{ new(0, -1, new List<TaskBL>()), new(1, -1, new List<TaskBL>()), new(2, -1, new List<TaskBL>())};            
+            Columns = new List<ColumnBL>();
+            for (int i = 0; i < 3; i++)
+                Columns.Add(new ColumnBL(i, -1, new List<TaskBL>()));
             Members = new List<String>();
             Members.Add(owner);
             _boardDTO = new BoardDTO(Owner, Name, -1, -1, -1);
@@ -40,8 +42,7 @@ namespace IntroSE.Kanban.Backend.BuisnessLayer.BoardPackage
             _boardDTO = boardDTO;
         }
 
-        private List<TaskBL> ConvertTasks(List<TaskDTO> dtos) =>
-    dtos.ConvertAll(t => new TaskBL(t));
+        private List<TaskBL> ConvertTasks(List<TaskDTO> dtos) => dtos.ConvertAll(t => new TaskBL(t));
 
 
         internal TaskBL AddTask(string email, string title, string description, DateTime dueDate, DateTime created_at, int columnOrdinal)
@@ -73,8 +74,8 @@ namespace IntroSE.Kanban.Backend.BuisnessLayer.BoardPackage
             }
             Columns[columnOrdinal + 1].Add(email, task);
             Columns[columnOrdinal].Delete(email, task);
-            // if (columnOrdinal + 1 == 2)
-            //    task.AssignTask(email, null);
+            if (columnOrdinal + 1 == 2)
+                task.AssignTask(email, null);
             _boardDTO.AdvanceTask(task, email, columnOrdinal);
             Log.Info("Task id " + task.Id + " moved from " + Columns[columnOrdinal].GetName() + " to " + Columns[columnOrdinal + 1].GetName() + " for " + email + " in board " + Name + ".");
         }

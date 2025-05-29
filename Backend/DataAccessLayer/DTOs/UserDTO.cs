@@ -65,6 +65,7 @@ namespace IntroSE.Kanban.Backend.DataAccessLayer.DTOs
         }
 
         public string[] GetColumnNames() => new[] { USER_EMAIL_COLUMN_NAME, USER_PASSWORD_COLUMN_NAME, USER_LOGGED_IN_COLUMN_NAME };
+        
         public object[] GetColumnValues() => new object[] { _email, _password, _loggedIn };
     }
 }
