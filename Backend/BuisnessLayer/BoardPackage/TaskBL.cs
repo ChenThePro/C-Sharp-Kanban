@@ -77,6 +77,7 @@ namespace IntroSE.Kanban.Backend.BuisnessLayer.BoardPackage
                 Log.Error("Task can be assigned only by the assigne");
                 throw new InvalidOperationException("Task can be assigned only by the assigne");
             }
+            Log.Info("Assigned succesfuly");
             Assignee = emailAssignee;
             _taskDTO.Assignee = emailAssignee;
         }
