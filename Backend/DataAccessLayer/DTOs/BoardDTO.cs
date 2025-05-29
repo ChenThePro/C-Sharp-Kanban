@@ -87,8 +87,8 @@ namespace IntroSE.Kanban.Backend.DataAccessLayer.DTOs
         {
             TaskDTO taskDTO = new TaskDTO(task.Id, _id, email, task.CreatedAt, task.DueDate, task.Title, task.Description, columnOrdinal);
             taskDTO.Column = taskDTO.Column + 1;
-            _columns[columnOrdinal].RemoveTask(taskDTO);
             _columns[columnOrdinal + 1].AddTask(taskDTO);
+            _columns[columnOrdinal].RemoveTask(taskDTO);
         }
 
         internal void LimitColumn(int limit, int columnOrdinal)

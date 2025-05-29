@@ -68,7 +68,7 @@ namespace IntroSE.Kanban.Backend.BuisnessLayer.UserPackage
             // }
         }
 
-        private void AuthenticateUser(string email)
+        internal void AuthenticateUser(string email)
         {
             if (!_emails.ContainsKey(email))
             {

@@ -47,11 +47,6 @@ namespace IntroSE.Kanban.Backend.BuisnessLayer.BoardPackage
 
         internal TaskBL AddTask(string email, string title, string description, DateTime dueDate, DateTime created_at, int columnOrdinal)
         {
-            if (!Members.Contains(email))
-            {
-                Log.Error("User " + email + " is not a member of the board.");
-                throw new InvalidOperationException("User " + email + " is not a member of the board.");
-            }
             TaskBL task = new TaskBL(title, description, dueDate, created_at, Id, columnOrdinal);
             Columns[columnOrdinal].Add(Owner, task);
             _boardDTO.AddTask(task, email);
@@ -67,7 +62,7 @@ namespace IntroSE.Kanban.Backend.BuisnessLayer.BoardPackage
                     Columns[columnOrdinal].GetName() + " column.");
                 throw new KeyNotFoundException("Task id" + taskID + " for " + email + " doesn't exist in " + Name + "'s " + Columns[columnOrdinal].GetName() + " column.");
             }
-            if (task.Assignee != email)
+            if (task.Assignee != null && task.Assignee != email) // task.Assignee != null
             {
                 Log.Error("Task id " + taskID + " for " + email + " is not assigned to the user.");
                 throw new InvalidOperationException("Task id " + taskID + " for " + email + " is not assigned to the user.");
@@ -113,10 +108,10 @@ namespace IntroSE.Kanban.Backend.BuisnessLayer.BoardPackage
 
         internal void AssignTask(string email, int columnOrdinal, int taskID, string emailAssignee)
         {
-            if (!Members.Contains(email))
+            if (!Members.Contains(emailAssignee))
             {
-                Log.Error("User " + email + " is not a member of the board.");
-                throw new InvalidOperationException("User " + email + " is not a member of the board.");
+                Log.Error("User " + emailAssignee + " is not a member of the board.");
+                throw new InvalidOperationException("User " + emailAssignee + " is not a member of the board.");
             }
             Columns[columnOrdinal].AssignTask(email, taskID, emailAssignee);
         }
@@ -134,7 +129,7 @@ namespace IntroSE.Kanban.Backend.BuisnessLayer.BoardPackage
                 throw new InvalidOperationException("New owner must be a member of the board.");
             }
             Owner = newOwnerEmail;
-            _boardDTO.Owner = Owner;
+            _boardDTO.Owner = newOwnerEmail;
         }
 
         internal void LeaveBoard(string email)
@@ -146,8 +141,8 @@ namespace IntroSE.Kanban.Backend.BuisnessLayer.BoardPackage
             }
             if (!Members.Contains(email))
             {
-                Log.Error("User is not a member of the board.");
-                throw new InvalidOperationException("User is not a member of the board.");
+                Log.Error(email + " cannot leave a board he is not a member in.");
+                throw new InvalidOperationException(email + " cannot leave a board he is not a member in.");
             }
             Log.Info("User " + email + " left the board " + Name + ".");
             for (int i = 0; i < 2; i++)

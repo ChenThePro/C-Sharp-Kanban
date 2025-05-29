@@ -145,11 +145,7 @@ namespace IntroSE.Kanban.Backend.BuisnessLayer.BoardPackage
             AuthenticateUser(email);
             AuthenticateString(boardName, "Board name");
             UserBL user = _userfacade.GetUser(email);
-            if (user.BoardExists(boardName))
-            {
-                Log.Error("A board with the given name already exists.");
-                throw new InvalidOperationException("A board with the given name already exists.");
-            }
+            user.BoardExists(boardName);
             BoardBL board = new BoardBL(email, boardName);
             user.CreateBoard(board);
             _boards.Add(board.Id, board);
@@ -170,12 +166,8 @@ namespace IntroSE.Kanban.Backend.BuisnessLayer.BoardPackage
             UserBL user = _userfacade.GetUser(email);
             BoardBL board = user.GetBoard(boardName);
             board.Delete(email);
-            UserBL memberUser;
             foreach (string member in board.Members)
-            {
-                memberUser = _userfacade.GetUser(member);
-                memberUser.DeleteBoard(board.Name);
-            }
+                _userfacade.GetUser(member).DeleteBoard(boardName);
             _boards.Remove(board.Id);
             Log.Info($"Board '{boardName}' deleted for {email}.");
         }
@@ -350,7 +342,7 @@ namespace IntroSE.Kanban.Backend.BuisnessLayer.BoardPackage
             UserBL user = _userfacade.GetUser(email);
             BoardBL board = GetBoardById(boardID);
             board.JoinBoard(email);
-            user.JoinBoard(board);
+            user.CreateBoard(board);
         }
 
         internal void LeaveBoard(string email, int boardID)
@@ -358,8 +350,8 @@ namespace IntroSE.Kanban.Backend.BuisnessLayer.BoardPackage
             AuthenticateUser(email);
             UserBL user = _userfacade.GetUser(email);
             BoardBL board = GetBoardById(boardID);
-            user.LeaveBoard(board);
             board.LeaveBoard(email);
+            user.LeaveBoard(board);
         }
 
         internal string GetBoardName(int boardID)
@@ -370,11 +362,7 @@ namespace IntroSE.Kanban.Backend.BuisnessLayer.BoardPackage
         internal void TransferOwnership(string currentOwnerEmail, string newOwnerEmail, string boardName)
         {
             AuthenticateUser(currentOwnerEmail);
-            if (!_userfacade._emails.ContainsKey(newOwnerEmail))
-            {
-                Log.Error("New ownerUser doesn't exist.");
-                throw new KeyNotFoundException("New ownerUser doesn't exist.");
-            }
+            _userfacade.AuthenticateUser(newOwnerEmail);
             UserBL user = _userfacade.GetUser(currentOwnerEmail);
             BoardBL board = user.GetBoard(boardName);
             board.TransferOwnership(currentOwnerEmail, newOwnerEmail);
@@ -385,6 +373,7 @@ namespace IntroSE.Kanban.Backend.BuisnessLayer.BoardPackage
             AuthenticateUser(email);
             AuthenticateColumn(columnOrdinal, 1);
             AuthenticateInteger(taskID, "Id");
+            _userfacade.AuthenticateUser(emailAssignee);
             UserBL user = _userfacade.GetUser(email);
             BoardBL board = user.GetBoard(boardName);
             board.AssignTask(email, columnOrdinal, taskID, emailAssignee);

@@ -83,7 +83,8 @@ namespace IntroSE.Kanban.Backend.BuisnessLayer.UserPackage
             foreach (BoardBL board in _boards)
                 if (board.Name.ToLower() == boardName.ToLower())
                     return true;
-            return false;
+            Log.Error("A board with the given name already exists.");
+            throw new InvalidOperationException("A board with the given name already exists.");
         }
 
         internal void CreateBoard(BoardBL board)
@@ -110,22 +111,9 @@ namespace IntroSE.Kanban.Backend.BuisnessLayer.UserPackage
                 boardsID.Add(board.Id);
             return boardsID;
         }
-        internal void JoinBoard(BoardBL board)
-        {
-            if (_boards.Contains(board))
-            {
-                Log.Error("Board already exists in user's boards.");
-                throw new InvalidOperationException("Board already exists in user's boards.");
-            }
-            _boards.Add(board);
-        }
+
         internal void LeaveBoard(BoardBL board)
         {
-            if (!_boards.Contains(board))
-            {
-                Log.Error("Board does not exist in user's boards.");
-                throw new KeyNotFoundException("Board does not exist in user's boards.");
-            }
             _boards.Remove(board);  
         }
     }

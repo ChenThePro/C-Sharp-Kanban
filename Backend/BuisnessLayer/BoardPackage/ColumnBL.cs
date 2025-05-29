@@ -44,14 +44,13 @@ namespace IntroSE.Kanban.Backend.BuisnessLayer.BoardPackage
 
         internal void UpdateTask(string email, int taskID, DateTime? dueDate, string title, string description)
         {
-            foreach (TaskBL task in _tasks)
-                if (task.Id == taskID)
-                {
-                    task.Update(email, dueDate, title, description);
-                    return;
-                }
-            Log.Error("Task doensn't exist.");
-            throw new KeyNotFoundException("Task doensn't exist.");
+            TaskBL task = GetTaskById(taskID);
+            if (task == null)
+            {
+                Log.Error("Task doensn't exist.");
+                throw new KeyNotFoundException("Task doensn't exist.");
+            }
+            task.Update(email, dueDate, title, description);
         }
 
         internal TaskBL GetTaskById(int taskID)
