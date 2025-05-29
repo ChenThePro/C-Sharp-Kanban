@@ -17,7 +17,7 @@ namespace IntroSE.Kanban.Backend.DataAccessLayer
         protected BaseController(string tableName)
         {
             string path = Path.GetFullPath(Path.Combine(Directory.GetCurrentDirectory(), "database.db"));
-            _connectionString = $"Data Source={path}; Version=3;";
+            _connectionString = $"Data Source={path};";
             _tableName = tableName;
         }
 

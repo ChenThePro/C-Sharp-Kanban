@@ -60,6 +60,7 @@ namespace IntroSE.Kanban.Backend.ServiceLayer
             }
             catch (Exception ex)
             {
+                Console.WriteLine(ex.Message);
                 return JsonSerializer.Serialize(new Response(ex.Message, null));
             }
         }
