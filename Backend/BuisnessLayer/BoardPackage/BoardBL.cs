@@ -16,16 +16,15 @@ namespace IntroSE.Kanban.Backend.BuisnessLayer.BoardPackage
         internal readonly List<String> Members;
         private readonly BoardDTO _boardDTO;
 
-        internal BoardBL(string owner, string name, int id)
+        internal BoardBL(string owner, string name)
         {
-            Id = id;
             Owner = owner;
             Name = name;
             Columns = new List<ColumnBL>{ new(0, -1, new List<TaskBL>()), new(1, -1, new List<TaskBL>()), new(2, -1, new List<TaskBL>())};            
             Members = new List<String>();
             Members.Add(owner);
-            _boardDTO = new BoardDTO(Id, Owner, Name, -1, -1, -1);
-            _boardDTO.Insert();
+            _boardDTO = new BoardDTO(Owner, Name, -1, -1, -1);
+            Id = _boardDTO.Id;
         }
 
         public BoardBL(BoardDTO boardDTO)
@@ -45,14 +44,14 @@ namespace IntroSE.Kanban.Backend.BuisnessLayer.BoardPackage
     dtos.ConvertAll(t => new TaskBL(t));
 
 
-        internal TaskBL AddTask(string email, string title, string description, DateTime dueDate, DateTime created_at, int taskID, int columnOrdinal)
+        internal TaskBL AddTask(string email, string title, string description, DateTime dueDate, DateTime created_at, int columnOrdinal)
         {
             if (!Members.Contains(email))
             {
                 Log.Error("User " + email + " is not a member of the board.");
                 throw new InvalidOperationException("User " + email + " is not a member of the board.");
             }
-            TaskBL task = new TaskBL(title, description, dueDate, created_at, taskID, Id, columnOrdinal);
+            TaskBL task = new TaskBL(title, description, dueDate, created_at, Id, columnOrdinal);
             Columns[columnOrdinal].Add(Owner, task);
             _boardDTO.AddTask(task, email);
             return task;

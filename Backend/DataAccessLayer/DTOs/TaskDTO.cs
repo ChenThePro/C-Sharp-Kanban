@@ -67,6 +67,19 @@ namespace IntroSE.Kanban.Backend.DataAccessLayer.DTOs
             set { _controller.Update(TASK_ID_COLUMN_NAME, _id, TASK_COLUMN_COLUMN_NAME, value); _column = value; }
         }
 
+        internal TaskDTO(int boardId, string assignee, DateTime creationTime, DateTime due, string title, string description, int column)
+        {
+            _boardId = boardId;
+            _assignee = assignee;
+            _creationTime = creationTime;
+            _dueDate = due;
+            _title = title;
+            _description = description;
+            _column = column;
+            _controller = new TaskController();
+            _id = _controller.GetLastId(_boardId);
+        }
+
         internal TaskDTO(int id, int boardId, string assignee, DateTime creationTime, DateTime due, string title, string description, int column)
         {
             _id = id;

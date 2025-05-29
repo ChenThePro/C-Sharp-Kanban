@@ -6,13 +6,11 @@ namespace IntroSE.Kanban.Backend.ServiceLayer
 {
     public class TaskService
     {
-        private static int _id;
         private readonly BoardFacade _boardFacade;
 
         internal TaskService(BoardFacade boardFacade)
         {
             _boardFacade = boardFacade;
-            _id = 1;
         }
 
         /// <summary>
@@ -35,8 +33,7 @@ namespace IntroSE.Kanban.Backend.ServiceLayer
         {
             try
             {
-                TaskBL task = _boardFacade.AddTask(email, boardName, title, description, dueDate, _id);
-                _id++;
+                TaskBL task = _boardFacade.AddTask(email, boardName, title, description, dueDate);
                 return JsonSerializer.Serialize(new Response(null, null));
             }
             catch (Exception ex)

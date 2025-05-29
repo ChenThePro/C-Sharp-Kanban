@@ -118,23 +118,17 @@ namespace IntroSE.Kanban.Backend.BuisnessLayer.BoardPackage
         /// <exception cref="ArgumentOutOfRangeException"></exception>
         /// <exception cref="KeyNotFoundException"></exception>
         /// <exception cref="InvalidOperationException">Thrown when email does not exist or not logged in.</exception>
-        internal TaskBL AddTask(string email, string boardName, string title, string description, DateTime dueDate, int taskID)
+        internal TaskBL AddTask(string email, string boardName, string title, string description, DateTime dueDate)
         {
             AuthenticateString(title, "Title");
             AuthenticateTitleLength(title);
             AuthenticateDescription(description);
-            AuthenticateInteger(taskID, "Id");
             DateTime created_at = DateTime.Today;
             AuthenticateInteger(dueDate.CompareTo(created_at), "", true);
             AuthenticateUser(email);
             UserBL user = _userfacade.GetUser(email);
             BoardBL board = user.GetBoard(boardName);
-            if (board.GetTaskByIdAndColumn(0, taskID) != null || board.GetTaskByIdAndColumn(1, taskID) != null || board.GetTaskByIdAndColumn(2, taskID) != null)
-            {
-                Log.Error("Task ID is already used in this board.");
-                throw new InvalidOperationException("Task ID is already used in this board.");
-            }
-            return board.AddTask(email, title, description, dueDate, created_at, taskID, 0);
+            return board.AddTask(email, title, description, dueDate, created_at, 0);
         }
 
         /// <summary>
@@ -147,18 +141,17 @@ namespace IntroSE.Kanban.Backend.BuisnessLayer.BoardPackage
         /// <exception cref="KeyNotFoundException"></exception>
         /// <exception cref="ArgumentOutOfRangeException"></exception>
         /// <exception cref="InvalidOperationException">Thrown if a board with the given name already exists.</exception>
-        internal BoardBL CreateBoard(string email, string boardName, int BoardID)
+        internal BoardBL CreateBoard(string email, string boardName)
         {
             AuthenticateUser(email);
             AuthenticateString(boardName, "Board name");
-            AuthenticateInteger(BoardID, "Id");
             UserBL user = _userfacade.GetUser(email);
             if (user.BoardExists(boardName))
             {
                 Log.Error("A board with the given name already exists.");
                 throw new InvalidOperationException("A board with the given name already exists.");
             }
-            BoardBL board = new BoardBL(email, boardName, BoardID);
+            BoardBL board = new BoardBL(email, boardName);
             user.CreateBoard(board);
             _boards.Add(board.Id, board);
             Log.Info($"New board '{boardName}' created for {email}.");

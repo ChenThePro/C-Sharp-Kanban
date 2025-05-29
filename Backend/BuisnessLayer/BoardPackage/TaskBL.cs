@@ -18,15 +18,15 @@ namespace IntroSE.Kanban.Backend.BuisnessLayer.BoardPackage
 
         internal TaskDTO TaskDTO => _taskDTO;
 
-        internal TaskBL(string title, string description, DateTime due, DateTime created_at, int taskID, int boardId, int columnOrdinal)
+        internal TaskBL(string title, string description, DateTime due, DateTime created_at, int boardId, int columnOrdinal)
         {
             Title = title;
             DueDate = due;
             Description = description;
             CreatedAt = created_at;
-            Id = taskID;
             Assigne = null;
-            _taskDTO = new TaskDTO(Id, boardId, null, CreatedAt, DueDate, title, description, columnOrdinal);
+            _taskDTO = new TaskDTO(boardId, null, CreatedAt, DueDate, title, description, columnOrdinal);
+            Id = _taskDTO.Id;
         }
 
         internal TaskBL(TaskDTO taskDTO)
