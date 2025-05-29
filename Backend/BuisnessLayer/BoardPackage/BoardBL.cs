@@ -67,7 +67,7 @@ namespace IntroSE.Kanban.Backend.BuisnessLayer.BoardPackage
                     Columns[columnOrdinal].GetName() + " column.");
                 throw new KeyNotFoundException("Task id" + taskID + " for " + email + " doesn't exist in " + Name + "'s " + Columns[columnOrdinal].GetName() + " column.");
             }
-            if (task.Assigne != email)
+            if (task.Assignee != email)
             {
                 Log.Error("Task id " + taskID + " for " + email + " is not assigned to the user.");
                 throw new InvalidOperationException("Task id " + taskID + " for " + email + " is not assigned to the user.");
@@ -150,13 +150,10 @@ namespace IntroSE.Kanban.Backend.BuisnessLayer.BoardPackage
                 throw new InvalidOperationException("User is not a member of the board.");
             }
             Log.Info("User " + email + " left the board " + Name + ".");
-            for (int i = 0; i < Columns.Count - 1; i++)
-            {
-                List<TaskBL> tasks = Columns[i].GetTasks();
-                foreach (TaskBL task in tasks)
-                    if (task.Assigne == email)
+            for (int i = 0; i < 2; i++)
+                foreach (TaskBL task in Columns[i].GetTasks())
+                    if (task.Assignee == email)
                         task.AssignTask(email, null);
-            }
             Members.Remove(email);
             new BoardUserDTO(Id, email).Delete();
         }

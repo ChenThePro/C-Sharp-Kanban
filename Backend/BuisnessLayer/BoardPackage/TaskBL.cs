@@ -13,7 +13,7 @@ namespace IntroSE.Kanban.Backend.BuisnessLayer.BoardPackage
         internal DateTime DueDate;
         internal readonly DateTime CreatedAt;
         internal readonly int Id;
-        internal string Assigne;
+        internal string Assignee;
         private readonly TaskDTO _taskDTO;
 
         internal TaskDTO TaskDTO => _taskDTO;
@@ -24,7 +24,7 @@ namespace IntroSE.Kanban.Backend.BuisnessLayer.BoardPackage
             DueDate = due;
             Description = description;
             CreatedAt = created_at;
-            Assigne = null;
+            Assignee = null;
             _taskDTO = new TaskDTO(boardId, null, CreatedAt, DueDate, title, description, columnOrdinal);
             Id = _taskDTO.Id;
         }
@@ -36,13 +36,13 @@ namespace IntroSE.Kanban.Backend.BuisnessLayer.BoardPackage
             Description = taskDTO.Description;
             CreatedAt = taskDTO.CreationTime;
             Id = taskDTO.Id;
-            Assigne = taskDTO.Assignee;
+            Assignee = taskDTO.Assignee;
             _taskDTO = taskDTO;
         }
 
         internal void Update(string email, DateTime? dueDate, string title, string description)
         {
-            if (email != Assigne)
+            if (email != Assignee)
             {
                 Log.Error("Task can be updated only by the assignee.");
                 throw new InvalidOperationException("Task can be updated only by the assignee.");
@@ -72,12 +72,12 @@ namespace IntroSE.Kanban.Backend.BuisnessLayer.BoardPackage
 
         internal void AssignTask(string email, string emailAssignee)
         {
-            if (Assigne != null && Assigne != email)
+            if (Assignee != null && Assignee != email)
             {
                 Log.Error("Task can be assigned only by the assigne");
                 throw new InvalidOperationException("Task can be assigned only by the assigne");
             }
-            Assigne = emailAssignee;
+            Assignee = emailAssignee;
             _taskDTO.Assignee = emailAssignee;
         }
 

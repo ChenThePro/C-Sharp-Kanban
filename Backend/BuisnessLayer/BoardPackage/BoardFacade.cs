@@ -358,8 +358,8 @@ namespace IntroSE.Kanban.Backend.BuisnessLayer.BoardPackage
             AuthenticateUser(email);
             UserBL user = _userfacade.GetUser(email);
             BoardBL board = GetBoardById(boardID);
-            board.LeaveBoard(email);
             user.LeaveBoard(board);
+            board.LeaveBoard(email);
         }
 
         internal string GetBoardName(int boardID)
