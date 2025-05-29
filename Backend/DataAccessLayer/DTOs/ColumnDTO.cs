@@ -9,16 +9,15 @@ namespace IntroSE.Kanban.Backend.DataAccessLayer.DTOs
         private readonly List<TaskDTO> _tasks;
         private readonly TaskController _controller;
 
-        internal int BoardId => _boardId;
 
         internal List<TaskDTO> Tasks => _tasks;
 
-        internal ColumnDTO(int boardId, int limit, int index)
+        internal ColumnDTO(int id, int limit, int index)
         {
-            _boardId = boardId;
+            _boardId = id;
             Limit = limit;
             _controller = new TaskController();
-            _tasks = _controller.SelectAll().FindAll(task =>  task.BoardId == BoardId && task.Column == index);
+            _tasks = _controller.SelectAll().FindAll(task =>  task.BoardId == _boardId && task.Column == index);
         }
 
         internal void AddTask(TaskDTO task)

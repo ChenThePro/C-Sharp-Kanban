@@ -9,12 +9,10 @@ namespace IntroSE.Kanban.Backend.ServiceLayer
 {
     public class BoardService
     {
-        private int _id;
         private readonly BoardFacade _boardFacade;
         internal BoardService(BoardFacade boardFacade)
         {
             _boardFacade = boardFacade;
-            _id = 1;
         }
 
         /// <summary>
@@ -33,8 +31,7 @@ namespace IntroSE.Kanban.Backend.ServiceLayer
         {
             try
             {
-                BoardBL board = _boardFacade.CreateBoard(email, boardName, _id);
-                _id++;
+                BoardBL board = _boardFacade.CreateBoard(email, boardName);
                 return JsonSerializer.Serialize(new Response(null, null));
             }
             catch (Exception ex)
