@@ -11,14 +11,12 @@ namespace IntroSE.Kanban.Backend.BuisnessLayer.UserPackage
     {
         private static readonly ILog Log = LogManager.GetLogger(MethodBase.GetCurrentMethod().DeclaringType);
         internal readonly Dictionary<string, UserBL> _emails;
-        private readonly Regex PasswordCharRegex;
         /// <summary>
         /// Initializes a new instance of the <see cref="UserFacade"/> class.
         /// </summary>
         internal UserFacade()
         {
             _emails = new Dictionary<string, UserBL>();
-            PasswordCharRegex = new Regex(@"^(?=.*[a-zA-Z])(?=.*\d)[a-zA-Z0-9!@#$%^&*()_+\-=\[\]{};':""\\|,.<>/?~` ]+$");
         }
 
         private void ValidateEmail(string email)
@@ -140,9 +138,8 @@ namespace IntroSE.Kanban.Backend.BuisnessLayer.UserPackage
         }
         public void LoadData()
         {
-            List<UserDTO> users = new UserDTO().SelectAll();
             UserBL user;
-            foreach (UserDTO userDTO in users)
+            foreach (UserDTO userDTO in new UserDTO().SelectAll())
             {
                 user = new UserBL(userDTO);
                 _emails.Add(user.Email, user);

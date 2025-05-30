@@ -382,9 +382,8 @@ namespace IntroSE.Kanban.Backend.BuisnessLayer.BoardPackage
         public void LoadData()
         {
             _userfacade.LoadData();
-            List<BoardDTO> boards = new BoardDTO().SelectAll();
             BoardBL board;
-            foreach (BoardDTO boardDTO in boards)
+            foreach (BoardDTO boardDTO in new BoardDTO().SelectAll())
             {
                 board = new BoardBL(boardDTO);
                 _boards.Add(board.Id, board);
