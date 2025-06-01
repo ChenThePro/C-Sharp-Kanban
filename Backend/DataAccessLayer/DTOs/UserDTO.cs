@@ -1,5 +1,4 @@
 ﻿using System.Collections.Generic;
-using System.Security.Cryptography;
 
 namespace IntroSE.Kanban.Backend.DataAccessLayer.DTOs
 {
@@ -10,8 +9,6 @@ namespace IntroSE.Kanban.Backend.DataAccessLayer.DTOs
 
         private string _email, _password;
         private bool _loggedIn;
-
-        private readonly UserController _controller;
 
         internal string Email
         {
@@ -30,6 +27,8 @@ namespace IntroSE.Kanban.Backend.DataAccessLayer.DTOs
             get => _loggedIn;
             set { Update(LOGGED_IN, value); _loggedIn = value; }
         }
+
+        private readonly UserController _controller;
 
         internal UserDTO(string email, string password, bool loggedIn)
         {

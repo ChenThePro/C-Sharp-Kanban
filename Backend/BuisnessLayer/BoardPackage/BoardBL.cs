@@ -17,6 +17,13 @@ namespace IntroSE.Kanban.Backend.BuisnessLayer.BoardPackage
             get => _id; 
             private set { _id = value; _boardDTO.Id = value; } 
         }
+
+        internal string Owner
+        {
+            get => _owner;
+            private set { _owner = value; _boardDTO.Owner = value; }
+        }
+
         internal string Name { 
             get => _name; 
             private set { _name = value; _boardDTO.Name = value; } 
@@ -52,8 +59,8 @@ namespace IntroSE.Kanban.Backend.BuisnessLayer.BoardPackage
         internal TaskBL AddTask(string email, string title, string description, DateTime dueDate, DateTime createdAt)
         {
             TaskBL task = new(title, description, dueDate, createdAt, _id, 0);
-            _columns[0].Add(_owner, task);
-            _boardDTO.AddTask(task, email);
+            _columns[0].AddTask(_owner, task);
+            _boardDTO.AddTask(task);
             Log.Info($"Task '{task.Title}' added to column {0} by '{email}' in board {_name}'.");
             return task;
         }
@@ -67,9 +74,9 @@ namespace IntroSE.Kanban.Backend.BuisnessLayer.BoardPackage
                 Log.Error($"Task ID {taskID} is not assigned to '{email}'.");
                 throw new InvalidOperationException($"Task ID {taskID} is not assigned to '{email}'.");
             }
-            _columns[columnOrdinal + 1].Add(email, task);
-            _columns[columnOrdinal].Delete(email, task);
-            _boardDTO.AdvanceTask(task, email, columnOrdinal);
+            _columns[columnOrdinal + 1].AddTask(email, task);
+            _columns[columnOrdinal].DeleteTask(email, task);
+            _boardDTO.AdvanceTask(task.TaskDTO, email, columnOrdinal);
             Log.Info($"Task ID {taskID} advanced by '{email}' from column {columnOrdinal} to {columnOrdinal + 1} in board '{_name}'.");
         }
 
@@ -81,12 +88,12 @@ namespace IntroSE.Kanban.Backend.BuisnessLayer.BoardPackage
 
         internal void LimitColumn(string email, int columnOrdinal, int limit)
         {
-            _columns[columnOrdinal].LimitColumn(email, limit);
+            _columns[columnOrdinal].Limit(email, limit);
             _boardDTO.LimitColumn(limit, columnOrdinal);
             Log.Info($"Column {columnOrdinal} limit set to {limit} by '{email}' in board '{_name}'.");
         }
 
-        internal List<TaskBL> GetColumn(int columnOrdinal) =>
+        internal List<TaskBL> GetColumnTasks(int columnOrdinal) =>
             _columns[columnOrdinal].GetTasks();
 
         internal int GetColumnLimit(int columnOrdinal) =>
@@ -106,12 +113,11 @@ namespace IntroSE.Kanban.Backend.BuisnessLayer.BoardPackage
         {
             IsOwner(currentOwnerEmail);
             IsMember(newOwnerEmail);
-            _owner = newOwnerEmail;
-            _boardDTO.Owner = newOwnerEmail;
+            Owner = newOwnerEmail;
             Log.Info($"Ownership of board '{_name}' transferred from '{currentOwnerEmail}' to '{newOwnerEmail}'.");
         }
 
-        internal void LeaveBoard(string email)
+        internal void Leave(string email)
         {
             if (_owner == email)
             {
@@ -122,7 +128,7 @@ namespace IntroSE.Kanban.Backend.BuisnessLayer.BoardPackage
             for (int i = 0; i < _columns.Count - 1; i++)
                 foreach (TaskBL task in _columns[i].GetTasks())
                     if (task.Assignee == email)
-                        task.AssignTask(email, null);
+                        task.Assign(email, null);
             Members.Remove(email);
             new BoardUserDTO(_id, email).Delete();
             Log.Info($"User '{email}' left the board '{_name}'.");
@@ -137,7 +143,7 @@ namespace IntroSE.Kanban.Backend.BuisnessLayer.BoardPackage
             Log.Info($"Board '{_name}' deleted by '{email}'.");
         }
 
-        internal void JoinBoard(string email)
+        internal void Join(string email)
         {
             if (Members.Contains(email))
             {

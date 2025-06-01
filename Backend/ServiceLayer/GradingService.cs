@@ -234,7 +234,7 @@ namespace IntroSE.Kanban.Backend.ServiceLayer
         /// <returns>A response with a list of the column's tasks, unless an error occurs (see <see cref="GradingService"/>)</returns>
         public string GetColumn(string email, string boardName, int columnOrdinal)
         {
-            return _serviceFactory.GetBoardService().GetColumn(email, boardName, columnOrdinal);
+            return _serviceFactory.GetBoardService().GetColumnTasks(email, boardName, columnOrdinal);
         }
 
         /* FROM HERE: NEW METHODS FOR MILESTONE 2-3 */
@@ -246,7 +246,7 @@ namespace IntroSE.Kanban.Backend.ServiceLayer
         /// <returns>A response with a list of IDs of all user's boards, unless an error occurs (see <see cref="GradingService"/>)</returns>
         public string GetUserBoards(string email)
         {
-            return _serviceFactory.GetBoardService().GetUserBoards(email);
+            return _serviceFactory.GetBoardService().GetUserBoardsAsId(email);
         }
 
         /// <summary>

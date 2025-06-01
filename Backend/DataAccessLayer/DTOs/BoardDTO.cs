@@ -71,17 +71,17 @@ namespace IntroSE.Kanban.Backend.DataAccessLayer.DTOs
 
         internal BoardDTO() => _controller = new();
 
-        internal void AddTask(TaskBL task, string email)
+        internal void AddTask(TaskBL task)
         {
             task.Insert();
             Columns[0].AddTask(task.TaskDTO);
         }
 
-        internal void AdvanceTask(TaskBL task, string email, int columnOrdinal)
+        internal void AdvanceTask(TaskDTO task, string email, int columnOrdinal)
         {
-            TaskDTO taskDTO = new(task.Id, _id, email, task.CreatedAt, task.DueDate, task.Title, task.Description, columnOrdinal + 1);
-            Columns[columnOrdinal + 1].AddTask(taskDTO);
-            Columns[columnOrdinal].RemoveTask(taskDTO);
+            task.Column++;
+            Columns[columnOrdinal + 1].AddTask(task);
+            Columns[columnOrdinal].RemoveTask(task);
         }
 
         internal void LimitColumn(int limit, int columnOrdinal)

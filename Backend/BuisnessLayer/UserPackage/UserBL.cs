@@ -97,7 +97,7 @@ namespace IntroSE.Kanban.Backend.BuisnessLayer.UserPackage
             return board;
         }
 
-        internal void BoardExists(string boardName)
+        internal void CheckCreateBoard(string boardName)
         {
             bool exists = _boards.Any(b => b.Name.Equals(boardName, StringComparison.OrdinalIgnoreCase));
             if (exists)
@@ -110,7 +110,7 @@ namespace IntroSE.Kanban.Backend.BuisnessLayer.UserPackage
         internal void CreateBoard(BoardBL board)
         {
             _boards.Add(board);
-            Log.Info($"Board '{board.Name}' added to user '{Email}'.");
+            Log.Info($"Board '{board.Name}' added to user '{_email}'.");
         }
 
         internal void DeleteBoard(string boardName)
@@ -120,9 +120,9 @@ namespace IntroSE.Kanban.Backend.BuisnessLayer.UserPackage
         }
 
         internal List<TaskBL> InProgressTasks() =>
-            _boards.SelectMany(board => board.GetColumn(1)).Where(task => task.Assignee == _email).ToList();
+            _boards.SelectMany(board => board.GetColumnTasks(1)).Where(task => task.Assignee == _email).ToList();
 
-        internal List<int> GetUserBoards() =>
+        internal List<int> GetBoardsAsId() =>
             _boards.Select(board => board.Id).ToList();
 
         internal void LeaveBoard(BoardBL board) => RemoveBoard(board);

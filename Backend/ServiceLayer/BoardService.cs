@@ -104,7 +104,7 @@ namespace IntroSE.Kanban.Backend.ServiceLayer
         /// <exception cref="KeyNotFoundException">If the board does not exist or is not accessible by the user.</exception>
         /// <precondition>The user must own the board and the column must exist.</precondition>
         /// <postcondition>A list of tasks in the specified column is returned.</postcondition>
-        public string GetColumn(string email, string boardName, int columnOrdinal)
+        public string GetColumnTasks(string email, string boardName, int columnOrdinal)
         {
             try
             {
@@ -252,11 +252,11 @@ namespace IntroSE.Kanban.Backend.ServiceLayer
         /// </summary>
         /// <param name="email">The email of the user.</param>
         /// <returns>Response containing a list of board Ids.</returns>
-        public string GetUserBoards(string email)
+        public string GetUserBoardsAsId(string email)
         {
             try
             {
-                List<int> boardIds = _boardFacade.GetUserBoards(email);
+                List<int> boardIds = _boardFacade.GetUserBoardsAsId(email);
                 return ToResponseJson(null, boardIds);
             }
             catch (Exception ex)

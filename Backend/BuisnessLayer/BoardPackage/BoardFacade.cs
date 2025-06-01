@@ -30,7 +30,7 @@ namespace IntroSE.Kanban.Backend.BuisnessLayer.BoardPackage
             AuthenticateUser(email);
             AuthenticateString(boardName, "Board name");
             UserBL user = _userfacade.GetUser(email);
-            user.BoardExists(boardName);
+            user.CheckCreateBoard(boardName);
             BoardBL board = new(email, boardName);
             user.CreateBoard(board);
             _boards.Add(board.Id, board);
@@ -127,7 +127,7 @@ namespace IntroSE.Kanban.Backend.BuisnessLayer.BoardPackage
             AuthenticateColumn(columnOrdinal, MAX_COLUMN_INDEX);
             UserBL user = _userfacade.GetUser(email);
             BoardBL board = user.GetBoard(boardName);
-            return board.GetColumn(columnOrdinal);
+            return board.GetColumnTasks(columnOrdinal);
         }
 
         internal int GetColumnLimit(string email, string boardName, int columnOrdinal)
@@ -154,10 +154,10 @@ namespace IntroSE.Kanban.Backend.BuisnessLayer.BoardPackage
             return _userfacade.GetUser(email).InProgressTasks();
         }
 
-        internal List<int> GetUserBoards(string email)
+        internal List<int> GetUserBoardsAsId(string email)
         {
             AuthenticateUser(email);
-            return _userfacade.GetUser(email).GetUserBoards();
+            return _userfacade.GetUser(email).GetBoardsAsId();
         }
 
         internal void JoinBoard(string email, int boardID)
@@ -165,7 +165,7 @@ namespace IntroSE.Kanban.Backend.BuisnessLayer.BoardPackage
             AuthenticateUser(email);
             UserBL user = _userfacade.GetUser(email);
             BoardBL board = GetBoardById(boardID);
-            board.JoinBoard(email);
+            board.Join(email);
             user.CreateBoard(board);
         }
 
@@ -174,7 +174,7 @@ namespace IntroSE.Kanban.Backend.BuisnessLayer.BoardPackage
             AuthenticateUser(email);
             UserBL user = _userfacade.GetUser(email);
             BoardBL board = GetBoardById(boardID);
-            board.LeaveBoard(email);
+            board.Leave(email);
             user.LeaveBoard(board);
         }
 

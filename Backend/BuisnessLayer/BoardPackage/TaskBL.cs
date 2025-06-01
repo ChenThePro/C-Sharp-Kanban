@@ -15,34 +15,32 @@ namespace IntroSE.Kanban.Backend.BuisnessLayer.BoardPackage
 
         internal string Title { 
             get => _title; 
-            private set { _title = value; _taskDTO.Title = value; } 
+            private set { _title = value; TaskDTO.Title = value; } 
         }
 
         internal string Description { 
             get => _description; 
-            private set { _description = value; _taskDTO.Description = value; } 
+            private set { _description = value; TaskDTO.Description = value; } 
         }
 
         internal DateTime DueDate { 
             get => _dueDate; 
-            private set { _dueDate = value; _taskDTO.DueDate = value; } 
+            private set { _dueDate = value; TaskDTO.DueDate = value; } 
         }
 
-        internal DateTime CreatedAt { get; }
+        internal DateTime CreatedAt { get; init; }
 
         internal int Id { 
             get => _id; 
-            private set { _id = value; _taskDTO.Id = value; } 
+            private set { _id = value; TaskDTO.Id = value; } 
         }
 
         internal string Assignee { 
             get => _assignee; 
-            private set { _assignee = value; _taskDTO.Assignee = value; } 
+            private set { _assignee = value; TaskDTO.Assignee = value; } 
         }
 
-        internal TaskDTO TaskDTO => _taskDTO;
-
-        private readonly TaskDTO _taskDTO;
+        internal TaskDTO TaskDTO { get; init; }
 
         internal TaskBL(string title, string description, DateTime dueDate, DateTime createdAt, int boardId, int columnOrdinal)
         {
@@ -51,8 +49,8 @@ namespace IntroSE.Kanban.Backend.BuisnessLayer.BoardPackage
             _dueDate = dueDate;
             CreatedAt = createdAt;
             _assignee = null;
-            _taskDTO = new(boardId, null, CreatedAt, _dueDate, _title, _description, columnOrdinal);
-            _id = _taskDTO.Id;
+            TaskDTO = new(boardId, null, CreatedAt, _dueDate, _title, _description, columnOrdinal);
+            _id = TaskDTO.Id;
         }
 
         internal TaskBL(TaskDTO taskDTO)
@@ -63,7 +61,7 @@ namespace IntroSE.Kanban.Backend.BuisnessLayer.BoardPackage
             CreatedAt = taskDTO.CreatedAt;
             _id = taskDTO.Id;
             _assignee = taskDTO.Assignee;
-            _taskDTO = taskDTO;
+            TaskDTO = taskDTO;
         }
 
         internal void Update(string email, DateTime? dueDate, string title, string description)
@@ -89,7 +87,7 @@ namespace IntroSE.Kanban.Backend.BuisnessLayer.BoardPackage
             Log.Info($"Task {Id} updated by {email}.");
         }
 
-        internal void AssignTask(string email, string emailAssignee)
+        internal void Assign(string email, string emailAssignee)
         {
             if (_assignee != null && _assignee != email)
             {
@@ -100,6 +98,6 @@ namespace IntroSE.Kanban.Backend.BuisnessLayer.BoardPackage
             Log.Info($"Task {Id} assigned to '{emailAssignee}' by '{email}'.");
         }
 
-        internal void Insert() => _taskDTO.Insert();
+        internal void Insert() => TaskDTO.Insert();
     }
 }

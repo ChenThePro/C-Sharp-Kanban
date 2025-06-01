@@ -97,11 +97,8 @@ namespace IntroSE.Kanban.Backend.BuisnessLayer.UserPackage
             return newUser;
         }
 
-        internal UserBL GetUser(string email)
-        {
-            AuthenticateUser(email);
-            return _emails[email];
-        }
+        internal UserBL GetUser(string email) => 
+            _emails[email];
 
         internal void LoadData()
         {

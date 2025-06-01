@@ -64,13 +64,13 @@ namespace IntroSE.Kanban.BackendTests.Testings
 
         public bool CheckUserBoardIdList()
         {
-            string json = _factory.GetBoardService().GetUserBoards(EMAIL2);
+            string json = _factory.GetBoardService().GetUserBoardsAsId(EMAIL2);
             return json.Contains("\"ErrorMessage\":null");
         }
         public bool CheckUserBoardIdList_userWithoutBoards()
         {
             _factory.GetUserService().Register("empty@gmail.com", "Empty1");
-            string json = _factory.GetBoardService().GetUserBoards("empty@gmail.com");
+            string json = _factory.GetBoardService().GetUserBoardsAsId("empty@gmail.com");
             return json.Contains("\"ErrorMessage\":null");
         }
 

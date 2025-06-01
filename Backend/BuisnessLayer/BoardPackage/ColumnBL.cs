@@ -26,7 +26,7 @@ namespace IntroSE.Kanban.Backend.BuisnessLayer.BoardPackage
             _tasks = tasks;
         }
 
-        internal void Add(string email, TaskBL task)
+        internal void AddTask(string email, TaskBL task)
         {
             if (_limit != -1 && _tasks.Count >= _limit)
             {
@@ -37,7 +37,7 @@ namespace IntroSE.Kanban.Backend.BuisnessLayer.BoardPackage
             Log.Info($"Task added successfully by {email} to '{_name}' column.");
         }
 
-        internal void Delete(string email, TaskBL task)
+        internal void DeleteTask(string email, TaskBL task)
         {
             _tasks.Remove(task);
             Log.Info($"Task removed successfully by {email} from '{_name}' column.");
@@ -53,7 +53,7 @@ namespace IntroSE.Kanban.Backend.BuisnessLayer.BoardPackage
         internal TaskBL GetTaskById(int taskID) => 
             _tasks.Find(task => task.Id == taskID);
 
-        internal void LimitColumn(string email, int limit)
+        internal void Limit(string email, int limit)
         {
             if (limit != -1 && limit < _tasks.Count)
             {
@@ -74,7 +74,7 @@ namespace IntroSE.Kanban.Backend.BuisnessLayer.BoardPackage
         {
             TaskBL task = GetTaskById(taskID);
             TaskExists(task, taskID);
-            task.AssignTask(email, emailAssignee);
+            task.Assign(email, emailAssignee);
         }
 
         internal void TaskExists(TaskBL task, int taskID)
