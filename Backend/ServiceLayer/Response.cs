@@ -8,10 +8,10 @@
         public string ErrorMessage { get; set; }
         public object ReturnValue { get; set; }
 
-        public Response(string errorMsg, object retVal)
+        public Response(string errorMessage, object returnValue)
         {
-            ErrorMessage = errorMsg;
-            ReturnValue = retVal;
+            ErrorMessage = errorMessage;
+            ReturnValue = returnValue;
         }
     }
 }

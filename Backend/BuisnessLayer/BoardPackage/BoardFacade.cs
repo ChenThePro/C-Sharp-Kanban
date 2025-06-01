@@ -1,6 +1,5 @@
 using IntroSE.Kanban.Backend.BuisnessLayer.UserPackage;
 using log4net;
-using IntroSE.Kanban.Backend.ServiceLayer;
 using System;
 using System.Collections.Generic;
 using System.Reflection;
@@ -12,26 +11,218 @@ namespace IntroSE.Kanban.Backend.BuisnessLayer.BoardPackage
     internal class BoardFacade
     {
         private static readonly ILog Log = LogManager.GetLogger(MethodBase.GetCurrentMethod().DeclaringType);
-        private const int DESC_MAX = 300;
-        private const int TITLE_MAX = 50;
+
+        private const int DESC_MAX = 300, TITLE_MAX = 50, MAX_COLUMN_INDEX = 2, 
+            MAX_IN_PROGRESS_COLUMN = 1;
+
         private readonly UserFacade _userfacade;
         private readonly Dictionary<int, BoardBL> _boards;
 
-        /// <summary>
-        /// Initializes a new instance of the <see cref="BoardFacade"/> class.
-        /// </summary>
         internal BoardFacade(UserFacade userfacade)
         {
             _userfacade = userfacade;
-            _boards = new Dictionary<int, BoardBL>();
+            _boards = new();
         }
 
-        private void AuthenticateString(string name, string type)
+        internal BoardBL CreateBoard(string email, string boardName)
         {
-            if (string.IsNullOrWhiteSpace(name))
+            Log.Info($"Attempting to create board '{boardName}' for user '{email}'.");
+            AuthenticateUser(email);
+            AuthenticateString(boardName, "Board name");
+            UserBL user = _userfacade.GetUser(email);
+            user.BoardExists(boardName);
+            BoardBL board = new(email, boardName);
+            user.CreateBoard(board);
+            _boards.Add(board.Id, board);
+            Log.Info($"Board '{boardName}' successfully created for user '{email}'.");
+            return board;
+        }
+
+        internal void DeleteBoard(string email, string boardName)
+        {
+            Log.Info($"User '{email}' is deleting board '{boardName}'.");
+            AuthenticateUser(email);
+            UserBL user = _userfacade.GetUser(email);
+            BoardBL board = user.GetBoard(boardName);
+            board.Delete(email);
+            foreach (string member in board.Members)
+                _userfacade.GetUser(member).DeleteBoard(boardName);
+            _boards.Remove(board.Id);
+            Log.Info($"Board '{boardName}' deleted for user '{email}'.");
+        }
+
+        internal TaskBL AddTask(string email, string boardName, string title, string description, DateTime dueDate)
+        {
+            Log.Info($"Adding task to board '{boardName}' by '{email}'.");
+            AuthenticateString(title, "Title");
+            AuthenticateTitleLength(title);
+            AuthenticateDescription(description);
+            DateTime createdAt = DateTime.Today;
+            AuthenticateInteger(dueDate.CompareTo(createdAt), "Due date", true);
+            AuthenticateUser(email);
+            UserBL user = _userfacade.GetUser(email);
+            BoardBL board = user.GetBoard(boardName);
+            return board.AddTask(email, title, description, dueDate, createdAt);
+        }
+
+        internal void LimitColumn(string email, string boardName, int columnOrdinal, int limit)
+        {
+            Log.Info($"User '{email}' is setting column limit to {limit} in column {columnOrdinal} of board '{boardName}'.");
+            AuthenticateUser(email);
+            AuthenticateColumn(columnOrdinal, MAX_COLUMN_INDEX);
+            if (limit != -1)
             {
-                Log.Error($"{type} cannot be empty.");
-                throw new ArgumentNullException($"{type} cannot be empty.");
+                if (limit == 0)
+                {
+                    Log.Error("Limit cannot be zero.");
+                    throw new ArgumentOutOfRangeException("Limit cannot be zero.");
+                }
+                AuthenticateInteger(limit, "Limit");
+            }
+            UserBL user = _userfacade.GetUser(email);
+            BoardBL board = user.GetBoard(boardName);
+            board.LimitColumn(email, columnOrdinal, limit);
+        }
+
+        internal void AdvanceTask(string email, string boardName, int columnOrdinal, int taskID)
+        {
+            Log.Info($"User '{email}' is advancing task {taskID} in board '{boardName}'.");
+            AuthenticateUser(email);
+            AuthenticateColumn(columnOrdinal, MAX_IN_PROGRESS_COLUMN);
+            AuthenticateInteger(taskID, "Task ID");
+            UserBL user = _userfacade.GetUser(email);
+            BoardBL board = user.GetBoard(boardName);
+            board.AdvanceTask(email, columnOrdinal, taskID);
+        }
+
+        internal void UpdateTask(string email, string boardName, int columnOrdinal, int taskID, DateTime? dueDate, string title, string description)
+        {
+            Log.Info($"User '{email}' is updating task {taskID} in board '{boardName}'.");
+            if (title == null && description == null && dueDate == null)
+            {
+                Log.Error("At least one field (title, description, or due date) must be provided.");
+                throw new ArgumentNullException("At least one field (title, description, or due date) must be provided.");
+            }
+            if (title != null)
+            {
+                if (title.Trim().Length == 0)
+                {
+                    Log.Error("Title cannot be empty.");
+                    throw new ArgumentException("Title cannot be empty.");
+                }
+                AuthenticateTitleLength(title);
+            }
+            AuthenticateDescription(description);
+            AuthenticateUser(email);
+            AuthenticateColumn(columnOrdinal, MAX_IN_PROGRESS_COLUMN);
+            AuthenticateInteger(taskID, "Task ID");
+            UserBL user = _userfacade.GetUser(email);
+            BoardBL board = user.GetBoard(boardName);
+            board.UpdateTask(email, columnOrdinal, taskID, dueDate, title, description);
+        }
+
+        internal List<TaskBL> GetColumn(string email, string boardName, int columnOrdinal)
+        {
+            AuthenticateUser(email);
+            AuthenticateColumn(columnOrdinal, MAX_COLUMN_INDEX);
+            UserBL user = _userfacade.GetUser(email);
+            BoardBL board = user.GetBoard(boardName);
+            return board.GetColumn(columnOrdinal);
+        }
+
+        internal int GetColumnLimit(string email, string boardName, int columnOrdinal)
+        {
+            AuthenticateUser(email);
+            AuthenticateColumn(columnOrdinal, MAX_COLUMN_INDEX);
+            UserBL user = _userfacade.GetUser(email);
+            BoardBL board = user.GetBoard(boardName);
+            return board.GetColumnLimit(columnOrdinal);
+        }
+
+        internal string GetColumnName(string email, string boardName, int columnOrdinal)
+        {
+            AuthenticateUser(email);
+            AuthenticateColumn(columnOrdinal, MAX_COLUMN_INDEX);
+            UserBL user = _userfacade.GetUser(email);
+            BoardBL board = user.GetBoard(boardName);
+            return board.GetColumnName(columnOrdinal);
+        }
+
+        internal List<TaskBL> InProgressTasks(string email)
+        {
+            AuthenticateUser(email);
+            return _userfacade.GetUser(email).InProgressTasks();
+        }
+
+        internal List<int> GetUserBoards(string email)
+        {
+            AuthenticateUser(email);
+            return _userfacade.GetUser(email).GetUserBoards();
+        }
+
+        internal void JoinBoard(string email, int boardID)
+        {
+            AuthenticateUser(email);
+            UserBL user = _userfacade.GetUser(email);
+            BoardBL board = GetBoardById(boardID);
+            board.JoinBoard(email);
+            user.CreateBoard(board);
+        }
+
+        internal void LeaveBoard(string email, int boardID)
+        {
+            AuthenticateUser(email);
+            UserBL user = _userfacade.GetUser(email);
+            BoardBL board = GetBoardById(boardID);
+            board.LeaveBoard(email);
+            user.LeaveBoard(board);
+        }
+
+        internal string GetBoardName(int boardID) => GetBoardById(boardID).Name;
+
+        internal void TransferOwnership(string currentOwnerEmail, string newOwnerEmail, string boardName)
+        {
+            AuthenticateUser(currentOwnerEmail);
+            _userfacade.AuthenticateUser(newOwnerEmail);
+            UserBL user = _userfacade.GetUser(currentOwnerEmail);
+            BoardBL board = user.GetBoard(boardName);
+            board.TransferOwnership(currentOwnerEmail, newOwnerEmail);
+        }
+
+        internal void AssignTask(string email, string boardName, int columnOrdinal, int taskID, string emailAssignee)
+        {
+            AuthenticateUser(email);
+            AuthenticateColumn(columnOrdinal, MAX_IN_PROGRESS_COLUMN);
+            AuthenticateInteger(taskID, "Task ID");
+            _userfacade.AuthenticateUser(emailAssignee);
+            UserBL user = _userfacade.GetUser(email);
+            BoardBL board = user.GetBoard(boardName);
+            board.AssignTask(email, columnOrdinal, taskID, emailAssignee);
+        }
+
+        internal void LoadData()
+        {
+            Log.Info("Loading board data from storage.");
+            _userfacade.LoadData();
+            foreach (BoardDTO boardDTO in new BoardDTO().SelectAll())
+                _boards[boardDTO.Id] = new(boardDTO);
+        }
+
+        internal void DeleteData()
+        {
+            Log.Warn("Deleting all data and resetting auto-increments.");
+            new TaskController().DeleteAllAndResetAutoIncrement();
+            new BoardUserController().DeleteAll();
+            new BoardController().DeleteAllAndResetAutoIncrement();
+            new UserController().DeleteAll();
+        }
+
+        private void AuthenticateString(string value, string name)
+        {
+            if (string.IsNullOrWhiteSpace(value))
+            {
+                Log.Error($"{name} cannot be null or empty.");
+                throw new ArgumentNullException($"{name} cannot be null or empty.");
             }
         }
 
@@ -39,8 +230,8 @@ namespace IntroSE.Kanban.Backend.BuisnessLayer.BoardPackage
         {
             if (title.Length > TITLE_MAX)
             {
-                Log.Error("Title cannot exceed 50 characters.");
-                throw new ArgumentOutOfRangeException("Title cannot exceed 50 characters.");
+                Log.Error($"Title must not exceed {TITLE_MAX} characters.");
+                throw new ArgumentOutOfRangeException($"Title must not exceed {TITLE_MAX} characters.");
             }
         }
 
@@ -48,31 +239,31 @@ namespace IntroSE.Kanban.Backend.BuisnessLayer.BoardPackage
         {
             if (description != null && (description.Length > DESC_MAX || description.Trim().Length == 0))
             {
-                Log.Error("Description must be non-empty and at most 300 characters.");
-                throw new ArgumentOutOfRangeException("Description must be non-empty and at most 300 characters.");
+                Log.Error($"Description must be non-empty and at most {DESC_MAX} characters.");
+                throw new ArgumentOutOfRangeException($"Description must be non-empty and at most {DESC_MAX} characters.");
             }
         }
 
         private void AuthenticateUser(string email)
         {
-            if (!_userfacade._emails.ContainsKey(email))
+            if (!_userfacade._emails.TryGetValue(email, out var user))
             {
-                Log.Error("User doesn't exist.");
-                throw new KeyNotFoundException("User doesn't exist.");
+                Log.Error(email + " doesn't exist.");
+                throw new KeyNotFoundException(email + " doesn't exist.");
             }
-            if (!_userfacade._emails[email].LoggedIn)
+            if (!user.LoggedIn)
             {
-                Log.Error("User is not logged in.");
-                throw new InvalidOperationException("User is not logged in.");
+                Log.Error(email + " is not logged in.");
+                throw new InvalidOperationException(email + " is not logged in.");
             }
         }
 
-        private void AuthenticateColumn(int columnOrdinal, int limit)
+        private void AuthenticateColumn(int ordinal, int max)
         {
-            if (columnOrdinal > limit || columnOrdinal < 0)
+            if (ordinal < 0 || ordinal > max)
             {
-                Log.Error("Column index is out of valid range.");
-                throw new ArgumentOutOfRangeException("Column index is out of valid range.");
+                Log.Error($"Column index must be between 0 and {max}.");
+                throw new ArgumentOutOfRangeException($"Column index must be between 0 and {max}.");
             }
         }
 
@@ -94,308 +285,10 @@ namespace IntroSE.Kanban.Backend.BuisnessLayer.BoardPackage
         {
             if (!_boards.TryGetValue(boardID, out var board))
             {
-                Log.Error("Board not found.");
-                throw new KeyNotFoundException("Board not found.");
+                Log.Error(boardID + " Board not found.");
+                throw new KeyNotFoundException(boardID + " Board not found.");
             }
             return board;
-        }
-
-        /// <summary>
-        /// The AddTask function adds a task to a board after validating input, 
-        /// checking if the board exists and ensuring the task name isn't already taken. 
-        /// If valid, it creates a new TaskSL object and adds it to the Backlog
-        /// </summary>
-        /// <param name="boardName"></param>
-        /// <param name="title"></param>
-        /// <param name="description"></param>
-        /// <param name="due"></param>
-        /// <param name="taskID"></param>
-        /// <param name="creatinTime"></param>
-        /// <param name="email"></param>
-        /// <returns></returns>
-        /// <exception cref="ArgumentNullException"></exception>
-        /// <exception cref="ArgumentOutOfRangeException"></exception>
-        /// <exception cref="KeyNotFoundException"></exception>
-        /// <exception cref="InvalidOperationException">Thrown when email does not exist or not logged in.</exception>
-        internal TaskBL AddTask(string email, string boardName, string title, string description, DateTime dueDate)
-        {
-            AuthenticateString(title, "Title");
-            AuthenticateTitleLength(title);
-            AuthenticateDescription(description);
-            DateTime created_at = DateTime.Today;
-            AuthenticateInteger(dueDate.CompareTo(created_at), "", true);
-            AuthenticateUser(email);
-            UserBL user = _userfacade.GetUser(email);
-            BoardBL board = user.GetBoard(boardName);
-            return board.AddTask(email, title, description, dueDate, created_at, 0);
-        }
-
-        /// <summary>
-        /// Creates a new board for a user.
-        /// </summary>
-        /// <param name="boardName">The name of the board.</param>
-        /// <param name="email">The user's email.</param>
-        /// <returns>The created <see cref="BoardBL"/> instance.</returns>
-        /// <exception cref="ArgumentNullException">Thrown if boardName or email is null or empty.</exception>
-        /// <exception cref="KeyNotFoundException"></exception>
-        /// <exception cref="ArgumentOutOfRangeException"></exception>
-        /// <exception cref="InvalidOperationException">Thrown if a board with the given name already exists.</exception>
-        internal BoardBL CreateBoard(string email, string boardName)
-        {
-            AuthenticateUser(email);
-            AuthenticateString(boardName, "Board name");
-            UserBL user = _userfacade.GetUser(email);
-            user.BoardExists(boardName);
-            BoardBL board = new BoardBL(email, boardName);
-            user.CreateBoard(board);
-            _boards.Add(board.Id, board);
-            Log.Info($"New board '{boardName}' created for {email}.");
-            return board;
-        }
-
-        /// <summary>
-        /// Deletes an existing board.
-        /// </summary>
-        /// <param name="boardName">The name of the board to delete.</param>
-        /// <param name="email">The user's email.</param>
-        /// <exception cref="KeyNotFoundException"></exception>
-        /// <exception cref="InvalidOperationException"></exception>
-        internal void DeleteBoard(string email, string boardName)
-        {
-            AuthenticateUser(email);
-            UserBL user = _userfacade.GetUser(email);
-            BoardBL board = user.GetBoard(boardName);
-            board.Delete(email);
-            foreach (string member in board.Members)
-                _userfacade.GetUser(member).DeleteBoard(boardName);
-            _boards.Remove(board.Id);
-            Log.Info($"Board '{boardName}' deleted for {email}.");
-        }
-
-        /// <summary>
-        /// Sets a task limit for a specific column in a board.
-        /// </summary>
-        /// <param name="boardName">The name of the board.</param>
-        /// <param name="column">The column index.</param>
-        /// <param name="limit">The new task limit (must be non-negative).</param>
-        /// <param name="email">The user's email.</param>
-        /// <exception cref="InvalidOperationException">Thrown if the column index is invalid.</exception>
-        /// <exception cref="KeyNotFoundException">Thrown if the board does not exist.</exception>
-        /// <exception cref="ArgumentOutOfRangeException"></exception>
-        internal void LimitColumn(string email, string boardName, int columnOrdinal, int limit)
-        {
-            AuthenticateUser(email);
-            AuthenticateColumn(columnOrdinal, 2);
-            if (limit != -1)
-            {
-                if (limit == 0)
-                {
-                    Log.Error("Limit cannot be zero.");
-                    throw new ArgumentOutOfRangeException("Limit cannot be zero.");
-                }
-                AuthenticateInteger(limit, "Limit");
-            }
-            UserBL user = _userfacade.GetUser(email);
-            BoardBL board = user.GetBoard(boardName);
-            board.LimitColumn(email, columnOrdinal, limit);
-        }
-
-        /// <summary>
-        /// Moves a task to the next column.
-        /// </summary>
-        /// <param name="boardName">The name of the board.</param>
-        /// <param name="column">The current column index.</param>
-        /// <param name="taskID">The task ID.</param>
-        /// <param name="email">The user's email.</param>
-        /// <exception cref="InvalidOperationException">Thrown if the column index is invalid.</exception>
-        /// <exception cref="KeyNotFoundException">Thrown if the board or task does not exist.</exception>
-        /// <exception cref="ArgumentOutOfRangeException"></exception>
-        internal void AdvanceTask(string email, string boardName, int columnOrdinal, int taskID)
-        {
-            AuthenticateUser(email);
-            AuthenticateColumn(columnOrdinal, 1);
-            AuthenticateInteger(taskID, "Id");
-            UserBL user = _userfacade.GetUser(email);
-            BoardBL board = user.GetBoard(boardName);
-            board.AdvanceTask(email, columnOrdinal, taskID);
-        }
-
-        /// <summary>
-        /// Updates a task's details.
-        /// </summary>
-        /// <param name="boardName">The name of the board.</param>
-        /// <param name="title">The new title.</param>
-        /// <param name="due">The new due date.</param>
-        /// <param name="description">The new description.</param>
-        /// <param name="id">The task ID.</param>
-        /// <param name="email">The user's email.</param>
-        /// <param name="column">The column index.</param>
-        /// <exception cref="KeyNotFoundException">Thrown if the board or task does not exist.</exception>
-        /// <exception cref="ArgumentOutOfRangeException"></exception>
-        /// <exception cref="InvalidOperationException">Thrown if the user doesn't exist or is not logged in ot task id is taken or invalid column.</exception>
-        internal void UpdateTask(string email, string boardName, int columnOrdinal, int taskID, DateTime? dueDate, string title, string description)
-        {
-            if (title == null && description == null && dueDate == null)
-            {
-                Log.Error("At least one field (title, description, or due date) must be provided for update.");
-                throw new ArgumentNullException("At least one field (title, description, or due date) must be provided for update.");
-            }
-            if (title != null)
-            {
-                if (title.Trim().Length == 0)
-                {
-                    Log.Error("Title cannot be empty.");
-                    throw new ArgumentException("Title cannot be empty.");
-                }
-                AuthenticateTitleLength(title);
-            }
-            AuthenticateDescription(description);
-            AuthenticateUser(email);
-            AuthenticateColumn(columnOrdinal, 1);
-            AuthenticateInteger(taskID, "Id");
-            UserBL user = _userfacade.GetUser(email);
-            BoardBL board = user.GetBoard(boardName);
-            board.UpdateTask(email, columnOrdinal, taskID, dueDate, title, description);
-        }
-
-        /// <summary>
-        /// Retrieves all tasks in a specified column.
-        /// </summary>
-        /// <param name="email">The user's email.</param>
-        /// <param name="boardName">The board's name.</param>
-        /// <param name="columnOrdinal">The column index.</param>
-        /// <exception cref="ArgumentOutOfRangeException"></exception>
-        /// <exception cref="KeyNotFoundException"></exception>
-        /// <exception cref="InvalidOperationException"></exception>
-        /// <returns>A list of <see cref="TaskBL"/>.</returns>
-        internal List<TaskBL> GetColumn(string email, string boardName, int columnOrdinal)
-        {
-            AuthenticateUser(email);
-            AuthenticateColumn(columnOrdinal, 2);
-            UserBL user = _userfacade.GetUser(email);
-            BoardBL board = user.GetBoard(boardName);
-            return board.GetColumn(columnOrdinal);
-        }
-
-        /// <summary>
-        /// Retrieves the task limit for a specified column.
-        /// </summary>
-        /// <param name="email">The user's email.</param>
-        /// <param name="boardName">The board's name.</param>
-        /// <param name="columnOrdinal">The column index.</param>
-        /// <exception cref="KeyNotFoundException"></exception>
-        /// <exception cref="InvalidOperationException"></exception>
-        /// <exception cref="ArgumentOutOfRangeException"></exception>
-        /// <returns>The task limit.</returns>
-        internal int GetColumnLimit(string email, string boardName, int columnOrdinal)
-        {
-            AuthenticateUser(email);
-            AuthenticateColumn(columnOrdinal, 2);
-            UserBL user = _userfacade.GetUser(email);
-            BoardBL board = user.GetBoard(boardName);
-            return board.GetColumnLimit(columnOrdinal);
-        }
-
-        /// <summary>
-        /// Gets the name of a specific column in a board.
-        /// </summary>
-        /// <param name="email">The email of the requesting user.</param>
-        /// <param name="boardName">The name of the board.</param>
-        /// <param name="columnOrdinal">The index of the column.</param>
-        /// <exception cref="KeyNotFoundException"></exception>
-        /// <exception cref="InvalidOperationException"></exception>
-        /// <exception cref="ArgumentOutOfRangeException"></exception>
-        /// <returns>The name of the column.</returns>
-        internal string GetColumnName(string email, string boardName, int columnOrdinal)
-        {
-            AuthenticateUser(email);
-            AuthenticateColumn(columnOrdinal, 2);
-            UserBL user = _userfacade.GetUser(email);
-            BoardBL board = user.GetBoard(boardName);
-            return board.GetColumnName(columnOrdinal);
-        }
-
-        /// <summary>
-        /// Retrieves all in-progress tasks across all boards.
-        /// </summary>
-        /// <param name="email">The email of the requesting user.</param>
-        /// <exception cref="KeyNotFoundException"></exception>
-        /// <exception cref="InvalidOperationException"></exception>
-        /// <returns>A list of in-progress <see cref="TaskSL"/> objects.</returns>
-        internal List<TaskBL> InProgressTasks(string email)
-        {
-            AuthenticateUser(email);
-            UserBL user = _userfacade.GetUser(email);
-            return user.InProgressTasks();
-        }
-
-        internal List<int> GetUserBoards(string email)
-        {
-            AuthenticateUser(email);
-            UserBL user = _userfacade.GetUser(email);
-            return user.GetUserBoards(email);
-        }
-
-        internal void JoinBoard(string email, int boardID)
-        {
-            AuthenticateUser(email);
-            UserBL user = _userfacade.GetUser(email);
-            BoardBL board = GetBoardById(boardID);
-            board.JoinBoard(email);
-            user.CreateBoard(board);
-        }
-
-        internal void LeaveBoard(string email, int boardID)
-        {
-            AuthenticateUser(email);
-            UserBL user = _userfacade.GetUser(email);
-            BoardBL board = GetBoardById(boardID);
-            board.LeaveBoard(email);
-            user.LeaveBoard(board);
-        }
-
-        internal string GetBoardName(int boardID)
-        {
-            return GetBoardById(boardID).Name;
-        }
-
-        internal void TransferOwnership(string currentOwnerEmail, string newOwnerEmail, string boardName)
-        {
-            AuthenticateUser(currentOwnerEmail);
-            _userfacade.AuthenticateUser(newOwnerEmail);
-            UserBL user = _userfacade.GetUser(currentOwnerEmail);
-            BoardBL board = user.GetBoard(boardName);
-            board.TransferOwnership(currentOwnerEmail, newOwnerEmail);
-        }
-
-        internal void AssignTask(string email, string boardName, int columnOrdinal, int taskID, string emailAssignee)
-        {
-            AuthenticateUser(email);
-            AuthenticateColumn(columnOrdinal, 1);
-            AuthenticateInteger(taskID, "Id");
-            _userfacade.AuthenticateUser(emailAssignee);
-            UserBL user = _userfacade.GetUser(email);
-            BoardBL board = user.GetBoard(boardName);
-            board.AssignTask(email, columnOrdinal, taskID, emailAssignee);
-        }
-
-        public void LoadData()
-        {
-            _userfacade.LoadData();
-            BoardBL board;
-            foreach (BoardDTO boardDTO in new BoardDTO().SelectAll())
-            {
-                board = new BoardBL(boardDTO);
-                _boards.Add(board.Id, board);
-            }
-        }
-
-        internal void DeleteData()
-        {
-            new TaskController().DeleteAllAndResetAutoIncrement();
-            new BoardUserController().DeleteAll();
-            new BoardController().DeleteAllAndResetAutoIncrement();
-            new UserController().DeleteAll();
         }
     }
 }

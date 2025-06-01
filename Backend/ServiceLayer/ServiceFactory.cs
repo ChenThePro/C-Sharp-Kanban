@@ -4,8 +4,6 @@ using System.Reflection;
 using System.IO;
 using IntroSE.Kanban.Backend.BuisnessLayer.BoardPackage;
 using IntroSE.Kanban.Backend.BuisnessLayer.UserPackage;
-using System.Text.Json;
-using System;
 
 
 namespace IntroSE.Kanban.Backend.ServiceLayer
@@ -20,28 +18,19 @@ namespace IntroSE.Kanban.Backend.ServiceLayer
 
         public ServiceFactory()
         {
-            _taskService = null;
-            _boardService = null;
-            _userService = null;
             _userFacade = new UserFacade();
             _boardFacade = new BoardFacade(_userFacade);
             var logRepository = LogManager.GetRepository(Assembly.GetEntryAssembly());
             XmlConfigurator.Configure(logRepository, new FileInfo("log4net.config"));
         }
 
-        public TaskService GetTaskService()
-        {
-            return _taskService ??= new TaskService(_boardFacade);
-        }
+        public TaskService GetTaskService() => 
+            _taskService ??= new TaskService(_boardFacade);
 
-        public BoardService GetBoardService()
-        {
-            return _boardService ??= new BoardService(_boardFacade);
-        }
+        public BoardService GetBoardService() => 
+            _boardService ??= new BoardService(_boardFacade);
 
-        public UserService GetUserService()
-        {
-            return _userService ??= new UserService(_userFacade);
-        }   
+        public UserService GetUserService() => 
+            _userService ??= new UserService(_userFacade);
     }
 }

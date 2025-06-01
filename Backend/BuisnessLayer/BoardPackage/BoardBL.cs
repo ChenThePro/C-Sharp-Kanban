@@ -9,172 +9,184 @@ namespace IntroSE.Kanban.Backend.BuisnessLayer.BoardPackage
     internal class BoardBL
     {
         private static readonly ILog Log = LogManager.GetLogger(MethodBase.GetCurrentMethod().DeclaringType);
-        internal int Id;
-        internal string Owner;
-        internal readonly string Name;
-        internal readonly List<ColumnBL> Columns;
-        internal readonly List<String> Members;
+
+        private int _id;
+        private string _owner, _name;
+
+        internal int Id { 
+            get => _id; 
+            private set { _id = value; _boardDTO.Id = value; } 
+        }
+        internal string Name { 
+            get => _name; 
+            private set { _name = value; _boardDTO.Name = value; } 
+        }
+
+        internal List<string> Members { get; init; }
+
+        private readonly List<ColumnBL> _columns;
         private readonly BoardDTO _boardDTO;
 
         internal BoardBL(string owner, string name)
         {
-            Owner = owner;
-            Name = name;
-            Columns = new List<ColumnBL>();
-            for (int i = 0; i < 3; i++)
-                Columns.Add(new ColumnBL(i, -1, new List<TaskBL>()));
-            Members = new List<String>();
-            Members.Add(owner);
-            _boardDTO = new BoardDTO(Owner, Name, -1, -1, -1);
-            Id = _boardDTO.Id;
+            _owner = owner;
+            _name = name;
+            _columns = InitializeDefaultColumns();
+            Members = new() { owner };
+            _boardDTO = new(owner, name);
+            _id = _boardDTO.Id;
+            Log.Info($"Board '{_name}' created for owner '{_owner}'.");
         }
 
-        public BoardBL(BoardDTO boardDTO)
+        internal BoardBL(BoardDTO boardDTO)
         {
-            Id = boardDTO.Id;
-            Owner = boardDTO.Owner;
-            Name = boardDTO.Name;
-            Columns = new List<ColumnBL>();
-            for (int i = 0; i < 3; i++)
-                Columns.Add(new ColumnBL(i, boardDTO.Columns[i].Limit, ConvertTasks(boardDTO.Columns[i].Tasks)));
-            Members = new List<string>();
-            Members.AddRange(new BoardUserDTO(Id).GetParticipants());
+            _id = boardDTO.Id;
+            _owner = boardDTO.Owner;
+            _name = boardDTO.Name;
+            _columns = InitializeColumnsFromDTO(boardDTO);
+            Members = new(new BoardUserDTO(_id).GetParticipants());
             _boardDTO = boardDTO;
+            Log.Info($"Board '{_name}' loaded from persistence.");
         }
 
-        private List<TaskBL> ConvertTasks(List<TaskDTO> dtos) => dtos.ConvertAll(t => new TaskBL(t));
-
-
-        internal TaskBL AddTask(string email, string title, string description, DateTime dueDate, DateTime created_at, int columnOrdinal)
+        internal TaskBL AddTask(string email, string title, string description, DateTime dueDate, DateTime createdAt)
         {
-            TaskBL task = new TaskBL(title, description, dueDate, created_at, Id, columnOrdinal);
-            Columns[columnOrdinal].Add(Owner, task);
+            TaskBL task = new(title, description, dueDate, createdAt, _id, 0);
+            _columns[0].Add(_owner, task);
             _boardDTO.AddTask(task, email);
+            Log.Info($"Task '{task.Title}' added to column {0} by '{email}' in board {_name}'.");
             return task;
         }
 
         internal void AdvanceTask(string email, int columnOrdinal, int taskID)
         {
-            TaskBL task = GetTaskByIdAndColumn(columnOrdinal, taskID);
-            if (task == null)
-            {
-                Log.Error("Task id " + taskID + " for " + email + " doesn't exist in " + Name + "'s " + 
-                    Columns[columnOrdinal].GetName() + " column.");
-                throw new KeyNotFoundException("Task id" + taskID + " for " + email + " doesn't exist in " + Name + "'s " + Columns[columnOrdinal].GetName() + " column.");
-            }
+            TaskBL task = _columns[columnOrdinal].GetTaskById(taskID);
+            _columns[columnOrdinal].TaskExists(task, taskID);
             if (task.Assignee != email)
             {
-                Log.Error("Task id " + taskID + " for " + email + " is not assigned to the user.");
-                throw new InvalidOperationException("Task id " + taskID + " for " + email + " is not assigned to the user.");
+                Log.Error($"Task ID {taskID} is not assigned to '{email}'.");
+                throw new InvalidOperationException($"Task ID {taskID} is not assigned to '{email}'.");
             }
-            Columns[columnOrdinal + 1].Add(email, task);
-            Columns[columnOrdinal].Delete(email, task);
-            // if (columnOrdinal + 1 == 2)
-            //    task.AssignTask(email, null);
+            _columns[columnOrdinal + 1].Add(email, task);
+            _columns[columnOrdinal].Delete(email, task);
             _boardDTO.AdvanceTask(task, email, columnOrdinal);
-            Log.Info("Task id " + task.Id + " moved from " + Columns[columnOrdinal].GetName() + " to " + Columns[columnOrdinal + 1].GetName() + " for " + email + " in board " + Name + ".");
+            Log.Info($"Task ID {taskID} advanced by '{email}' from column {columnOrdinal} to {columnOrdinal + 1} in board '{_name}'.");
         }
 
         internal void UpdateTask(string email, int columnOrdinal, int taskID, DateTime? dueDate, string title, string description)
         {
-            Columns[columnOrdinal].UpdateTask(email, taskID, dueDate, title, description);
-        }
-
-        internal TaskBL GetTaskByIdAndColumn(int columnOrdinal, int taskID)
-        {
-            return Columns[columnOrdinal].GetTaskById(taskID);
+            _columns[columnOrdinal].UpdateTask(email, taskID, dueDate, title, description);
+            Log.Info($"Task ID {taskID} updated by '{email}' in column {columnOrdinal} of board '{_name}'.");
         }
 
         internal void LimitColumn(string email, int columnOrdinal, int limit)
         {
-            Columns[columnOrdinal].LimitColumn(email, limit);
+            _columns[columnOrdinal].LimitColumn(email, limit);
             _boardDTO.LimitColumn(limit, columnOrdinal);
+            Log.Info($"Column {columnOrdinal} limit set to {limit} by '{email}' in board '{_name}'.");
         }
 
-        internal List<TaskBL> GetColumn(int columnOrdinal)
-        {
-            return Columns[columnOrdinal].GetTasks();
-        }
+        internal List<TaskBL> GetColumn(int columnOrdinal) =>
+            _columns[columnOrdinal].GetTasks();
 
-        internal int GetColumnLimit(int columnOrdinal)
-        {
-            return Columns[columnOrdinal].GetLimit();
-        }
+        internal int GetColumnLimit(int columnOrdinal) =>
+            _columns[columnOrdinal].GetLimit();
 
-        internal string GetColumnName(int columnOrdinal)
-        {
-            return Columns[columnOrdinal].GetName();
-        }
+        internal string GetColumnName(int columnOrdinal) =>
+            _columns[columnOrdinal].GetName();
 
         internal void AssignTask(string email, int columnOrdinal, int taskID, string emailAssignee)
         {
-            if (!Members.Contains(emailAssignee))
-            {
-                Log.Error("User " + emailAssignee + " is not a member of the board.");
-                throw new InvalidOperationException("User " + emailAssignee + " is not a member of the board.");
-            }
-            Columns[columnOrdinal].AssignTask(email, taskID, emailAssignee);
+            IsMember(emailAssignee);
+            _columns[columnOrdinal].AssignTask(email, taskID, emailAssignee);
+            Log.Info($"Task ID {taskID} assigned to '{emailAssignee}' by '{email}' in column {columnOrdinal} of board '{_name}'.");
         }
 
         internal void TransferOwnership(string currentOwnerEmail, string newOwnerEmail)
         {
-            if (Owner != currentOwnerEmail)
-            {
-                Log.Error("Only the owner can transfer ownership.");
-                throw new InvalidOperationException("Only the owner can transfer ownership.");
-            }
-            if (!Members.Contains(newOwnerEmail))
-            {
-                Log.Error("New owner must be a member of the board.");
-                throw new InvalidOperationException("New owner must be a member of the board.");
-            }
-            Owner = newOwnerEmail;
+            IsOwner(currentOwnerEmail);
+            IsMember(newOwnerEmail);
+            _owner = newOwnerEmail;
             _boardDTO.Owner = newOwnerEmail;
+            Log.Info($"Ownership of board '{_name}' transferred from '{currentOwnerEmail}' to '{newOwnerEmail}'.");
         }
 
         internal void LeaveBoard(string email)
         {
-            if (Owner == email)
+            if (_owner == email)
             {
-                Log.Error("Owner cannot leave the board. Transfer ownership first.");
-                throw new InvalidOperationException("Owner cannot leave the board. Transfer ownership first.");
+                Log.Error(email + " cannot leave the board. Transfer ownership first.");
+                throw new InvalidOperationException(email + " cannot leave the board. Transfer ownership first.");
             }
-            if (!Members.Contains(email))
-            {
-                Log.Error(email + " cannot leave a board he is not a member in.");
-                throw new InvalidOperationException(email + " cannot leave a board he is not a member in.");
-            }
-            Log.Info("User " + email + " left the board " + Name + ".");
-            for (int i = 0; i < 2; i++)
-                foreach (TaskBL task in Columns[i].GetTasks())
+            IsMember(email);
+            for (int i = 0; i < _columns.Count - 1; i++)
+                foreach (TaskBL task in _columns[i].GetTasks())
                     if (task.Assignee == email)
                         task.AssignTask(email, null);
             Members.Remove(email);
-            new BoardUserDTO(Id, email).Delete();
+            new BoardUserDTO(_id, email).Delete();
+            Log.Info($"User '{email}' left the board '{_name}'.");
         }
 
         internal void Delete(string email)
         {
-            if (Owner != email)
-            {
-                Log.Error("Only the owner can delete the board.");
-                throw new InvalidOperationException("Only the owner can delete the board.");
-            }
-            Log.Info("Board " + Name + " deleted by owner " + email + ".");
+            IsOwner(email);
             foreach (string member in Members)
-                new BoardUserDTO(Id, member).Delete();
+                new BoardUserDTO(_id, member).Delete();
             _boardDTO.Delete();
+            Log.Info($"Board '{_name}' deleted by '{email}'.");
         }
 
         internal void JoinBoard(string email)
         {
             if (Members.Contains(email))
             {
-                Log.Error("User is already a member of the board.");
-                throw new InvalidOperationException("User is already a member of the board.");
+                Log.Error($"User '{email}' is already a member of board '{_name}'.");
+                throw new InvalidOperationException($"User '{email}' is already a member of board '{_name}'.");
             }
             Members.Add(email);
-            new BoardUserDTO(Id, email).Insert();
+            new BoardUserDTO(_id, email).Insert();
+            Log.Info($"User '{email}' joined board '{_name}'.");
+        }
+
+        private List<ColumnBL> InitializeDefaultColumns()
+        {
+            List<ColumnBL> columns = new();
+            for (int i = 0; i < 3; i++)
+                columns.Add(new(i, -1, new()));
+            return columns;
+        }
+
+        private List<ColumnBL> InitializeColumnsFromDTO(BoardDTO boardDTO)
+        {
+            List<ColumnBL> columns = new();
+            for (int i = 0; i < 3; i++)
+            {
+                ColumnDTO dtoColumn = boardDTO.Columns[i];
+                columns.Add(new(i, dtoColumn.Limit, ConvertTasks(dtoColumn.Tasks)));
+            }
+            return columns;
+        }
+
+        private List<TaskBL> ConvertTasks(List<TaskDTO> dtos) => 
+            dtos.ConvertAll(dto => new TaskBL(dto));
+
+        private void IsMember(string email)
+        {
+            if (!Members.Contains(email))
+            {
+                Log.Error($"User '{email}' is not a member of the board '{_name}'.");
+                throw new InvalidOperationException($"User '{email}' is not a member of the board '{_name}'.");
+            }
+        }
+
+        private void IsOwner(string email)
+        {
+            if (_owner != email)
+            {
+                Log.Error($"User '{email}' is not the owner of the board '{_name}'.");
+                throw new InvalidOperationException($"User '{email}' is not the owner of the board '{_name}'.");
+            }
         }
     }
 }

@@ -17,6 +17,9 @@ namespace IntroSE.Kanban.Backend.ServiceLayer
             _userFacade = userFacade;
         }
 
+        private string ToJsonResponse(string error = null, object data = null) =>
+            JsonSerializer.Serialize(new Response(error, data));
+
         /// <summary>
         /// Attempts to log in a user with the provided credentials.
         /// </summary>
@@ -31,12 +34,12 @@ namespace IntroSE.Kanban.Backend.ServiceLayer
         {
             try
             {
-                UserBL user = _userFacade.Login(email, password);
-                return JsonSerializer.Serialize(new Response(null, email));
+                _userFacade.Login(email, password);
+                return ToJsonResponse(null, email);
             }
             catch (Exception ex)
             {
-                return JsonSerializer.Serialize(new Response(ex.Message, null));
+                return ToJsonResponse(ex.Message);
             }
         }
 
@@ -55,13 +58,12 @@ namespace IntroSE.Kanban.Backend.ServiceLayer
         {
             try
             {
-                UserBL user = _userFacade.Register(email, password);
-                return JsonSerializer.Serialize(new Response(null, null));
+                _userFacade.Register(email, password);
+                return ToJsonResponse();
             }
             catch (Exception ex)
             {
-                Console.WriteLine(ex.Message);
-                return JsonSerializer.Serialize(new Response(ex.Message, null));
+                return ToJsonResponse(ex.Message);
             }
         }
 
@@ -79,11 +81,11 @@ namespace IntroSE.Kanban.Backend.ServiceLayer
             try
             {
                 _userFacade.Logout(email);
-                return JsonSerializer.Serialize(new Response(null, null));
+                return ToJsonResponse();
             }
             catch (Exception ex)
             {
-                return JsonSerializer.Serialize(new Response(ex.Message, null));
+                return ToJsonResponse(ex.Message);
             }
         }
     }

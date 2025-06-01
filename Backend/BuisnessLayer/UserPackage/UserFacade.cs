@@ -10,37 +10,36 @@ namespace IntroSE.Kanban.Backend.BuisnessLayer.UserPackage
     internal class UserFacade
     {
         private static readonly ILog Log = LogManager.GetLogger(MethodBase.GetCurrentMethod().DeclaringType);
+
         internal readonly Dictionary<string, UserBL> _emails;
-        /// <summary>
-        /// Initializes a new instance of the <see cref="UserFacade"/> class.
-        /// </summary>
+
         internal UserFacade()
         {
-            _emails = new Dictionary<string, UserBL>();
+            _emails = new();
         }
 
         private void ValidateEmail(string email)
         {
             if (string.IsNullOrWhiteSpace(email))
             {
-                Log.Error("Email cannot be empty");
-                throw new ArgumentNullException("Email cannot be empty");
+                Log.Error("Email cannot be empty.");
+                throw new ArgumentNullException("Email cannot be empty.");
             }
             if (_emails.ContainsKey(email))
             {
-                Log.Error("Email already exists.");
-                throw new InvalidOperationException("Email already exists.");
+                Log.Error(email + " already exists.");
+                throw new InvalidOperationException(email + " already exists.");
             }
             if (!Regex.IsMatch(email, @"^[^@\s]+@[^@\s]+\.[^@\s]+$"))
             {
-                Log.Error("Email format is not valid.");
-                throw new FormatException("Email format is not valid.");
+                Log.Error("Invalid email format.");
+                throw new FormatException("Invalid email format.");
             }
         }
 
-        private void VaildatePassword(string password)
+        private void ValidatePassword(string password)
         {
-            if (password.Length < 6 || password.Length > 20)
+            if (string.IsNullOrWhiteSpace(password) || password.Length < 6 || password.Length > 20)
             {
                 Log.Error("Password must be between 6 and 20 characters.");
                 throw new ArgumentOutOfRangeException("Password must be between 6 and 20 characters.");
@@ -60,15 +59,10 @@ namespace IntroSE.Kanban.Backend.BuisnessLayer.UserPackage
                 Log.Error("Password must contain at least one number.");
                 throw new ArgumentException("Password must contain at least one number.");
             }
-            // if (!Regex.IsMatch(password, @"^[a-zA-Z0-9]+$"))
-            // {
-            //     Log.Error("Password must not contain special characters.");
-            //     throw new ArgumentException("Password must not contain special characters.");
-            // }
-            if (new Regex(@"[!@#$%^&*()_+\-=\[\]{};':""\\|,.<>/?~` ]").IsMatch(password))
+            if (Regex.IsMatch(password, @"[!@#$%^&*()_+\-=\[\]{};':""\\|,.<>/?~` ]"))
             {
-                Log.Error("Password must not contain a unique char.");
-                throw new ArgumentException("Password must not contain a unique char.");
+                Log.Error("Password must not contain special characters.");
+                throw new ArgumentException("Password must not contain special characters.");
             }
         }
 
@@ -76,74 +70,44 @@ namespace IntroSE.Kanban.Backend.BuisnessLayer.UserPackage
         {
             if (!_emails.ContainsKey(email))
             {
-                Log.Error("Email doesn't exist.");
-                throw new KeyNotFoundException("Email doesn't exist.");
+                Log.Error(email + " doesn't exist.");
+                throw new KeyNotFoundException(email + " doesn't exist.");
             }
         }
 
-        /// <summary>
-        /// Attempts to log in a user with the provided email and password.
-        /// </summary>
-        /// <param name="email">The user's email address.</param>
-        /// <param name="password">The user's password.</param>
-        /// <returns>The <see cref="UserBL"/> instance representing the logged-in user.</returns>
-        /// <exception cref="KeyNotFoundException">Thrown if the email does not exist.</exception>
-        /// <exception cref="UnauthorizedAccessException">Thrown if the password is incorrect.</exception>
-        /// <precondition>User must exist in the system.</precondition>
-        /// <postcondition>User is marked as logged in if credentials are valid.</postcondition>
         internal UserBL Login(string email, string password)
         {
             AuthenticateUser(email);
             return _emails[email].Login(password);
         }
 
-        /// <summary>
-        /// Logs out the user associated with the given email.
-        /// </summary>
-        /// <param name="email">The user's email address.</param>
-        /// <exception cref="KeyNotFoundException">Thrown if the email does not exist.</exception>
-        /// <exception cref="InvalidOperationException">Thrown if the user is already logged out.</exception>
-        /// <precondition>User must be currently logged in.</precondition>
-        /// <postcondition>User is marked as logged out.</postcondition>
         internal void Logout(string email)
         {
             AuthenticateUser(email);
             _emails[email].Logout();
         }
 
-        /// <summary>
-        /// Registers a new user with the provided email and password.
-        /// </summary>
-        /// <param name="email">The desired email address.</param>
-        /// <param name="password">The desired password.</param>
-        /// <returns>The newly created <see cref="UserBL"/> instance.</returns>
-        /// <exception cref="InvalidOperationException">Thrown if the email already exists.</exception>
-        /// <exception cref="FormatException">Thrown if the email format is invalid.</exception>
-        /// <exception cref="ArgumentException">Thrown if the password does not meet complexity requirements.</exception>
-        /// <precondition>Email must be unique and valid. Password must meet complexity rules.</precondition>
-        /// <postcondition>User is added to the system and marked as logged in.</postcondition>
         internal UserBL Register(string email, string password)
         {
             ValidateEmail(email);
-            VaildatePassword(password);
-            UserBL newUser = new UserBL(email, password);
+            ValidatePassword(password);
+            UserBL newUser = new(email, password);
             _emails[email] = newUser;
-            Log.Info("New user " + email + " created.");
+            Log.Info($"New user registered: {email}");
             return newUser;
         }
 
         internal UserBL GetUser(string email)
         {
+            AuthenticateUser(email);
             return _emails[email];
         }
-        public void LoadData()
+
+        internal void LoadData()
         {
-            UserBL user;
-            foreach (UserDTO userDTO in new UserDTO().SelectAll())
-            {
-                user = new UserBL(userDTO);
-                _emails.Add(user.Email, user);
-            }
+            foreach (UserDTO dto in new UserDTO().SelectAll())
+                _emails[dto.Email] = new(dto);
+            Log.Info("All users loaded from persistent storage.");
         }
     }
 }

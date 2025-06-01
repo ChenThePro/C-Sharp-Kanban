@@ -1,128 +1,101 @@
 ﻿using System;
-using System.Collections.Generic;
 
 namespace IntroSE.Kanban.Backend.DataAccessLayer.DTOs
 {
     internal class TaskDTO : IDTO
     {
-        internal const string TASK_ID_COLUMN_NAME = "id";
-        internal const string TASK_BOARD_ID_COLUMN_NAME = "board_id";
-        internal const string TASK_ASSIGNEE_COLUMN_NAME = "assignee";
-        internal const string TASK_CREATE_COLUMN_NAME = "created_at";
-        internal const string TASK_DUE_COLUMN_NAME = "due_date";
-        internal const string TASK_TITLE_COLUMN_NAME = "title";
-        internal const string TASK_DESC_COLUMN_NAME = "description";
-        internal const string TASK_COLUMN_COLUMN_NAME = "column";
-        private int _id;
-        private int _boardId;
-        private string _assignee;
-        private readonly DateTime _creationTime;
-        private DateTime _dueDate;
-        private string _title;
-        private string _description;
-        private int _column;
-        private readonly TaskController _controller;
+        private const string ID = "id", BOARD_ID = "board_id", ASSIGNEE = "assignee",
+            CREATED_AT = "created_at", DUE_DATE = "due_date", TITLE = "title", 
+            DESC = "description", COLUMN = "column";
 
-        internal DateTime CreationTime => _creationTime;
+        private int _id, _boardId, _column;
+        private string _assignee, _title, _description;
+        private readonly DateTime _createdAt;
+        private DateTime _dueDate;
+
+        internal DateTime CreatedAt => _createdAt;
 
         internal int Id
         {
             get => _id;
-            set { _controller.Update(TASK_ID_COLUMN_NAME, _id, TASK_ID_COLUMN_NAME, value); _id = value; }
+            set { Update(ID, value); _id = value; }
         }
 
         internal int BoardId
         {
             get => _boardId;
-            set { _controller.Update(TASK_ID_COLUMN_NAME, _id, TASK_BOARD_ID_COLUMN_NAME, value); _boardId = value; }
+            set { Update(BOARD_ID, value); _boardId = value; }
         }
 
         internal string Assignee
         {
             get => _assignee;
-            set { _controller.Update(TASK_ID_COLUMN_NAME, _id, TASK_ASSIGNEE_COLUMN_NAME, value); _assignee = value; }
+            set { Update(ASSIGNEE, value); _assignee = value; }
         }
 
         internal string Title
         {
             get => _title;
-            set { _controller.Update(TASK_ID_COLUMN_NAME, _id, TASK_TITLE_COLUMN_NAME, value); _title = value; }
+            set { Update(TITLE, value); _title = value; }
         }
 
         internal string Description
         {
             get => _description;
-            set { _controller.Update(TASK_ID_COLUMN_NAME, _id, TASK_DESC_COLUMN_NAME, value); _description = value; }
+            set { Update(DESC, value); _description = value; }
         }
 
         internal DateTime DueDate
         {
             get => _dueDate;
-            set { _controller.Update(TASK_ID_COLUMN_NAME, _id, TASK_DUE_COLUMN_NAME, value.ToString("yyyy-MM-dd HH:mm:ss")); _dueDate = value; }
+            set { Update(DUE_DATE, value.ToString("yyyy-MM-dd HH:mm:ss")); _dueDate = value; }
         }
 
         internal int Column
         {
             get => _column;
-            set { _controller.Update(TASK_ID_COLUMN_NAME, _id, TASK_COLUMN_COLUMN_NAME, value); _column = value; }
+            set { Update(COLUMN, value); _column = value; }
         }
 
-        internal TaskDTO(int boardId, string assignee, DateTime creationTime, DateTime due, string title, string description, int column)
+        private readonly TaskController _controller;
+
+        internal TaskDTO(int boardId, string assignee, DateTime createdAt, DateTime due, string title, string description, int column)
         {
             _boardId = boardId;
             _assignee = assignee;
-            _creationTime = creationTime;
+            _createdAt = createdAt;
             _dueDate = due;
             _title = title;
             _description = description;
             _column = column;
-            _controller = new TaskController();
-            _id = _controller.GetLastId(_boardId);
+            _controller = new();
+            _id = _controller.GetNextId(boardId);
         }
 
-        internal TaskDTO(int id, int boardId, string assignee, DateTime creationTime, DateTime due, string title, string description, int column)
+        internal TaskDTO(int id, int boardId, string assignee, DateTime createdAt, DateTime due, string title, string description, int column)
         {
             _id = id;
             _boardId = boardId;
             _assignee = assignee;
-            _creationTime = creationTime;
+            _createdAt = createdAt;
             _dueDate = due;
             _title = title;
             _description = description;
             _column = column;
-            _controller = new TaskController();
+            _controller = new();
         }
 
-        internal TaskDTO(int id)
-        {
-            _id = id;
-            _controller = new TaskController();
-        }
+        internal void Insert() => _controller.Insert(this);
 
-        internal TaskDTO()
-        {
-            _controller = new TaskController();
-        }
+        internal void Delete() => _controller.Delete(ID, _id, BOARD_ID, _boardId);
 
-        internal void Insert()
-        {
-            _controller.Insert(this);
-        }
+        public void Update(string column, object newValue) =>
+            _controller.Update(ID, _id, BOARD_ID, _boardId, column, newValue);
 
-        internal void Delete()
-        {
-            _controller.Delete(TASK_ID_COLUMN_NAME, _id);
-        }
+        public string[] GetColumnNames() => 
+            new[] { ID, BOARD_ID, ASSIGNEE, CREATED_AT, DUE_DATE, TITLE, DESC, COLUMN };
 
-        internal List<TaskDTO> SelectAll()
-        {
-            return _controller.SelectAll();
-        }
-
-        public string[] GetColumnNames() => new[] { TASK_ID_COLUMN_NAME, TASK_BOARD_ID_COLUMN_NAME, TASK_ASSIGNEE_COLUMN_NAME, 
-            TASK_CREATE_COLUMN_NAME, TASK_DUE_COLUMN_NAME, TASK_TITLE_COLUMN_NAME, TASK_DESC_COLUMN_NAME, TASK_COLUMN_COLUMN_NAME };
-        
-        public object[] GetColumnValues() => new object[] { _id, _boardId, _assignee, 
-            _creationTime.ToString("yyyy-MM-dd HH:mm:ss"), _dueDate.ToString("yyyy-MM-dd HH:mm:ss"), _title, _description, _column };
+        public object[] GetColumnValues() =>
+            new object[] { _id, _boardId, _assignee, _createdAt.ToString("yyyy-MM-dd HH:mm:ss"), _dueDate.ToString("yyyy-MM-dd HH:mm:ss"), _title, _description, _column };
     }
 }
