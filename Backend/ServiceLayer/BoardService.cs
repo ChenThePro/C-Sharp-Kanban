@@ -15,6 +15,9 @@ namespace IntroSE.Kanban.Backend.ServiceLayer
             _boardFacade = boardFacade;
         }
 
+        private string ToResponseJson(string errorMessage = null, object returnValue = null) =>
+            JsonSerializer.Serialize(new Response(errorMessage, returnValue));
+
         /// <summary>
         /// Creates a new board for a user.
         /// </summary>
@@ -31,12 +34,12 @@ namespace IntroSE.Kanban.Backend.ServiceLayer
         {
             try
             {
-                BoardBL board = _boardFacade.CreateBoard(email, boardName);
-                return JsonSerializer.Serialize(new Response(null, null));
+                _boardFacade.CreateBoard(email, boardName);
+                return ToResponseJson();
             }
             catch (Exception ex)
             {
-                return JsonSerializer.Serialize(new Response(ex.Message, null));
+                return ToResponseJson(ex.Message);
             }
         }
 
@@ -55,11 +58,11 @@ namespace IntroSE.Kanban.Backend.ServiceLayer
             try
             {
                 _boardFacade.DeleteBoard(email, boardName);
-                return JsonSerializer.Serialize(new Response(null, null));
+                return ToResponseJson();
             }
             catch (Exception ex)
             {
-                return JsonSerializer.Serialize(new Response(ex.Message, null));
+                return ToResponseJson(ex.Message);
             }
         }
 
@@ -81,11 +84,11 @@ namespace IntroSE.Kanban.Backend.ServiceLayer
             try
             {
                 _boardFacade.LimitColumn(email, boardName, columnOrdinal, limit);
-                return JsonSerializer.Serialize(new Response(null, null));
+                return ToResponseJson();
             }
             catch (Exception ex)
             {
-                return JsonSerializer.Serialize(new Response(ex.Message, null));
+                return ToResponseJson(ex.Message);
             }
         }
 
@@ -105,12 +108,13 @@ namespace IntroSE.Kanban.Backend.ServiceLayer
         {
             try
             {
-                List<TaskSL> lst = _boardFacade.GetColumn(email, boardName, columnOrdinal).Select(task => new TaskSL(task.Title, task.DueDate, task.Description, task.CreatedAt, task.Id)).ToList();
-                return JsonSerializer.Serialize(new Response(null, lst));
+                List<TaskSL> tasks = _boardFacade.GetColumn(email, boardName, columnOrdinal)
+                    .Select(t => new TaskSL(t.Title, t.DueDate, t.Description, t.CreatedAt, t.Id)).ToList();
+                return ToResponseJson(null, tasks);
             }
             catch (Exception ex)
             {
-                return JsonSerializer.Serialize(new Response(ex.Message, null));
+                return ToResponseJson(ex.Message);
             }
         }
 
@@ -131,11 +135,11 @@ namespace IntroSE.Kanban.Backend.ServiceLayer
             try
             {
                 int limit = _boardFacade.GetColumnLimit(email, boardName, columnOrdinal);
-                return JsonSerializer.Serialize(new Response(null, limit));
+                return ToResponseJson(null, limit);
             }
             catch (Exception ex)
             {
-                return JsonSerializer.Serialize(new Response(ex.Message, null));
+                return ToResponseJson(ex.Message);
             }
         }
 
@@ -156,11 +160,11 @@ namespace IntroSE.Kanban.Backend.ServiceLayer
             try
             {
                 string name = _boardFacade.GetColumnName(email, boardName, columnOrdinal);
-                return JsonSerializer.Serialize(new Response(null, name));
+                return ToResponseJson(null, name);
             }
             catch (Exception ex)
             {
-                return JsonSerializer.Serialize(new Response(ex.Message, null));
+                return ToResponseJson(ex.Message);
             }
         }
 
@@ -177,12 +181,13 @@ namespace IntroSE.Kanban.Backend.ServiceLayer
         {
             try
             {
-                List<TaskSL> lst = _boardFacade.InProgressTasks(email).Select(task => new TaskSL(task.Title, task.DueDate, task.Description, task.CreatedAt, task.Id)).ToList();
-                return JsonSerializer.Serialize(new Response(null, lst));
+                List<TaskSL> tasks = _boardFacade.InProgressTasks(email)
+                    .Select(t => new TaskSL(t.Title, t.DueDate, t.Description, t.CreatedAt, t.Id)).ToList();
+                return ToResponseJson(null, tasks);
             }
             catch (Exception ex)
             {
-                return JsonSerializer.Serialize(new Response(ex.Message, null));
+                return ToResponseJson(ex.Message);
             }
         }
 
@@ -197,29 +202,11 @@ namespace IntroSE.Kanban.Backend.ServiceLayer
             try
             {
                 _boardFacade.JoinBoard(email, boardID);
-                return JsonSerializer.Serialize(new Response(null, null));
+                return ToResponseJson();
             }
             catch (Exception ex)
             {
-                return JsonSerializer.Serialize(new Response(ex.Message, null));
-            }
-        }
-
-        /// <summary>
-        /// returns a list of IDs of all user's boards.
-        /// </summary>
-        /// <param name="email">The email of the user.</param>
-        /// <returns>Response containing a list of board names.</returns>
-        public string GetUserBoards(string email)
-        {
-            try
-            {
-                List<int> boardsID = _boardFacade.GetUserBoards(email);
-                return JsonSerializer.Serialize(new Response(null, boardsID));
-            }
-            catch (Exception ex)
-            {
-                return JsonSerializer.Serialize(new Response(ex.Message, null));
+                return ToResponseJson(ex.Message);
             }
         }
 
@@ -234,11 +221,11 @@ namespace IntroSE.Kanban.Backend.ServiceLayer
             try
             {
                 _boardFacade.LeaveBoard(email, boardID);
-                return JsonSerializer.Serialize(new Response(null, null));
+                return ToResponseJson();
             }
             catch (Exception ex)
             {
-                return JsonSerializer.Serialize(new Response(ex.Message, null));
+                return ToResponseJson(ex.Message);
             }
         }
 
@@ -252,11 +239,29 @@ namespace IntroSE.Kanban.Backend.ServiceLayer
             try
             {
                 string boardName = _boardFacade.GetBoardName(boardID);
-                return JsonSerializer.Serialize(new Response(null, boardName));
+                return ToResponseJson(null, boardName);
             }
             catch (Exception ex)
             {
-                return JsonSerializer.Serialize(new Response(ex.Message, null));
+                return ToResponseJson(ex.Message);
+            }
+        }
+
+        /// <summary>
+        /// returns a list of IDs of all user's boards.
+        /// </summary>
+        /// <param name="email">The email of the user.</param>
+        /// <returns>Response containing a list of board Ids.</returns>
+        public string GetUserBoards(string email)
+        {
+            try
+            {
+                List<int> boardIds = _boardFacade.GetUserBoards(email);
+                return ToResponseJson(null, boardIds);
+            }
+            catch (Exception ex)
+            {
+                return ToResponseJson(ex.Message);
             }
         }
 
@@ -272,37 +277,46 @@ namespace IntroSE.Kanban.Backend.ServiceLayer
             try
             {
                 _boardFacade.TransferOwnership(currentOwnerEmail, newOwnerEmail, boardName);
-                return JsonSerializer.Serialize(new Response(null, null));
+                return ToResponseJson();
             }
             catch (Exception ex)
             {
-                return JsonSerializer.Serialize(new Response(ex.Message, null));
+                return ToResponseJson(ex.Message);
             }
         }
 
+        /// <summary>
+        /// Loads all data from DataBase to the system
+        /// </summary>
+        /// <returns>Response indicating success or failure</returns>
         public string LoadData()
         {
             try
             {
                 _boardFacade.LoadData();
-                return JsonSerializer.Serialize(new Response(null, null));
+                return ToResponseJson();
             }
             catch (Exception ex)
             {
-                return JsonSerializer.Serialize(new Response(ex.Message, null));
+                return ToResponseJson(ex.Message);
             }
 
         }
+
+        /// <summary>
+        /// Loads all data from DataBase to the system
+        /// </summary>
+        /// <returns>Response indicating success or failure</returns>
         public string DeleteData()
         {
             try
             {
                 _boardFacade.DeleteData();
-                return JsonSerializer.Serialize(new Response(null, null));
+                return ToResponseJson();
             }
             catch (Exception ex)
             {
-                return JsonSerializer.Serialize(new Response(ex.Message, null));
+                return ToResponseJson(ex.Message);
             }
         }
     }

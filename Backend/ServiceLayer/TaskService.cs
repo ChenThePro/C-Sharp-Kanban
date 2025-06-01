@@ -13,6 +13,9 @@ namespace IntroSE.Kanban.Backend.ServiceLayer
             _boardFacade = boardFacade;
         }
 
+        private string ToJsonResponse(string error = null, object data = null) =>
+            JsonSerializer.Serialize(new Response(error, data));
+
         /// <summary>
         /// Adds a new task to a board's backlog.
         /// </summary>
@@ -33,12 +36,12 @@ namespace IntroSE.Kanban.Backend.ServiceLayer
         {
             try
             {
-                TaskBL task = _boardFacade.AddTask(email, boardName, title, description, dueDate);
-                return JsonSerializer.Serialize(new Response(null, null));
+                _boardFacade.AddTask(email, boardName, title, description, dueDate);
+                return ToJsonResponse();
             }
             catch (Exception ex)
             {
-                return JsonSerializer.Serialize(new Response(ex.Message, null));
+                return ToJsonResponse(ex.Message);
             }
         }
 
@@ -59,11 +62,11 @@ namespace IntroSE.Kanban.Backend.ServiceLayer
             try
             {
                 _boardFacade.AdvanceTask(email, boardName, columnOrdinal, taskID);
-                return JsonSerializer.Serialize(new Response(null, null));
+                return ToJsonResponse();
             }
             catch (Exception ex)
             {
-                return JsonSerializer.Serialize(new Response(ex.Message, null));
+                return ToJsonResponse(ex.Message);
             }
         }
 
@@ -88,11 +91,11 @@ namespace IntroSE.Kanban.Backend.ServiceLayer
             try
             {
                 _boardFacade.UpdateTask(email, boardName, columnOrdinal, taskID, dueDate, title, description);
-                return JsonSerializer.Serialize(new Response(null, null));
+                return ToJsonResponse();
             }
             catch (Exception ex)
             {
-                return JsonSerializer.Serialize(new Response(ex.Message, null));
+                return ToJsonResponse(ex.Message);
             }
         }
       
@@ -110,11 +113,11 @@ namespace IntroSE.Kanban.Backend.ServiceLayer
             try
             {
                 _boardFacade.AssignTask(email, boardName, columnOrdinal, taskID, emailAssignee);
-                return JsonSerializer.Serialize(new Response(null, null));
+                return ToJsonResponse();
             }
             catch (Exception ex)
             {
-                return JsonSerializer.Serialize(new Response(ex.Message, null));
+                return ToJsonResponse(ex.Message);
             }
         }
     }

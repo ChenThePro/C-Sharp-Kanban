@@ -3,7 +3,7 @@ using Microsoft.Data.Sqlite;
 
 namespace IntroSE.Kanban.Backend.DataAccessLayer
 {
-    internal class UserController : BaseController<UserDTO>
+    internal class UserController : SingleKeyController<UserDTO>
     {
         internal UserController() : base("Users") { }
 

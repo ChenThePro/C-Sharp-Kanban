@@ -5,130 +5,115 @@ namespace IntroSE.Kanban.Backend.DataAccessLayer.DTOs
 {
     internal class BoardDTO : IDTO
     {
-        private const string BOARD_ID_COLUMN_NAME = "id";
-        private const string BOARD_OWNER_COLUMN_NAME = "owner";
-        private const string BOARD_NAME_COLUMN_NAME = "name";
-        private const string BOARD_LIMIT0_COLUMN_NAME = "limit_0";
-        private const string BOARD_LIMIT1_COLUMN_NAME = "limit_1";
-        private const string BOARD_LIMIT2_COLUMN_NAME = "limit_2";
-        private int _id;
-        private string _owner;
-        private string _name;
-        private int _limit_0;
-        private int _limit_1;
-        private int _limit_2;
-        private readonly List<ColumnDTO> _columns;
-        private readonly BoardController _controller;
+        private const string ID = "id", OWNER = "owner", NAME = "name", 
+            LIMIT_0 = "limit_0", LIMIT_1 = "limit_1", LIMIT_2 = "limit_2";
 
-        internal List<ColumnDTO> Columns => _columns;
+        private int _id, _limit0, _limit1, _limit2;
+        private string _owner, _name;
 
         internal int Id
         {
             get => _id;
-            set { _controller.Update(BOARD_ID_COLUMN_NAME, _id, BOARD_ID_COLUMN_NAME, value); _id = value; }
+            set { Update(ID, value); _id = value; }
         }
 
         internal string Owner
         {
             get => _owner;
-            set { _controller.Update(BOARD_ID_COLUMN_NAME, _id, BOARD_OWNER_COLUMN_NAME, value); _owner = value; }
+            set { Update(OWNER, value); _owner = value; }
         }
 
         internal string Name
         {
             get => _name;
-            set { _controller.Update(BOARD_ID_COLUMN_NAME, _id, BOARD_NAME_COLUMN_NAME, value); _name = value; }
+            set { Update(NAME, value); _name = value; }
         }
 
-        internal BoardDTO(string owner, string name, int limit_0, int limit_1, int limit_2)
+        internal List<ColumnDTO> Columns { get; init; }
+
+        private readonly BoardController _controller;
+
+        internal BoardDTO(string owner, string name)
         {
             _owner = owner;
             _name = name;
-            _limit_0 = limit_0;
-            _limit_1 = limit_1;
-            _limit_2 = limit_2;
-            _controller = new BoardController();
-            Insert();
-            _id = _controller.GetLastId();
+            _limit0 = -1;
+            _limit1 = -1;
+            _limit2 = -1;
+            _controller = new();
+            _controller.Insert(this);
+            _id = _controller.GetNextId();
             new BoardUserDTO(_id, _owner).Insert();
-            _columns = new List<ColumnDTO> { new(_id, limit_0, 0), new(_id, limit_1, 1), new(_id, limit_2, 2) };
+            Columns = new()
+            {
+                new(_id, _limit0, 0),
+                new(_id, _limit1, 1),
+                new(_id, _limit2, 2)
+            };
         }
 
-        internal BoardDTO(int id, string owner, string name, int limit_0, int limit_1, int limit_2)
+        internal BoardDTO(int id, string owner, string name, int limit0, int limit1, int limit2)
         {
             _id = id;
             _owner = owner;
             _name = name;
-            _limit_0 = limit_0;
-            _limit_1 = limit_1;
-            _limit_2 = limit_2;
-            _columns = new List<ColumnDTO> { new(_id, _limit_0, 0), new(_id, _limit_1, 1), new(_id, _limit_2, 2) };
-            _controller = new BoardController();
+            _limit0 = limit0;
+            _limit1 = limit1;
+            _limit2 = limit2;
+            _controller = new();
+            Columns = new()
+            {
+                new(_id, _limit0, 0),
+                new(_id, _limit1, 1),
+                new(_id, _limit2, 2)
+            };
         }
 
-        internal BoardDTO(int id)
-        {
-            _id = id;
-            _controller = new BoardController();
-        }
-
-        internal BoardDTO()
-        {
-            _controller = new BoardController();
-        }
+        internal BoardDTO() => _controller = new();
 
         internal void AddTask(TaskBL task, string email)
         {
             task.Insert();
-            _columns[0].AddTask(task.TaskDTO);
+            Columns[0].AddTask(task.TaskDTO);
         }
 
         internal void AdvanceTask(TaskBL task, string email, int columnOrdinal)
         {
-            TaskDTO taskDTO = new TaskDTO(task.Id, _id, email, task.CreatedAt, task.DueDate, task.Title, task.Description, columnOrdinal);
-            taskDTO.Column = taskDTO.Column + 1;
-            _columns[columnOrdinal + 1].AddTask(taskDTO);
-            _columns[columnOrdinal].RemoveTask(taskDTO);
+            TaskDTO taskDTO = new(task.Id, _id, email, task.CreatedAt, task.DueDate, task.Title, task.Description, columnOrdinal + 1);
+            Columns[columnOrdinal + 1].AddTask(taskDTO);
+            Columns[columnOrdinal].RemoveTask(taskDTO);
         }
 
         internal void LimitColumn(int limit, int columnOrdinal)
         {
-            switch (columnOrdinal)
+            string columnName = columnOrdinal switch
             {
-                case 0:
-                    _controller.Update(BOARD_ID_COLUMN_NAME, _id, BOARD_LIMIT0_COLUMN_NAME, limit);
-                    _columns[0].Limit = limit;
-                    break;
-                case 1:
-                    _controller.Update(BOARD_ID_COLUMN_NAME, _id, BOARD_LIMIT1_COLUMN_NAME, limit);
-                    _columns[1].Limit = limit;
-                    break;
-                case 2:
-                    _controller.Update(BOARD_ID_COLUMN_NAME, _id, BOARD_LIMIT2_COLUMN_NAME, limit);
-                    _columns[2].Limit = limit;
-                    break;
-            }
-        }
-
-        internal void Insert()
-        {
-            _controller.Insert(this);
+                0 => LIMIT_0,
+                1 => LIMIT_1,
+                2 => LIMIT_2,
+                _ => throw new KeyNotFoundException("Invalid column index")
+            };
+            _controller.Update(ID, _id, columnName, limit);
+            Columns[columnOrdinal].Limit = limit;
         }
 
         internal void Delete()
         {
-            _controller.Delete(BOARD_ID_COLUMN_NAME, _id);
-            new BoardUserDTO(_id, _owner).Delete();
+            foreach (ColumnDTO column in Columns)
+                foreach (TaskDTO task in column.Tasks)
+                    task.Delete();
+            _controller.Delete(ID, _id);
         }
 
-        internal List<BoardDTO> SelectAll()
-        {
-            return _controller.SelectAll();
-        }
+        internal List<BoardDTO> SelectAll() => _controller.SelectAll();
 
-        public string[] GetColumnNames() => new[] { BOARD_OWNER_COLUMN_NAME, BOARD_NAME_COLUMN_NAME, 
-            BOARD_LIMIT0_COLUMN_NAME, BOARD_LIMIT1_COLUMN_NAME, BOARD_LIMIT2_COLUMN_NAME };
-        
-        public object[] GetColumnValues() => new object[] { _owner, _name, _limit_0, _limit_1, _limit_2 };
+        public void Update(string column, object newValue) => 
+            _controller.Update(ID, _id, column, newValue);
+
+        public string[] GetColumnNames() =>
+            new[] { OWNER, NAME, LIMIT_0, LIMIT_1, LIMIT_2 };
+
+        public object[] GetColumnValues() =>
+            new object[] { _owner, _name, _limit0, _limit1, _limit2 };
     }
 }
