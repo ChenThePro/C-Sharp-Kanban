@@ -18,7 +18,7 @@ namespace IntroSE.Kanban.BackendTests.Testings
             return json.Contains("\"ErrorMessage\":null");
         }
 
-        public bool CreateBoardWithTheSameNmaeForDifferentUsers()
+        public bool CreateBoardWithTheSameNameForDifferentUsers()
         {
             _factory.GetUserService().Login(EMAIL2, PASSWORD);
             string json = _factory.GetBoardService().CreateBoard(EMAIL2, BOARDNAME1);
@@ -78,7 +78,7 @@ namespace IntroSE.Kanban.BackendTests.Testings
         {
             _factory = serviceFactory;
             Console.WriteLine("🔹 CreateBoardWithValidValues: " + CreateBoardWithValidValues());
-            Console.WriteLine("🔹 CreateBoardWithTheSameNmaeForDifferentUsers: " + CreateBoardWithTheSameNmaeForDifferentUsers());
+            Console.WriteLine("🔹 CreateBoardWithTheSameNmaeForDifferentUsers: " + CreateBoardWithTheSameNameForDifferentUsers());
             Console.WriteLine("🔹 CreateBoardWithOccupiedName: " + CreateBoardWithOccupiedName());
             Console.WriteLine("🔹 CreateBoard_CaseInsensitiveName: " + CreateBoard_CaseInsensitiveName());
             Console.WriteLine("🔹 DeleteBoard: " + DeleteBoard());

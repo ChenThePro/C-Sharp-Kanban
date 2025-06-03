@@ -52,7 +52,7 @@ namespace IntroSE.Kanban.Backend.ServiceLayer
 
         public GradingService()
         {
-            _serviceFactory = new ServiceFactory();
+            _serviceFactory = new();
         }
 
         /// <summary>
