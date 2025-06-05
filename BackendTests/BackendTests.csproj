@@ -10,8 +10,6 @@
 		<OutputType>Exe</OutputType>
 	</PropertyGroup>
 	<ItemGroup>
-	  <PackageReference Include="NUnit" Version="4.3.2" />
-	  <PackageReference Include="NUnitLite" Version="4.3.2" />
 	  <PackageReference Include="SQLitePCLRaw.bundle_green" Version="2.1.11" />
 	</ItemGroup>
 
