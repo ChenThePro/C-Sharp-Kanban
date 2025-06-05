@@ -12,6 +12,7 @@ namespace IntroSE.Kanban.Backend.BuisnessLayer.UserPackage
         private static readonly ILog Log = LogManager.GetLogger(MethodBase.GetCurrentMethod().DeclaringType);
         internal readonly Dictionary<string, UserBL> _emails;
         private readonly Regex PasswordCharRegex;
+
         /// <summary>
         /// Initializes a new instance of the <see cref="UserFacade"/> class.
         /// </summary>
@@ -61,16 +62,6 @@ namespace IntroSE.Kanban.Backend.BuisnessLayer.UserPackage
             {
                 Log.Error("Password must contain at least one number.");
                 throw new ArgumentException("Password must contain at least one number.");
-            }
-            // if (!Regex.IsMatch(password, @"^[a-zA-Z0-9]+$"))
-            // {
-            //     Log.Error("Password must not contain special characters.");
-            //     throw new ArgumentException("Password must not contain special characters.");
-            // }
-            if (new Regex(@"[!@#$%^&*()_+\-=\[\]{};':""\\|,.<>/?~` ]").IsMatch(password))
-            {
-                Log.Error("Password must not contain a unique char.");
-                throw new ArgumentException("Password must not contain a unique char.");
             }
         }
 
