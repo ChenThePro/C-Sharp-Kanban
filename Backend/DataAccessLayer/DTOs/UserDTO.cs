@@ -38,7 +38,7 @@ namespace IntroSE.Kanban.Backend.DataAccessLayer.DTOs
             _controller = new();
         }
 
-        internal UserDTO() { }
+        internal UserDTO() => _controller = new();
 
         internal void Insert() => _controller.Insert(this);
 
