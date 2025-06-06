@@ -211,8 +211,8 @@ namespace IntroSE.Kanban.Backend.BuisnessLayer.BoardPackage
         internal void DeleteData()
         {
             Log.Warn("Deleting all data and resetting auto-increments.");
-            new TaskController().DeleteAllAndResetAutoIncrement();
             new BoardUserController().DeleteAll();
+            new TaskController().DeleteAllAndResetAutoIncrement();
             new BoardController().DeleteAllAndResetAutoIncrement();
             new UserController().DeleteAll();
         }

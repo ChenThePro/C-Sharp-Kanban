@@ -1,5 +1,6 @@
 ﻿using IntroSE.Kanban.Backend.DataAccessLayer.DTOs;
 using Microsoft.Data.Sqlite;
+using System;
 using System.Collections.Generic;
 
 namespace IntroSE.Kanban.Backend.DataAccessLayer
@@ -12,30 +13,44 @@ namespace IntroSE.Kanban.Backend.DataAccessLayer
         internal List<string> GetParticipants(string keyColumn, int key)
         {
             List<string> results = new();
-            using SqliteConnection connection = new(_connectionString);
-            using SqliteCommand command = connection.CreateCommand();
-            command.CommandText = $"SELECT * FROM {_tableName} WHERE {keyColumn} = @key;";
-            command.Parameters.AddWithValue("@key", key);
-            connection.Open();
-            using SqliteDataReader reader = command.ExecuteReader();
-            while (reader.Read())
-                results.Add(reader.GetString(1));
-            Log.Info($"Select succeeded on {_tableName}.");
+            try
+            {
+                using SqliteConnection connection = new(_connectionString);
+                using SqliteCommand command = connection.CreateCommand();
+                command.CommandText = $"SELECT * FROM {_tableName} WHERE {keyColumn} = @key;";
+                command.Parameters.AddWithValue("@key", key);
+                connection.Open();
+                using SqliteDataReader reader = command.ExecuteReader();
+                while (reader.Read())
+                    results.Add(reader.GetString(1));
+                Log.Info($"Select succeeded on {_tableName}.");
+            }
+            catch (Exception ex)
+            {
+                Log.Error(ex.Message);
+            }
             return results;
         }
 
         internal List<int> GetBoards(string keyColumn, string key)
         {
             List<int> results = new();
-            using SqliteConnection connection = new(_connectionString);
-            using SqliteCommand command = connection.CreateCommand();
-            command.CommandText = $"SELECT * FROM {_tableName} WHERE {keyColumn} = @key;";
-            command.Parameters.AddWithValue("@key", key);
-            connection.Open();
-            using SqliteDataReader reader = command.ExecuteReader();
-            while (reader.Read())
-                results.Add(reader.GetInt32(0));
-            Log.Info($"Select succeeded on {_tableName}.");
+            try
+            {
+                using SqliteConnection connection = new(_connectionString);
+                using SqliteCommand command = connection.CreateCommand();
+                command.CommandText = $"SELECT * FROM {_tableName} WHERE {keyColumn} = @key;";
+                command.Parameters.AddWithValue("@key", key);
+                connection.Open();
+                using SqliteDataReader reader = command.ExecuteReader();
+                while (reader.Read())
+                    results.Add(reader.GetInt32(0));
+                Log.Info($"Select succeeded on {_tableName}.");
+            }
+            catch (Exception ex)
+            {
+                Log.Error(ex.Message);
+            }
             return results;
         }
 

@@ -10,13 +10,21 @@ namespace IntroSE.Kanban.Backend.DataAccessLayer
 
         internal int GetNextId()
         {
-            using SqliteConnection connection = new(_connectionString);
-            using SqliteCommand command = connection.CreateCommand();
-            command.CommandText = $"SELECT seq FROM sqlite_sequence WHERE name = '{_tableName}';";
-            connection.Open();
-            object result = command.ExecuteScalar();
-            int nextID = Convert.ToInt32(result);
-            Log.Info($"GetLastId succeeded for table {_tableName}. Last ID: {nextID}");
+            int nextID = -1;
+            try
+            {
+                using SqliteConnection connection = new(_connectionString);
+                using SqliteCommand command = connection.CreateCommand();
+                command.CommandText = $"SELECT seq FROM sqlite_sequence WHERE name = '{_tableName}';";
+                connection.Open();
+                object result = command.ExecuteScalar();
+                nextID = Convert.ToInt32(result);
+                Log.Info($"GetLastId succeeded for table {_tableName}. Last ID: {nextID}");
+            }
+            catch (Exception ex)
+            {
+                Log.Error(ex.Message);
+            }
             return nextID;
         }
 

@@ -11,20 +11,27 @@ namespace IntroSE.Kanban.Backend.DataAccessLayer
 
         internal int GetNextId(int boardId)
         {
-            using SqliteConnection connection = new(_connectionString);
-            using SqliteCommand command = connection.CreateCommand();
-            command.CommandText = $"SELECT MAX(id) FROM {_tableName} WHERE board_id = @BoardId;";
-            command.Parameters.AddWithValue("@BoardId", boardId);
-            connection.Open();
-            object result = command.ExecuteScalar();
-            if (result != DBNull.Value)
+            int nextID = 1;
+            try
             {
-                int nextID = Convert.ToInt32(result) + 1;
-                Log.Info($"GetNextId succeeded for board {boardId} in table {_tableName}. Next ID: {nextID}");
-                return nextID;
+                using SqliteConnection connection = new(_connectionString);
+                using SqliteCommand command = connection.CreateCommand();
+                command.CommandText = $"SELECT MAX(id) FROM {_tableName} WHERE board_id = @BoardId;";
+                command.Parameters.AddWithValue("@BoardId", boardId);
+                connection.Open();
+                object result = command.ExecuteScalar();
+                if (result != DBNull.Value)
+                {
+                    nextID = Convert.ToInt32(result) + 1;
+                    Log.Info($"GetNextId succeeded for board {boardId} in table {_tableName}. Next ID: {nextID}");
+                }
+                else Log.Info($"GetNextId: first task for board {boardId}.");
             }
-            Log.Info($"GetNextId: first task for board {boardId}.");
-            return 1;
+            catch (Exception ex)
+            {
+                Log.Error(ex.Message);
+            }
+            return nextID;
         }
 
         protected override TaskDTO ConvertReaderToDTO(SqliteDataReader reader)
