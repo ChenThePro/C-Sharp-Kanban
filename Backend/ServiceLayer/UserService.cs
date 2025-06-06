@@ -8,10 +8,6 @@ namespace IntroSE.Kanban.Backend.ServiceLayer
     {
         private readonly UserFacade _userFacade;
 
-        /// <summary>
-        /// Constructs a new UserService with the given UserFacade.
-        /// </summary>
-        /// <param name="userFacade">The facade to handle user-related operations.</param>
         internal UserService(UserFacade userFacade)
         {
             _userFacade = userFacade;

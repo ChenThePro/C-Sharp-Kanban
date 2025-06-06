@@ -46,9 +46,9 @@ namespace IntroSE.Kanban.Backend.DataAccessLayer.DTOs
             new BoardUserDTO(_id, _owner).Insert();
             Columns = new()
             {
-                new(_id, _limit0, 0),
-                new(_id, _limit1, 1),
-                new(_id, _limit2, 2)
+                new(_id, _limit0, 0, true),
+                new(_id, _limit1, 1, true),
+                new(_id, _limit2, 2, true)
             };
         }
 
@@ -93,7 +93,13 @@ namespace IntroSE.Kanban.Backend.DataAccessLayer.DTOs
                 2 => LIMIT_2,
                 _ => throw new KeyNotFoundException("Invalid column index")
             };
-            _controller.Update(ID, _id, columnName, limit);
+            switch (columnOrdinal)
+            {
+                case 0: _limit0 = limit; break;
+                case 1: _limit1 = limit; break;
+                case 2: _limit2 = limit; break;
+            }
+            Update(columnName, limit);
             Columns[columnOrdinal].Limit = limit;
         }
 

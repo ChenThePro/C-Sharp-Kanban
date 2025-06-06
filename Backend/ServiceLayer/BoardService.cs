@@ -232,7 +232,7 @@ namespace IntroSE.Kanban.Backend.ServiceLayer
         /// <summary>
         /// Gets the name of a board by its ID.
         /// </summary>
-        /// <param name="boardId">The ID of the board.</param>
+        /// <param name="boardID">The ID of the board.</param>
         /// <returns>Response containing the board name.</returns>
         public string GetBoardName(int boardID)
         {

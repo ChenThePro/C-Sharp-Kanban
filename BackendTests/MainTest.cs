@@ -19,7 +19,6 @@ namespace IntroSE.Kanban.BackendTests
             new BoardTests().RunAll(serviceFactory);
             Console.WriteLine("\n📋 Running task-related tests...");
             new TaskTests().RunAll(serviceFactory);
-            Console.WriteLine("\n💾 Running persistence-related tests...");
         }
     }
 }

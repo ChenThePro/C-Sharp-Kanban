@@ -10,7 +10,7 @@ namespace IntroSE.Kanban.Backend.DataAccessLayer
 
         internal int GetNextId()
         {
-            int nextID = -1;
+            int nextID = 1;
             try
             {
                 using SqliteConnection connection = new(_connectionString);
