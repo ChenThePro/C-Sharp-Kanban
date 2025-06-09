@@ -7,9 +7,7 @@ namespace IntroSE.Kanban.BackendTests
     {
         public static void Main(string[] args)
         {
-            // SQLitePCL.Batteries_V2.Init();
             ServiceFactory serviceFactory = new();
-            // serviceFactory.GetBoardService().DeleteData(); return;
             Console.WriteLine("🚀 Running all tests!\n");
             Console.WriteLine("👤 Running registration-related tests...");
             new RegistrationTests().RunAll(serviceFactory);
@@ -19,6 +17,7 @@ namespace IntroSE.Kanban.BackendTests
             new BoardTests().RunAll(serviceFactory);
             Console.WriteLine("\n📋 Running task-related tests...");
             new TaskTests().RunAll(serviceFactory);
+            serviceFactory.GetBoardService().DeleteData();
         }
     }
 }

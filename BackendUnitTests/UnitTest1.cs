@@ -1,6 +1,6 @@
-﻿namespace BackendUnitTests
+namespace BackendUnitTests
 {
-    public class TestsTasks
+    public class Tests
     {
         [SetUp]
         public void Setup()
