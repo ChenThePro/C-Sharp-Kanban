@@ -215,6 +215,8 @@ namespace IntroSE.Kanban.Backend.BuisnessLayer.BoardPackage
             new TaskController().DeleteAllAndResetAutoIncrement();
             new BoardController().DeleteAllAndResetAutoIncrement();
             new UserController().DeleteAll();
+            _boards.Clear();
+            _userfacade._emails.Clear();
         }
 
         private void AuthenticateString(string value, string name)
