@@ -22,8 +22,7 @@ namespace Frontend
         public LoginWindow()
         {
             InitializeComponent();
-            LoginWindow login = new LoginWindow();
-            login.ShowDialog();
+    
         }
     }
 }
