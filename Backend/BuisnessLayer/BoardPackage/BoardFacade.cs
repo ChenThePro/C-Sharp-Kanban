@@ -121,7 +121,7 @@ namespace IntroSE.Kanban.Backend.BuisnessLayer.BoardPackage
             board.UpdateTask(email, columnOrdinal, taskID, dueDate, title, description);
         }
 
-        internal List<TaskBL> GetColumn(string email, string boardName, int columnOrdinal)
+        internal List<TaskBL> GetColumnTasks(string email, string boardName, int columnOrdinal)
         {
             AuthenticateUser(email);
             AuthenticateColumn(columnOrdinal, MAX_COLUMN_INDEX);

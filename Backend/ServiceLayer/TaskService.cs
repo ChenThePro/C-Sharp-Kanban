@@ -21,9 +21,8 @@ namespace IntroSE.Kanban.Backend.ServiceLayer
         /// </summary>
         /// <param name="boardName">Name of the board.</param>
         /// <param name="title">Title of the task.</param>
-        /// <param name="due">Due date of the task.</param>
+        /// <param name="dueDate">Due date of the task.</param>
         /// <param name="description">Task description.</param>
-        /// <param name="creationTime">Task creation timestamp.</param>
         /// <param name="id">Unique task identifier.</param>
         /// <param name="email">Email of the task owner.</param>
         /// <returns>Serialized response containing the created <see cref="TaskSL"/> or an error message.</returns>
@@ -49,8 +48,8 @@ namespace IntroSE.Kanban.Backend.ServiceLayer
         /// Moves a task to the next column in the specified board.
         /// </summary>
         /// <param name="boardName">Name of the board.</param>
-        /// <param name="column">Index of the current column.</param>
-        /// <param name="id">ID of the task to move.</param>
+        /// <param name="columnOrdinal">Index of the current column.</param>
+        /// <param name="taskID">ID of the task to move.</param>
         /// <param name="email">Email of the user initiating the move.</param>
         /// <returns>Serialized empty response or error message.</returns>
         /// <exception cref="InvalidOperationException">If the move is not allowed by board rules.</exception>
@@ -76,10 +75,10 @@ namespace IntroSE.Kanban.Backend.ServiceLayer
         /// <param name="boardName">Name of the board containing the task.</param>
         /// <param name="title">New title for the task.</param>
         /// <param name="description">New description for the task.</param>
-        /// <param name="due">New due date for the task.</param>
-        /// <param name="id">ID of the task to update.</param>
+        /// <param name="dueDate">New due date for the task.</param>
+        /// <param name="taskID">ID of the task to update.</param>
         /// <param name="email">User's email address.</param>
-        /// <param name="column">Index of the column containing the task.</param>
+        /// <param name="columnOrdinal">Index of the column containing the task.</param>
         /// <returns>Serialized empty response or error message.</returns>
         /// <exception cref="KeyNotFoundException">If the board or task is not found.</exception>
         /// <exception cref="InvalidOperationException">Thrown if the user doesn't exist or is not logged in ot task id is taken or invalid column.</exception>

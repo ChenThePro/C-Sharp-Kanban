@@ -70,7 +70,7 @@ namespace IntroSE.Kanban.Backend.ServiceLayer
         /// Sets a task limit for a specific column in a board.
         /// </summary>
         /// <param name="boardName">The name of the board.</param>
-        /// <param name="column">The name of the column to limit.</param>
+        /// <param name="columnOrdinal">The name of the column to limit.</param>
         /// <param name="limit">The new limit for the column (must be non-negative).</param>
         /// <param name="email">The user's email.</param>
         /// <returns>An empty Response indicating success or failure.</returns>
@@ -108,7 +108,7 @@ namespace IntroSE.Kanban.Backend.ServiceLayer
         {
             try
             {
-                List<TaskSL> tasks = _boardFacade.GetColumn(email, boardName, columnOrdinal)
+                List<TaskSL> tasks = _boardFacade.GetColumnTasks(email, boardName, columnOrdinal)
                     .Select(t => new TaskSL(t.Title, t.DueDate, t.Description, t.CreatedAt, t.Id)).ToList();
                 return ToResponseJson(null, tasks);
             }
