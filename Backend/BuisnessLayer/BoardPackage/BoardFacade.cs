@@ -160,13 +160,14 @@ namespace IntroSE.Kanban.Backend.BuisnessLayer.BoardPackage
             return _userfacade.GetUser(email).GetBoardsAsId();
         }
 
-        internal void JoinBoard(string email, int boardID)
+        internal BoardBL JoinBoard(string email, int boardID)
         {
             AuthenticateUser(email);
             UserBL user = _userfacade.GetUser(email);
             BoardBL board = GetBoardById(boardID);
             board.Join(email);
             user.CreateBoard(board);
+            return board;
         }
 
         internal void LeaveBoard(string email, int boardID)
