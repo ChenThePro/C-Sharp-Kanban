@@ -4,19 +4,19 @@ namespace IntroSE.Kanban.Backend.ServiceLayer
 {
     public class TaskSL
     {
-        public int Id { get; set; }
-        public DateTime CreationTime { get; init; }
         public string Title { get; set; }
         public string Description { get; set; }
         public DateTime DueDate { get; set; }
+        public DateTime CreatedAt { get; init; }
+        public string Assignee { get; set; }
 
-        public TaskSL(string title, DateTime due, string description, DateTime creationTime, int id)
+        public TaskSL(string title, DateTime due, string description, string assignee, DateTime creationTime)
         {
             Title = title;
             DueDate = due;
             Description = description;
-            CreationTime = creationTime;
-            Id = id;
+            Assignee = assignee;
+            CreatedAt = creationTime;
         }
     }
 }
