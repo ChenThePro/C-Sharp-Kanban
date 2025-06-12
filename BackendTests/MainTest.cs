@@ -7,8 +7,10 @@ namespace IntroSE.Kanban.BackendTests
     {
         public static void Main(string[] args)
         {
+            Console.WriteLine("🔧 Initializing test environment...");
             ServiceFactory serviceFactory = new();
-            Console.WriteLine("🚀 Running all tests!\n");
+            serviceFactory.GetBoardService().DeleteData();
+            Console.WriteLine("\n🚀 Running all tests!\n");
             Console.WriteLine("👤 Running registration-related tests...");
             new RegistrationTests().RunAll(serviceFactory);
             Console.WriteLine("\n👤 Running login-related tests...");
@@ -17,7 +19,6 @@ namespace IntroSE.Kanban.BackendTests
             new BoardTests().RunAll(serviceFactory);
             Console.WriteLine("\n📋 Running task-related tests...");
             new TaskTests().RunAll(serviceFactory);
-            serviceFactory.GetBoardService().DeleteData();
         }
     }
 }
