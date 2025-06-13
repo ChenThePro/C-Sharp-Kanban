@@ -55,6 +55,22 @@ namespace IntroSE.Kanban.Backend.ServiceLayer
             _serviceFactory = new();
         }
 
+        private string NormalizeSuccess(string json, string overrideReturnValue = null)
+        {
+            if (!json.Contains("\"ErrorMessage\":null"))
+                return json;
+
+            if (overrideReturnValue != null)
+                return $"{{\"ErrorMessage\":null, \"ReturnValue\":{JsonValue(overrideReturnValue)}}}";
+
+            return "{\"ErrorMessage\":null, \"ReturnValue\":null}";
+        }
+
+        private string JsonValue(string value)
+        {
+            return $"\"{value.Replace("\"", "\\\"")}\"";
+        }
+
         /// <summary>
         /// This method registers a new user to the system.
         /// </summary>
@@ -63,7 +79,8 @@ namespace IntroSE.Kanban.Backend.ServiceLayer
         /// <returns>An empty response, unless an error occurs (see <see cref="GradingService"/>)</returns>
         public string Register(string email, string password)
         {
-            return _serviceFactory.GetUserService().Register(email, password);
+            var json = _serviceFactory.GetUserService().Register(email, password);
+            return NormalizeSuccess(json);
         }
 
         /// <summary>
@@ -74,7 +91,8 @@ namespace IntroSE.Kanban.Backend.ServiceLayer
         /// <returns>A response with the user's email, unless an error occurs (see <see cref="GradingService"/>)</returns>
         public string Login(string email, string password)
         {
-            return _serviceFactory.GetUserService().Login(email, password);
+            var json = _serviceFactory.GetUserService().Login(email, password);
+            return NormalizeSuccess(json, email);
         }
 
         /// <summary>
@@ -135,7 +153,8 @@ namespace IntroSE.Kanban.Backend.ServiceLayer
         /// <returns>An empty response, unless an error occurs (see <see cref="GradingService"/>)</returns>
         public string AddTask(string email, string boardName, string title, string description, DateTime dueDate)
         {
-            return _serviceFactory.GetTaskService().AddTask(email, boardName, title, description, dueDate);
+            var json = _serviceFactory.GetTaskService().AddTask(email, boardName, title, description, dueDate);
+            return NormalizeSuccess(json);
         }
 
         /// <summary>
@@ -201,7 +220,8 @@ namespace IntroSE.Kanban.Backend.ServiceLayer
         /// <returns>An empty response, unless an error occurs (see <see cref="GradingService"/>)</returns>
         public string CreateBoard(string email, string boardName)
         {
-            return _serviceFactory.GetBoardService().CreateBoard(email, boardName);
+            var json = _serviceFactory.GetBoardService().CreateBoard(email, boardName);
+            return NormalizeSuccess(json);
         }
 
         /// <summary>
@@ -257,7 +277,8 @@ namespace IntroSE.Kanban.Backend.ServiceLayer
         /// <returns>An empty response, unless an error occurs (see <see cref="GradingService"/>)</returns>
         public string JoinBoard(string email, int boardID)
         {
-            return _serviceFactory.GetBoardService().JoinBoard(email, boardID);
+            var json = _serviceFactory.GetBoardService().JoinBoard(email, boardID);
+            return NormalizeSuccess(json);
         }
 
         /// <summary>
