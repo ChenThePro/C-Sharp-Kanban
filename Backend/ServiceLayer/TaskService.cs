@@ -35,8 +35,8 @@ namespace IntroSE.Kanban.Backend.ServiceLayer
         {
             try
             {
-                _boardFacade.AddTask(email, boardName, title, description, dueDate);
-                return ToJsonResponse();
+                TaskBL task = _boardFacade.AddTask(email, boardName, title, description, dueDate);
+                return ToJsonResponse(null, new TaskSL(title, description, dueDate, task.CreatedAt, null));
             }
             catch (Exception ex)
             {

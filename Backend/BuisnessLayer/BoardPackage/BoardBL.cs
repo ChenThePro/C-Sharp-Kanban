@@ -30,15 +30,15 @@ namespace IntroSE.Kanban.Backend.BuisnessLayer.BoardPackage
         }
 
         internal List<string> Members { get; init; }
+        internal List<ColumnBL> Columns { get; init; }
 
-        private readonly List<ColumnBL> _columns;
         private readonly BoardDTO _boardDTO;
 
         internal BoardBL(string owner, string name)
         {
             _owner = owner;
             _name = name;
-            _columns = InitializeDefaultColumns();
+            Columns = InitializeDefaultColumns();
             Members = new() { owner };
             _boardDTO = new(owner, name);
             _id = _boardDTO.Id;
@@ -50,7 +50,7 @@ namespace IntroSE.Kanban.Backend.BuisnessLayer.BoardPackage
             _id = boardDTO.Id;
             _owner = boardDTO.Owner;
             _name = boardDTO.Name;
-            _columns = InitializeColumnsFromDTO(boardDTO);
+            Columns = InitializeColumnsFromDTO(boardDTO);
             Members = new(new BoardUserDTO(_id).GetParticipants());
             _boardDTO = boardDTO;
             Log.Info($"Board '{_name}' loaded from persistence.");
@@ -59,7 +59,7 @@ namespace IntroSE.Kanban.Backend.BuisnessLayer.BoardPackage
         internal TaskBL AddTask(string email, string title, string description, DateTime dueDate, DateTime createdAt)
         {
             TaskBL task = new(title, description, dueDate, createdAt, _id, 0);
-            _columns[0].AddTask(_owner, task);
+            Columns[0].AddTask(_owner, task);
             _boardDTO.AddTask(task);
             Log.Info($"Task '{task.Title}' added to column {0} by '{email}' in board {_name}'.");
             return task;
@@ -67,45 +67,45 @@ namespace IntroSE.Kanban.Backend.BuisnessLayer.BoardPackage
 
         internal void AdvanceTask(string email, int columnOrdinal, int taskID)
         {
-            TaskBL task = _columns[columnOrdinal].GetTaskById(taskID);
-            _columns[columnOrdinal].TaskExists(task, taskID);
+            TaskBL task = Columns[columnOrdinal].GetTaskById(taskID);
+            Columns[columnOrdinal].TaskExists(task, taskID);
             if (task.Assignee != email)
             {
                 Log.Error($"Task ID {taskID} is not assigned to '{email}'.");
                 throw new InvalidOperationException($"Task ID {taskID} is not assigned to '{email}'.");
             }
-            _columns[columnOrdinal + 1].AddTask(email, task);
-            _columns[columnOrdinal].DeleteTask(email, task);
+            Columns[columnOrdinal + 1].AddTask(email, task);
+            Columns[columnOrdinal].DeleteTask(email, task);
             _boardDTO.AdvanceTask(task.TaskDTO, email, columnOrdinal);
             Log.Info($"Task ID {taskID} advanced by '{email}' from column {columnOrdinal} to {columnOrdinal + 1} in board '{_name}'.");
         }
 
         internal void UpdateTask(string email, int columnOrdinal, int taskID, DateTime? dueDate, string title, string description)
         {
-            _columns[columnOrdinal].UpdateTask(email, taskID, dueDate, title, description);
+            Columns[columnOrdinal].UpdateTask(email, taskID, dueDate, title, description);
             Log.Info($"Task ID {taskID} updated by '{email}' in column {columnOrdinal} of board '{_name}'.");
         }
 
         internal void LimitColumn(string email, int columnOrdinal, int limit)
         {
-            _columns[columnOrdinal].Limit(email, limit);
+            Columns[columnOrdinal].LimitColumn(email, limit);
             _boardDTO.LimitColumn(limit, columnOrdinal);
             Log.Info($"Column {columnOrdinal} limit set to {limit} by '{email}' in board '{_name}'.");
         }
 
         internal List<TaskBL> GetColumnTasks(int columnOrdinal) =>
-            _columns[columnOrdinal].GetTasks();
+            Columns[columnOrdinal].Tasks;
 
         internal int GetColumnLimit(int columnOrdinal) =>
-            _columns[columnOrdinal].GetLimit();
+            Columns[columnOrdinal].Limit;
 
         internal string GetColumnName(int columnOrdinal) =>
-            _columns[columnOrdinal].GetName();
+            Columns[columnOrdinal].Name;
 
         internal void AssignTask(string email, int columnOrdinal, int taskID, string emailAssignee)
         {
             IsMember(emailAssignee);
-            _columns[columnOrdinal].AssignTask(email, taskID, emailAssignee);
+            Columns[columnOrdinal].AssignTask(email, taskID, emailAssignee);
             Log.Info($"Task ID {taskID} assigned to '{emailAssignee}' by '{email}' in column {columnOrdinal} of board '{_name}'.");
         }
 
@@ -125,8 +125,8 @@ namespace IntroSE.Kanban.Backend.BuisnessLayer.BoardPackage
                 throw new InvalidOperationException(email + " cannot leave the board. Transfer ownership first.");
             }
             IsMember(email);
-            for (int i = 0; i < _columns.Count - 1; i++)
-                foreach (TaskBL task in _columns[i].GetTasks())
+            for (int i = 0; i < Columns.Count - 1; i++)
+                foreach (TaskBL task in Columns[i].Tasks)
                     if (task.Assignee == email)
                         task.Assign(email, null);
             Members.Remove(email);

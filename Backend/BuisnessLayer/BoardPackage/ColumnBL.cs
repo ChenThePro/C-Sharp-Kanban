@@ -9,38 +9,38 @@ namespace IntroSE.Kanban.Backend.BuisnessLayer.BoardPackage
     {
         private static readonly ILog Log = LogManager.GetLogger(MethodBase.GetCurrentMethod().DeclaringType);
 
-        private readonly string _name;
-        private int _limit;
-        private readonly List<TaskBL> _tasks;
+        internal readonly string Name;
+        internal int Limit;
+        internal readonly List<TaskBL> Tasks;
 
         internal ColumnBL(int num, int limit, List<TaskBL> tasks)
         {
-            _name = num switch
+            Name = num switch
             {
                 0 => "backlog",
                 1 => "in progress",
                 2 => "done",
                 _ => throw new ArgumentOutOfRangeException(nameof(num), "Invalid column index")
             };
-            _limit = limit;
-            _tasks = tasks;
+            Limit = limit;
+            Tasks = tasks;
         }
 
         internal void AddTask(string email, TaskBL task)
         {
-            if (_limit != -1 && _tasks.Count >= _limit)
+            if (Limit != -1 && Tasks.Count >= Limit)
             {
                 Log.Error("Adding task exceeds column limit.");
                 throw new InvalidOperationException("Adding task exceeds column limit.");
             }
-            _tasks.Add(task);
-            Log.Info($"Task added successfully by {email} to '{_name}' column.");
+            Tasks.Add(task);
+            Log.Info($"Task added successfully by {email} to '{Name}' column.");
         }
 
         internal void DeleteTask(string email, TaskBL task)
         {
-            _tasks.Remove(task);
-            Log.Info($"Task removed successfully by {email} from '{_name}' column.");
+            Tasks.Remove(task);
+            Log.Info($"Task removed successfully by {email} from '{Name}' column.");
         }
 
         internal void UpdateTask(string email, int taskID, DateTime? dueDate, string title, string description)
@@ -51,24 +51,18 @@ namespace IntroSE.Kanban.Backend.BuisnessLayer.BoardPackage
         }
 
         internal TaskBL GetTaskById(int taskID) => 
-            _tasks.Find(task => task.Id == taskID);
+            Tasks.Find(task => task.Id == taskID);
 
-        internal void Limit(string email, int limit)
+        internal void LimitColumn(string email, int limit)
         {
-            if (limit != -1 && limit < _tasks.Count)
+            if (limit != -1 && limit < Tasks.Count)
             {
-                Log.Error($"New limit {limit} is less than current task count {_tasks.Count}.");
-                throw new InvalidOperationException($"New limit {limit} is less than current task count {_tasks.Count}.");
+                Log.Error($"New limit {limit} is less than current task count {Tasks.Count}.");
+                throw new InvalidOperationException($"New limit {limit} is less than current task count {Tasks.Count}.");
             }
-            _limit = limit;
-            Log.Info($"Column '{_name}' limit set to {limit} by {email}.");
+            Limit = limit;
+            Log.Info($"Column '{Name}' limit set to {limit} by {email}.");
         }
-
-        internal List<TaskBL> GetTasks() => _tasks;
-
-        internal int GetLimit() => _limit;
-
-        internal string GetName() => _name;
 
         internal void AssignTask(string email, int taskID, string emailAssignee)
         {
@@ -81,8 +75,8 @@ namespace IntroSE.Kanban.Backend.BuisnessLayer.BoardPackage
         {
             if (task == null)
             {
-                Log.Error($"Task ID {taskID} not found in column '{_name}'.");
-                throw new KeyNotFoundException($"Task ID {taskID} not found in column '{_name}'.");
+                Log.Error($"Task ID {taskID} not found in column '{Name}'.");
+                throw new KeyNotFoundException($"Task ID {taskID} not found in column '{Name}'.");
             }
         }
     }

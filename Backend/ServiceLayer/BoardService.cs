@@ -18,6 +18,12 @@ namespace IntroSE.Kanban.Backend.ServiceLayer
         private string ToResponseJson(string errorMessage = null, object returnValue = null) =>
             JsonSerializer.Serialize(new Response(errorMessage, returnValue));
 
+        private List<ColumnSL> ConvertColumns(BoardBL board) =>
+            board.Columns.Select(c => new ColumnSL(c.Name, c.Limit, ConvertTasks(c.Tasks))).ToList();
+
+        private List<TaskSL> ConvertTasks(List<TaskBL> tasks) =>
+            tasks.Select(t => new TaskSL(t.Title, t.Description, t.DueDate, t.CreatedAt, t.Assignee)).ToList();
+
         /// <summary>
         /// Creates a new board for a user.
         /// </summary>
@@ -35,7 +41,7 @@ namespace IntroSE.Kanban.Backend.ServiceLayer
             try
             {
                 _boardFacade.CreateBoard(email, boardName);
-                return ToResponseJson();
+                return ToResponseJson(null, new BoardSL(email, boardName, new List<string>{email}, new List<ColumnSL>()));
             }
             catch (Exception ex)
             {
@@ -109,7 +115,7 @@ namespace IntroSE.Kanban.Backend.ServiceLayer
             try
             {
                 List<TaskSL> tasks = _boardFacade.GetColumnTasks(email, boardName, columnOrdinal)
-                    .Select(t => new TaskSL(t.Title, t.DueDate, t.Description, t.CreatedAt, t.Id)).ToList();
+                    .Select(t => new TaskSL(t.Title, t.Description, t.DueDate, t.CreatedAt, t.Assignee)).ToList();
                 return ToResponseJson(null, tasks);
             }
             catch (Exception ex)
@@ -182,7 +188,7 @@ namespace IntroSE.Kanban.Backend.ServiceLayer
             try
             {
                 List<TaskSL> tasks = _boardFacade.InProgressTasks(email)
-                    .Select(t => new TaskSL(t.Title, t.DueDate, t.Description, t.CreatedAt, t.Id)).ToList();
+                    .Select(t => new TaskSL(t.Title, t.Description, t.DueDate, t.CreatedAt, t.Assignee)).ToList();
                 return ToResponseJson(null, tasks);
             }
             catch (Exception ex)
@@ -201,8 +207,8 @@ namespace IntroSE.Kanban.Backend.ServiceLayer
         {
             try
             {
-                _boardFacade.JoinBoard(email, boardID);
-                return ToResponseJson();
+                BoardBL board = _boardFacade.JoinBoard(email, boardID);
+                return ToResponseJson(null, new BoardSL(board.Owner, board.Name, board.Members, ConvertColumns(board)));
             }
             catch (Exception ex)
             {

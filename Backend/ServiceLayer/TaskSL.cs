@@ -10,13 +10,13 @@ namespace IntroSE.Kanban.Backend.ServiceLayer
         public DateTime CreatedAt { get; init; }
         public string Assignee { get; set; }
 
-        public TaskSL(string title, DateTime due, string description, string assignee, DateTime creationTime)
+        public TaskSL(string title, string description, DateTime due, DateTime createdAt, string assignee)
         {
             Title = title;
-            DueDate = due;
             Description = description;
+            DueDate = due;
+            CreatedAt = createdAt;
             Assignee = assignee;
-            CreatedAt = creationTime;
         }
     }
 }

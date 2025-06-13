@@ -30,7 +30,8 @@ namespace IntroSE.Kanban.Backend.BuisnessLayer.UserPackage
             private set { _loggedIn = value; _userDTO.LoggedIn = value; } 
         }
 
-        private readonly List<BoardBL> _boards;
+        internal List<BoardBL> Boards { get; init; }
+
         private readonly UserDTO _userDTO;
 
         internal UserBL(string email, string password)
@@ -38,7 +39,7 @@ namespace IntroSE.Kanban.Backend.BuisnessLayer.UserPackage
             _email = email;
             _password = password;
             _loggedIn = true;
-            _boards = new();
+            Boards = new();
             _userDTO = new(_email, _password, _loggedIn);
             _userDTO.Insert();
             Log.Info($"User created and logged in: {_email}");
@@ -50,11 +51,11 @@ namespace IntroSE.Kanban.Backend.BuisnessLayer.UserPackage
             _password = userDTO.Password;
             _loggedIn = userDTO.LoggedIn;
             _userDTO = userDTO;
-            _boards = new();
+            Boards = new();
             List<int> boardIds = new BoardUserDTO(Email).GetBoards();
             List<BoardDTO> allBoards = new BoardDTO().SelectAll();
             foreach (BoardDTO boardDTO in allBoards.Where(board => boardIds.Contains(board.Id)))
-                _boards.Add(new BoardBL(boardDTO));
+                Boards.Add(new BoardBL(boardDTO));
             Log.Info($"User loaded from database: {_email}");
         }
 
@@ -88,7 +89,7 @@ namespace IntroSE.Kanban.Backend.BuisnessLayer.UserPackage
 
         internal BoardBL GetBoard(string boardName)
         {
-            BoardBL board = _boards.FirstOrDefault(b => b.Name.Equals(boardName, StringComparison.OrdinalIgnoreCase));
+            BoardBL board = Boards.FirstOrDefault(b => b.Name.Equals(boardName, StringComparison.OrdinalIgnoreCase));
             if (board == null)
             {
                 Log.Error($"Board '{boardName}' not found for user '{_email}'.");
@@ -99,7 +100,7 @@ namespace IntroSE.Kanban.Backend.BuisnessLayer.UserPackage
 
         internal void CheckCreateBoard(string boardName)
         {
-            bool exists = _boards.Any(b => b.Name.Equals(boardName, StringComparison.OrdinalIgnoreCase));
+            bool exists = Boards.Any(b => b.Name.Equals(boardName, StringComparison.OrdinalIgnoreCase));
             if (exists)
             {
                 Log.Error($"Board '{boardName}' already exists for user '{_email}'.");
@@ -109,7 +110,7 @@ namespace IntroSE.Kanban.Backend.BuisnessLayer.UserPackage
 
         internal void CreateBoard(BoardBL board)
         {
-            _boards.Add(board);
+            Boards.Add(board);
             Log.Info($"Board '{board.Name}' added to user '{_email}'.");
         }
 
@@ -120,16 +121,16 @@ namespace IntroSE.Kanban.Backend.BuisnessLayer.UserPackage
         }
 
         internal List<TaskBL> InProgressTasks() =>
-            _boards.SelectMany(board => board.GetColumnTasks(1)).Where(task => task.Assignee == _email).ToList();
+            Boards.SelectMany(board => board.GetColumnTasks(1)).Where(task => task.Assignee == _email).ToList();
 
         internal List<int> GetBoardsAsId() =>
-            _boards.Select(board => board.Id).ToList();
+            Boards.Select(board => board.Id).ToList();
 
         internal void LeaveBoard(BoardBL board) => RemoveBoard(board);
 
         private void RemoveBoard(BoardBL board)
         {
-            _boards.Remove(board);
+            Boards.Remove(board);
             Log.Info($"Board '{board.Name}' removed from user '{_email}'.");
         }
     }

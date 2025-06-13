@@ -1,5 +1,8 @@
 using System;
+using System.Collections.Generic;
+using System.Linq;
 using System.Text.Json;
+using IntroSE.Kanban.Backend.BuisnessLayer.BoardPackage;
 using IntroSE.Kanban.Backend.BuisnessLayer.UserPackage;
 
 namespace IntroSE.Kanban.Backend.ServiceLayer
@@ -16,6 +19,12 @@ namespace IntroSE.Kanban.Backend.ServiceLayer
         private string ToJsonResponse(string error = null, object data = null) =>
             JsonSerializer.Serialize(new Response(error, data));
 
+        private List<ColumnSL> ConvertColumns(BoardBL board) =>
+            board.Columns.Select(c => new ColumnSL(c.Name, c.Limit, ConvertTasks(c.Tasks))).ToList();
+
+        private List<TaskSL> ConvertTasks(List<TaskBL> tasks) =>
+            tasks.Select(t => new TaskSL(t.Title, t.Description, t.DueDate, t.CreatedAt, t.Assignee)).ToList();
+
         /// <summary>
         /// Attempts to log in a user with the provided credentials.
         /// </summary>
@@ -30,8 +39,9 @@ namespace IntroSE.Kanban.Backend.ServiceLayer
         {
             try
             {
-                _userFacade.Login(email, password);
-                return ToJsonResponse(null, email);
+                UserBL user = _userFacade.Login(email, password);
+                List<BoardSL> boards = user.Boards.Select(b => new BoardSL(b.Owner, b.Name, b.Members, ConvertColumns(b))).ToList();
+                return ToJsonResponse(null, new UserSL(email, password, boards));
             }
             catch (Exception ex)
             {
@@ -55,7 +65,7 @@ namespace IntroSE.Kanban.Backend.ServiceLayer
             try
             {
                 _userFacade.Register(email, password);
-                return ToJsonResponse();
+                return ToJsonResponse(null, new UserSL(email, password, new List<BoardSL>()));
             }
             catch (Exception ex)
             {
