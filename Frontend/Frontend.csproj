@@ -11,8 +11,11 @@
   <ItemGroup>
     <PackageReference Include="MaterialDesignColors" Version="5.2.1" />
     <PackageReference Include="MaterialDesignThemes" Version="5.2.1" />
-	  <!-- SQLitePCL.Batteries_V2.Init(); -->
-	  <!-- <PackageReference Include="SQLitePCLRaw.bundle_green" Version="2.1.11" /> -->
+	<PackageReference Include="SQLitePCLRaw.bundle_green" Version="2.1.11" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Backend\Backend.csproj" />
   </ItemGroup>
 
 </Project>

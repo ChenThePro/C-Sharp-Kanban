@@ -59,10 +59,8 @@ namespace IntroSE.Kanban.Backend.ServiceLayer
         {
             if (!json.Contains("\"ErrorMessage\":null"))
                 return json;
-
             if (overrideReturnValue != null)
                 return $"{{\"ErrorMessage\":null, \"ReturnValue\":{JsonValue(overrideReturnValue)}}}";
-
             return "{\"ErrorMessage\":null, \"ReturnValue\":null}";
         }
 

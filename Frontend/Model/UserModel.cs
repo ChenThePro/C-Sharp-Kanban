@@ -1,12 +1,15 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace Frontend.Model
+﻿namespace Frontend.Model
 {
-    internal class UserModel
+    public class UserModel
     {
+        public string Email { get; set; }
+
+        public string Password { get; set; }
+
+        public UserModel(string email, string password) 
+        {
+            Email = email;
+            Password = password;
+        }
     }
 }

@@ -1,12 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace Frontend.Model
+﻿namespace Frontend.Model
 {
-    internal class BoardModel
+    public class BoardModel
     {
     }
 }
