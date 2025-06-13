@@ -1,5 +1,4 @@
-﻿using System.Configuration;
-using System.Data;
+﻿using Frontend.Model;
 using System.Windows;
 
 namespace Frontend
@@ -9,6 +8,14 @@ namespace Frontend
     /// </summary>
     public partial class App : Application
     {
-    }
+        public BackendController Controller { get; private set; } = new BackendController();
 
+        protected override void OnExit(ExitEventArgs e)
+        {
+            if (Current.Properties.Contains("CurrentUserEmail"))
+                if (Current.Properties["CurrentUserEmail"] is UserModel user)
+                    Controller.Logout(user.Email);
+            base.OnExit(e);
+        }
+    }
 }
