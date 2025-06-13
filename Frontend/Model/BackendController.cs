@@ -4,9 +4,9 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Frontend.Controllers
+namespace Frontend.Model
 {
-    internal class TaskController
+    internal class BackendController
     {
     }
 }

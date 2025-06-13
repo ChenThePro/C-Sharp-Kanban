@@ -4,9 +4,9 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Frontend.Controllers
+namespace Frontend.ViewModel
 {
-    internal class UserController
+    internal class MainViewModel
     {
     }
 }
