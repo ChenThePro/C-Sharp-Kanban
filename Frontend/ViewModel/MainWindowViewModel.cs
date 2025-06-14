@@ -40,9 +40,9 @@ namespace Frontend.ViewModel
                 userHome.Show();
                 CloseWindow();
             }
-            catch (Exception ex)
+            catch (Exception)
             {
-                MessageBox.Show($"Error signing in: {ex.Message}");
+                MessageBox.Show("Error signing in: email or password are incorrect");
             }
         }
 
