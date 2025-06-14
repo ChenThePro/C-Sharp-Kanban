@@ -24,7 +24,9 @@ namespace Frontend.Model
             Response response = JsonSerializer.Deserialize<Response>(json)!;
             if (response.ErrorMessage != null)
                 throw new Exception(response.ErrorMessage);
-            return new UserModel(this, (UserSL)response.ReturnValue);
+            var jsonElement = (JsonElement)response.ReturnValue;
+            UserSL userSl = jsonElement.Deserialize<UserSL>()!;
+            return new UserModel(this, userSl);
         }
 
         public UserModel SignUp(string email, string password)
@@ -33,7 +35,9 @@ namespace Frontend.Model
             Response response = JsonSerializer.Deserialize<Response>(json)!;
             if (response.ErrorMessage != null)
                 throw new Exception(response.ErrorMessage);
-            return new UserModel(this, (UserSL)response.ReturnValue);
+            var jsonElement = (JsonElement)response.ReturnValue;
+            UserSL userSl = jsonElement.Deserialize<UserSL>()!;
+            return new UserModel(this, userSl);
         }
 
         public bool Logout(string email)
