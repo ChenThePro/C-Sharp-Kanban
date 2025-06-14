@@ -2,6 +2,7 @@
 using Frontend.Command;
 using Frontend.Model;
 using System.Windows;
+using Frontend.View;
 
 namespace Frontend.ViewModel
 {
@@ -34,6 +35,9 @@ namespace Frontend.ViewModel
                 UserModel user = _controller.SignIn(Email, Password);
                 Application.Current.Properties["CurrentUserEmail"] = user;
                 MessageBox.Show($"Signed in as {user.Email}");
+                UserHomeWindow userHome = new(user);
+                Application.Current.MainWindow = userHome;
+                userHome.Show();
                 CloseWindow();
             }
             catch (Exception ex)
@@ -54,6 +58,9 @@ namespace Frontend.ViewModel
                 UserModel user = _controller.SignUp(Email, Password);
                 Application.Current.Properties["CurrentUserEmail"] = user;
                 MessageBox.Show($"Registered as {user.Email}");
+                UserHomeWindow userHome = new(user);
+                Application.Current.MainWindow = userHome;
+                userHome.Show();
                 CloseWindow();
             }
             catch (Exception ex)
