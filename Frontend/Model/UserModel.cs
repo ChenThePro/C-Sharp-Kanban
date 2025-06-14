@@ -1,15 +1,17 @@
 ﻿namespace Frontend.Model
 {
-    public class UserModel
+    public class UserModel : NotifiableModelObject
     {
-        public string Email { get; set; }
+        private string _email, _password;
+        public string Email { get => _email; set { _email = value; RaisePropertyChanged("Email"); } }
+        public string Password { get => _password; set { _password = value; RaisePropertyChanged("Password"); } }
 
-        public string Password { get; set; }
-
-        public UserModel(string email, string password) 
+        public UserModel(BackendController controller, string email, string password) : base(controller)
         {
-            Email = email;
-            Password = password;
+            _email = email;
+            _password = password;
+            Email = _email;
+            Password = _password;
         }
     }
 }

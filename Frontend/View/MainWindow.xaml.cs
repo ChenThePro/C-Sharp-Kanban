@@ -1,27 +1,33 @@
 ﻿using System.Windows;
 using System.Windows.Controls;
+using Frontend.ViewModel;
 
-namespace Frontend.View;
-
-/// <summary>
-/// Interaction logic for MainWindow.xaml
-/// </summary>
-public partial class MainWindow : Window
+namespace Frontend.View
 {
-    public MainWindow()
+    public partial class MainWindow : Window
     {
-        InitializeComponent();
-    }
+        private readonly MainWindowViewModel viewModel;
 
-    private void PasswordBox_PasswordChanged(object sender, RoutedEventArgs e)
-    {
-        if (DataContext is ViewModel.MainWindowViewModel vm)
-            vm.Password = ((PasswordBox)sender).Password;
-    }
+        public MainWindow()
+        {
+            InitializeComponent();
+            viewModel = new()
+            {
+                CloseAction = Close
+            };
+            DataContext = viewModel;
+        }
 
-    private void ConfirmPasswordBox_PasswordChanged(object sender, RoutedEventArgs e)
-    {
-        if (DataContext is ViewModel.MainWindowViewModel vm)
-            vm.ConfirmPassword = ((PasswordBox)sender).Password;
+        private void PasswordBox_PasswordChanged(object sender, RoutedEventArgs e)
+        {
+            if (DataContext is MainWindowViewModel vm)
+                vm.Password = ((PasswordBox)sender).Password;
+        }
+
+        private void ConfirmPasswordBox_PasswordChanged(object sender, RoutedEventArgs e)
+        {
+            if (DataContext is MainWindowViewModel vm)
+                vm.ConfirmPassword = ((PasswordBox)sender).Password;
+        }
     }
 }
