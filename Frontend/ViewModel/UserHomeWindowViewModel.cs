@@ -2,13 +2,15 @@
 
 namespace Frontend.ViewModel
 {
-    internal class UserHomeWindowViewModel
+    internal class UserHomeWindowViewModel : NotifiableObject
     {
-        private UserModel user;
+        private readonly UserModel _user;
+        private readonly BackendController _controller;
 
         public UserHomeWindowViewModel(UserModel user)
         {
-            this.user = user;
+            _user = user;
+            _controller = user.Controller;
         }
     }
 }

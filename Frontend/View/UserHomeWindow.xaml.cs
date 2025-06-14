@@ -1,16 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using Frontend.Model;
+using Frontend.ViewModel;
 using System.Windows;
-using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
-using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Shapes;
 
 namespace Frontend.View
 {
@@ -19,9 +9,13 @@ namespace Frontend.View
     /// </summary>
     public partial class UserHomeWindow : Window
     {
-        public UserHomeWindow()
+        private readonly UserHomeWindowViewModel _viewModel;
+
+        public UserHomeWindow(UserModel user)
         {
             InitializeComponent();
+            _viewModel = new UserHomeWindowViewModel(user);
+            DataContext = _viewModel;
         }
     }
 }
