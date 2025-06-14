@@ -35,6 +35,7 @@ namespace Frontend.ViewModel
                 Application.Current.Properties["CurrentUserEmail"] = user;
                 MessageBox.Show($"Signed in as {user.Email}");
                 CloseWindow();
+                new UserHomeWindowViewModel(user);
             }
             catch (Exception ex)
             {
@@ -55,6 +56,7 @@ namespace Frontend.ViewModel
                 Application.Current.Properties["CurrentUserEmail"] = user;
                 MessageBox.Show($"Registered as {user.Email}");
                 CloseWindow();
+                new UserHomeWindowViewModel(user);
             }
             catch (Exception ex)
             {
