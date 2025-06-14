@@ -8,7 +8,7 @@ namespace Frontend
     /// </summary>
     public partial class App : Application
     {
-        public BackendController Controller { get; private set; } = new BackendController();
+        public BackendController Controller { get; init; } = new();
 
         protected override void OnExit(ExitEventArgs e)
         {

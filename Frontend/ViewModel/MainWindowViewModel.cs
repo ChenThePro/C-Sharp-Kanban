@@ -1,71 +1,69 @@
-﻿using System.ComponentModel;
-using System.Runtime.CompilerServices;
-using System.Text.Json;
-using System.Windows;
-using System.Windows.Input;
+﻿using System.Windows.Input;
 using Frontend.Command;
 using Frontend.Model;
-using IntroSE.Kanban.Backend.ServiceLayer;
+using System.Windows;
 
 namespace Frontend.ViewModel
 {
-    public class MainWindowViewModel : INotifyPropertyChanged
+    public class MainWindowViewModel : NotifiableObject
     {
-        public event PropertyChangedEventHandler? PropertyChanged;
-        private void OnPropertyChanged([CallerMemberName] string? name = null) =>
-            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(name));
+        private string _email = string.Empty;
+        private string _password = string.Empty;
+        private string _confirmPassword = string.Empty;
 
-        public string Email { get => _email; set { _email = value; OnPropertyChanged(); } }
-        public string Password { get; set; }
-        public string ConfirmPassword { get; set; }
-        public bool ControlsEnabled => true;
+        public string Email { get => _email; set { _email = value; RaisePropertyChanged(); } }
+        public string Password { get => _password; set { _password = value; RaisePropertyChanged(); } }
+        public string ConfirmPassword { get => _confirmPassword; set { _confirmPassword = value; RaisePropertyChanged(); } }
 
-        private string _email;
+        private readonly BackendController _controller;
 
         public ICommand SignInCommand { get; }
         public ICommand SignUpCommand { get; }
 
-        private readonly BackendController _controller;
-
         public MainWindowViewModel()
         {
+            _controller = ((App)Application.Current).Controller;
             SignInCommand = new RelayCommand(_ => SignIn());
             SignUpCommand = new RelayCommand(_ => SignUp());
-            Password = string.Empty;
-            ConfirmPassword = string.Empty;
-            _email = string.Empty;
-            _controller = ((App)Application.Current).Controller;
         }
 
         private void SignIn()
         {
-            string json = _controller.SignIn(Email, Password);
-            Response response = JsonSerializer.Deserialize<Response>(json)!;
-            if (response.ErrorMessage != null)
-                MessageBox.Show($"Error signing in: {response.ErrorMessage}");
-            else
+            try
             {
-                MessageBox.Show($"Signed in as {Email}");
-                Application.Current.Properties["CurrentUserEmail"] = new UserModel(Email, Password);
+                UserModel user = _controller.SignIn(Email, Password);
+                Application.Current.Properties["CurrentUserEmail"] = user;
+                MessageBox.Show($"Signed in as {user.Email}");
+                CloseWindow();
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"Error signing in: {ex.Message}");
             }
         }
 
         private void SignUp()
         {
             if (Password != ConfirmPassword)
-                MessageBox.Show("Passwords do not match.");
-            else
             {
-                string json = _controller.SignUp(Email, Password);
-                Response response = JsonSerializer.Deserialize<Response>(json)!;
-                if (response.ErrorMessage != null)
-                    MessageBox.Show($"Error signing in: {response.ErrorMessage}");
-                else
-                {
-                    MessageBox.Show($"Registered as {Email}");
-                    Application.Current.Properties["CurrentUserEmail"] = new UserModel(Email, Password);
-                }
+                MessageBox.Show("Passwords do not match.");
+                return;
+            }
+            try
+            {
+                UserModel user = _controller.SignUp(Email, Password);
+                Application.Current.Properties["CurrentUserEmail"] = user;
+                MessageBox.Show($"Registered as {user.Email}");
+                CloseWindow();
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"Error registering: {ex.Message}");
             }
         }
+
+        public Action? CloseAction { get; set; }
+
+        private void CloseWindow() => CloseAction?.Invoke();
     }
 }
