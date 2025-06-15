@@ -14,7 +14,10 @@ namespace Frontend.View
         public UserHomeWindow(UserModel user)
         {
             InitializeComponent();
-            _viewModel = new UserHomeWindowViewModel(user);
+            _viewModel = new(user)
+            {
+                CloseAction = () => Close()
+            };
             DataContext = _viewModel;
         }
     }

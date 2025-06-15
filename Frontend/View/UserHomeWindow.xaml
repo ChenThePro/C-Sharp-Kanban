@@ -8,8 +8,31 @@
         mc:Ignorable="d"
         WindowStartupLocation="CenterScreen"
         Style="{StaticResource MaterialDesignWindow}"
-        Title="UserHomeWindow" Height="800" Width="1000">
-    <Grid>
-        
+        Title="Kanban Dashboard" Height="800" Width="1000">
+    <Grid Background="{DynamicResource MaterialDesignPaper}">
+        <DockPanel>
+            <materialDesign:Card DockPanel.Dock="Top" Margin="20 20 20 10" Padding="20" materialDesign:ElevationAssist.Elevation="Dp2">
+                <Grid>
+                    <TextBlock Text="Kanban Dashboard" FontSize="24" FontWeight="Bold" VerticalAlignment="Center" />
+                    <Button 
+                        Content="Logout" 
+                        Command="{Binding LogoutCommand}"
+                        Style="{StaticResource MaterialDesignOutlinedButton}"
+                        HorizontalAlignment="Right"
+                        materialDesign:ButtonAssist.CornerRadius="20"
+                        Padding="20 5" />
+                </Grid>
+            </materialDesign:Card>
+
+            <materialDesign:Card Margin="20 10 20 20" Padding="30" materialDesign:ElevationAssist.Elevation="Dp3">
+                <Grid>
+                    <TextBlock Text="Welcome to your Kanban board!" 
+                               FontSize="18" 
+                               HorizontalAlignment="Center" 
+                               VerticalAlignment="Center"
+                               Foreground="{DynamicResource MaterialDesignBodyLight}" />
+                </Grid>
+            </materialDesign:Card>
+        </DockPanel>
     </Grid>
 </Window>

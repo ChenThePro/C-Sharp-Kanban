@@ -8,9 +8,9 @@ namespace Frontend.ViewModel
 {
     public class MainWindowViewModel : NotifiableObject
     {
-        private string _email = string.Empty;
-        private string _password = string.Empty;
-        private string _confirmPassword = string.Empty;
+        private string _email;
+        private string _password;
+        private string _confirmPassword;
 
         public string Email { get => _email; set { _email = value; RaisePropertyChanged(); } }
         public string Password { get => _password; set { _password = value; RaisePropertyChanged(); } }
@@ -23,6 +23,9 @@ namespace Frontend.ViewModel
 
         public MainWindowViewModel()
         {
+            _email = string.Empty;
+            _password = string.Empty;
+            _confirmPassword = string.Empty;
             _controller = ((App)Application.Current).Controller;
             SignInCommand = new RelayCommand(_ => SignIn());
             SignUpCommand = new RelayCommand(_ => SignUp());
@@ -33,7 +36,7 @@ namespace Frontend.ViewModel
             try
             {
                 UserModel user = _controller.SignIn(Email, Password);
-                Application.Current.Properties["CurrentUserEmail"] = user;
+                Application.Current.Properties["CurrentUser"] = user;
                 MessageBox.Show($"Signed in as {user.Email}");
                 UserHomeWindow userHome = new(user);
                 Application.Current.MainWindow = userHome;
@@ -42,7 +45,7 @@ namespace Frontend.ViewModel
             }
             catch (Exception)
             {
-                MessageBox.Show("Error signing in: email or password are incorrect");
+                MessageBox.Show("Error signing in: email or password are incorrect", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
             }
         }
 
@@ -50,13 +53,13 @@ namespace Frontend.ViewModel
         {
             if (Password != ConfirmPassword)
             {
-                MessageBox.Show("Passwords do not match.");
+                MessageBox.Show("Passwords do not match", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
                 return;
             }
             try
             {
                 UserModel user = _controller.SignUp(Email, Password);
-                Application.Current.Properties["CurrentUserEmail"] = user;
+                Application.Current.Properties["CurrentUser"] = user;
                 MessageBox.Show($"Registered as {user.Email}");
                 UserHomeWindow userHome = new(user);
                 Application.Current.MainWindow = userHome;
@@ -65,7 +68,7 @@ namespace Frontend.ViewModel
             }
             catch (Exception ex)
             {
-                MessageBox.Show($"Error registering: {ex.Message}");
+                MessageBox.Show($"Error registering: {ex.Message}", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
             }
         }
 

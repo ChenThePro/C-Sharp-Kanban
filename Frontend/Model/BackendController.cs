@@ -7,11 +7,6 @@ namespace Frontend.Model
     {
         private readonly ServiceFactory _serviceFactory;
 
-        public BackendController(ServiceFactory serviceFactory)
-        {
-            _serviceFactory = serviceFactory;
-        }
-
         public BackendController()
         {
             _serviceFactory = new();
@@ -20,33 +15,32 @@ namespace Frontend.Model
 
         public UserModel SignIn(string email, string password)
         {
-            string json = _serviceFactory.GetUserService().Login(email, password);
-            Response response = JsonSerializer.Deserialize<Response>(json)!;
-            if (response.ErrorMessage != null)
-                throw new Exception(response.ErrorMessage);
-            var jsonElement = (JsonElement)response.ReturnValue;
-            UserSL userSl = jsonElement.Deserialize<UserSL>()!;
-            return new UserModel(this, userSl);
+            UserSL userSl = ExecuteServiceCall<UserSL>(() => _serviceFactory.GetUserService().Login(email, password));
+            return new(this, userSl);
         }
 
         public UserModel SignUp(string email, string password)
         {
-            string json = _serviceFactory.GetUserService().Register(email, password);
-            Response response = JsonSerializer.Deserialize<Response>(json)!;
-            if (response.ErrorMessage != null)
-                throw new Exception(response.ErrorMessage);
-            var jsonElement = (JsonElement)response.ReturnValue;
-            UserSL userSl = jsonElement.Deserialize<UserSL>()!;
-            return new UserModel(this, userSl);
+            UserSL userSl = ExecuteServiceCall<UserSL>(() => _serviceFactory.GetUserService().Register(email, password));
+            return new(this, userSl);
         }
 
         public bool Logout(string email)
         {
-            string json = _serviceFactory.GetUserService().Logout(email);
+            ExecuteServiceCall<object>(() => _serviceFactory.GetUserService().Logout(email));
+            return true;
+        }
+
+        private T ExecuteServiceCall<T>(Func<string> serviceCall)
+        {
+            string json = serviceCall();
             Response response = JsonSerializer.Deserialize<Response>(json)!;
             if (response.ErrorMessage != null)
                 throw new Exception(response.ErrorMessage);
-            return true;
+            if (response.ReturnValue == null)
+                return default!;
+            JsonElement jsonElement = (JsonElement)response.ReturnValue;
+            return jsonElement.Deserialize<T>()!;
         }
     }
 }
