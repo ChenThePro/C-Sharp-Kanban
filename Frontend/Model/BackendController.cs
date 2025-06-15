@@ -42,5 +42,16 @@ namespace Frontend.Model
             JsonElement jsonElement = (JsonElement)response.ReturnValue;
             return jsonElement.Deserialize<T>()!;
         }
+
+        public BoardModel CreateBoard(string email, string newBoardName)
+        {
+            BoardSL boardSl = ExecuteServiceCall<BoardSL>(() => _serviceFactory.GetBoardService().CreateBoard(email, newBoardName));
+            return new(this, boardSl);
+        }
+
+        public void DeleteBoard(string email, string name)
+        {
+            ExecuteServiceCall<BoardSL>(() => _serviceFactory.GetBoardService().DeleteBoard(email, name));
+        }
     }
 }
