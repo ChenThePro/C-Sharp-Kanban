@@ -9,8 +9,7 @@ namespace Frontend.Model
         public DateTime CreatedAt { get; init; }
         public string Assignee { get; set; }
 
-        public TaskModel(BackendController controller, TaskSL task)
-            : base(controller)
+        public TaskModel(BackendController controller, TaskSL task) : base(controller)
         {
             Title = task.Title;
             DueDate = task.DueDate;

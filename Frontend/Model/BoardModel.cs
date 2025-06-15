@@ -10,14 +10,12 @@ namespace Frontend.Model
         public ObservableCollection<string> Members { get; init; }
         public ObservableCollection<ColumnModel> Columns { get; init; }
 
-        public BoardModel(BackendController controller, BoardSL board)
-            : base(controller)
+        public BoardModel(BackendController controller, BoardSL board) : base(controller)
         {
             Name = board.Name;
             Owner = board.Owner;
-            Members = new ObservableCollection<string>(board.Members);
-            Columns = new ObservableCollection<ColumnModel>(
-                board.Columns.Select(c => new ColumnModel(controller, c)));
+            Members = new(board.Members);
+            Columns = new(board.Columns.Select(c => new ColumnModel(controller, c)));
         }
     }
 }

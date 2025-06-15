@@ -12,8 +12,8 @@ namespace Frontend
 
         protected override void OnExit(ExitEventArgs e)
         {
-            if (Current.Properties.Contains("CurrentUserEmail"))
-                if (Current.Properties["CurrentUserEmail"] is UserModel user)
+            if (Current.Properties.Contains("CurrentUser"))
+                if (Current.Properties["CurrentUser"] is UserModel user)
                     Controller.Logout(user.Email);
             base.OnExit(e);
         }
