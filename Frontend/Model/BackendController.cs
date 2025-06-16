@@ -25,10 +25,20 @@ namespace Frontend.Model
             return new(this, userSl);
         }
 
-        public bool Logout(string email)
+        public void Logout(string email)
         {
-            ExecuteServiceCall<object>(() => _serviceFactory.GetUserService().Logout(email));
-            return true;
+            ExecuteServiceCall<UserSL>(() => _serviceFactory.GetUserService().Logout(email));
+        }
+
+        public BoardModel CreateBoard(string email, string newBoardName)
+        {
+            BoardSL boardSl = ExecuteServiceCall<BoardSL>(() => _serviceFactory.GetBoardService().CreateBoard(email, newBoardName));
+            return new(this, boardSl);
+        }
+
+        public void DeleteBoard(string email, string name)
+        {
+            ExecuteServiceCall<BoardSL>(() => _serviceFactory.GetBoardService().DeleteBoard(email, name));
         }
 
         private T ExecuteServiceCall<T>(Func<string> serviceCall)
@@ -41,17 +51,6 @@ namespace Frontend.Model
                 return default!;
             JsonElement jsonElement = (JsonElement)response.ReturnValue;
             return jsonElement.Deserialize<T>()!;
-        }
-
-        public BoardModel CreateBoard(string email, string newBoardName)
-        {
-            BoardSL boardSl = ExecuteServiceCall<BoardSL>(() => _serviceFactory.GetBoardService().CreateBoard(email, newBoardName));
-            return new(this, boardSl);
-        }
-
-        public void DeleteBoard(string email, string name)
-        {
-            ExecuteServiceCall<BoardSL>(() => _serviceFactory.GetBoardService().DeleteBoard(email, name));
         }
     }
 }

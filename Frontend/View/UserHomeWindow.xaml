@@ -12,7 +12,6 @@
 
     <DockPanel Background="{DynamicResource MaterialDesignPaper}">
 
-        <!-- Header -->
         <materialDesign:Card DockPanel.Dock="Top" Margin="20 20 20 10" Padding="20" materialDesign:ElevationAssist.Elevation="Dp2">
             <Grid>
                 <TextBlock Text="Kanban Dashboard" FontSize="24" FontWeight="Bold" VerticalAlignment="Center" HorizontalAlignment="Left" />
@@ -26,11 +25,9 @@
             </Grid>
         </materialDesign:Card>
 
-        <!-- Main Content -->
         <ScrollViewer DockPanel.Dock="Top" Margin="20 10 20 20">
             <StackPanel>
 
-                <!-- Welcome Text -->
                 <materialDesign:Card Margin="0 0 0 20" Padding="30" materialDesign:ElevationAssist.Elevation="Dp3">
                     <TextBlock Text="Welcome to your Kanban board!" 
                                FontSize="18" 
@@ -38,7 +35,6 @@
                                Foreground="{DynamicResource MaterialDesignBodyLight}" />
                 </materialDesign:Card>
 
-                <!-- Create Board Input -->
                 <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" Margin="0 0 0 10">
                     <TextBox Width="200"
                              Margin="0 10 10 0"
@@ -50,7 +46,6 @@
                             Style="{StaticResource MaterialDesignOutlinedButton}" />
                 </StackPanel>
 
-                <!-- Boards List -->
                 <ItemsControl ItemsSource="{Binding Boards}">
                     <ItemsControl.ItemTemplate>
                         <DataTemplate>
@@ -58,7 +53,8 @@
                                 <DockPanel>
                                     <StackPanel DockPanel.Dock="Left">
                                         <TextBlock Text="{Binding Name}" FontWeight="Bold" FontSize="16" />
-                                        <TextBlock Text="Owner: {Binding Owner}" />
+                                        <TextBlock Text="{Binding Owner}" FontWeight="Bold" FontSize="16" />
+                                        <TextBlock Text="{Binding Members}" FontWeight="Bold" FontSize="16" />
                                     </StackPanel>
                                     <Button Content="Delete"
                                             Command="{Binding DataContext.DeleteBoardCommand, RelativeSource={RelativeSource AncestorType=Window}}"

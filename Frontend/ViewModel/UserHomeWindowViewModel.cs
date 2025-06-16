@@ -1,10 +1,8 @@
 ﻿using System.Collections.ObjectModel;
 using Frontend.Command;
 using Frontend.Model;
-using IntroSE.Kanban.Backend.ServiceLayer;
 using System.Windows.Input;
 using System.Windows;
-using System.Xml.Linq;
 using Frontend.View;
 
 namespace Frontend.ViewModel
@@ -13,11 +11,10 @@ namespace Frontend.ViewModel
     {
         private readonly UserModel _user;
         private readonly BackendController _controller;
+        private string _newBoardName;
 
         public ObservableCollection<BoardModel> Boards => _user.Boards;
         public string NewBoardName { get => _newBoardName; set { _newBoardName = value; RaisePropertyChanged(); } }
-        private string _newBoardName = string.Empty;
-
         public ICommand CreateBoardCommand { get; }
         public ICommand DeleteBoardCommand { get; }
         public ICommand LogoutCommand { get; }
@@ -26,8 +23,9 @@ namespace Frontend.ViewModel
         {
             _user = user;
             _controller = user.Controller;
+            _newBoardName = string.Empty;
             LogoutCommand = new RelayCommand(_ => ExecuteLogout());
-            CreateBoardCommand = new RelayCommand(_ => ExecuteCreateBoard(), _ => !string.IsNullOrWhiteSpace(NewBoardName));
+            CreateBoardCommand = new RelayCommand(_ => ExecuteCreateBoard());
             DeleteBoardCommand = new RelayCommand(b => ExecuteDeleteBoard(b as BoardModel));
         }
 
@@ -35,7 +33,7 @@ namespace Frontend.ViewModel
         {
             try
             {
-                BoardModel newBoard = _controller.CreateBoard(_user.Email, NewBoardName); // Adjust as needed
+                BoardModel newBoard = _controller.CreateBoard(_user.Email, NewBoardName);
                 Boards.Add(newBoard);
                 NewBoardName = string.Empty;
             }
@@ -58,6 +56,7 @@ namespace Frontend.ViewModel
                 MessageBox.Show($"Failed to delete board: {ex.Message}", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
             }
         }
+
         private void ExecuteLogout()
         {
             try
