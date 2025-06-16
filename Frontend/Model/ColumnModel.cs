@@ -5,10 +5,15 @@ namespace Frontend.Model
 {
     public class ColumnModel : NotifiableModelObject
     {
+        private bool _isExpanded;
+
         public string Name { get; init; }
         public int Limit { get; set; }
+
         public ObservableCollection<TaskModel> Tasks { get; init; }
-        public bool IsExpanded { get; set; }
+        
+        public bool IsExpanded  { get => _isExpanded; set { _isExpanded = value; RaisePropertyChanged(); } }
+
 
         public ColumnModel(BackendController controller, ColumnSL column) : base(controller)
         {

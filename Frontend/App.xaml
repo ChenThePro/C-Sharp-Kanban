@@ -11,6 +11,8 @@
                 <ResourceDictionary Source="pack://application:,,,/MaterialDesignThemes.Wpf;component/Themes/MaterialDesign3.Defaults.xaml" />
             </ResourceDictionary.MergedDictionaries>
             <local:MembersToStringConverter x:Key="MembersToStringConverter"/>
+            <local:BoolToVisibilityConverter x:Key="BoolToVisibilityConverter"/>
+            <local:InverseBoolToVisibilityConverter x:Key="InverseBoolToVisibilityConverter"/>
         </ResourceDictionary>
     </Application.Resources>
 </Application>
