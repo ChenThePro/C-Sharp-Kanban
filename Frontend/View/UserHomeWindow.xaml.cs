@@ -11,11 +11,14 @@ namespace Frontend.View
     public partial class UserHomeWindow : Window
     {
         private readonly UserHomeWindowViewModel _viewModel;
+        private readonly BoardController Bcontroller;
+
 
         public UserHomeWindow(UserModel user)
         {
             InitializeComponent();
-            _viewModel = new(user)
+            Bcontroller = new BoardController(user.Controller.GetFactory());
+            _viewModel = new(user , Bcontroller)
             {
                 CloseAction = () => Close()
             };

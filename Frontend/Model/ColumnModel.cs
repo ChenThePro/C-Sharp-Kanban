@@ -3,7 +3,7 @@ using System.Collections.ObjectModel;
 
 namespace Frontend.Model
 {
-    public class ColumnModel : NotifiableModelObject
+    public class ColumnModel : NotifiableModelObject<BoardController>
     {
         private bool _isExpanded;
 
@@ -15,7 +15,7 @@ namespace Frontend.Model
         public bool IsExpanded  { get => _isExpanded; set { _isExpanded = value; RaisePropertyChanged(); } }
 
 
-        public ColumnModel(BackendController controller, ColumnSL column) : base(controller)
+        public ColumnModel(BoardController controller, ColumnSL column) : base(controller)
         {
             Name = column.Name;
             Limit = column.Limit;

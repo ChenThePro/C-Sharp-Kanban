@@ -1,5 +1,6 @@
 ﻿using System.Windows;
 using System.Windows.Controls;
+using Frontend.Model;
 using Frontend.ViewModel;
 
 namespace Frontend.View
@@ -7,11 +8,13 @@ namespace Frontend.View
     public partial class MainWindow : Window
     {
         private readonly MainWindowViewModel viewModel;
+        private readonly UserController controller;
 
         public MainWindow()
         {
             InitializeComponent();
-            viewModel = new()
+            controller = new UserController();
+            viewModel = new(controller)
             {
                 CloseAction = Close
             };

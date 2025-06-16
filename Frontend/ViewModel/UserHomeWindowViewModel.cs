@@ -10,7 +10,7 @@ namespace Frontend.ViewModel
     internal class UserHomeWindowViewModel : NotifiableObject
     {
         private readonly UserModel _user;
-        private readonly BackendController _controller;
+        private readonly BoardController _controller;
         private string _newBoardName;
 
         public ObservableCollection<BoardModel> Boards => _user.Boards;
@@ -19,10 +19,10 @@ namespace Frontend.ViewModel
         public ICommand DeleteBoardCommand { get; }
         public ICommand LogoutCommand { get; }
 
-        public UserHomeWindowViewModel(UserModel user)
+        public UserHomeWindowViewModel(UserModel user, BoardController controller)
         {
             _user = user;
-            _controller = user.Controller;
+            _controller = controller;
             _newBoardName = string.Empty;
             LogoutCommand = new RelayCommand(_ => ExecuteLogout());
             CreateBoardCommand = new RelayCommand(_ => ExecuteCreateBoard());
@@ -61,7 +61,7 @@ namespace Frontend.ViewModel
         {
             try
             {
-                _controller.Logout(_user.Email);
+                _user.Controller.Logout(_user.Email);
                 Application.Current.Properties["CurrentUser"] = null;
                 MainWindow mainWindow = new();
                 Application.Current.MainWindow = mainWindow;

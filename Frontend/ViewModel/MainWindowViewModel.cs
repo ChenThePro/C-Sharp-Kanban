@@ -16,17 +16,17 @@ namespace Frontend.ViewModel
         public string Password { get => _password; set { _password = value; RaisePropertyChanged(); } }
         public string ConfirmPassword { get => _confirmPassword; set { _confirmPassword = value; RaisePropertyChanged(); } }
 
-        private readonly BackendController _controller;
+        private readonly UserController _controller;
 
         public ICommand SignInCommand { get; }
         public ICommand SignUpCommand { get; }
 
-        public MainWindowViewModel()
+        public MainWindowViewModel(UserController controller)
         {
             _email = string.Empty;
             _password = string.Empty;
             _confirmPassword = string.Empty;
-            _controller = ((App)Application.Current).Controller;
+            _controller = controller;
             SignInCommand = new RelayCommand(_ => SignIn());
             SignUpCommand = new RelayCommand(_ => SignUp());
         }
