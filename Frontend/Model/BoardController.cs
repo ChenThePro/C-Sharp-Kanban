@@ -1,35 +1,21 @@
 ﻿using IntroSE.Kanban.Backend.ServiceLayer;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
 using System.Text.Json;
+using System.Threading.Tasks;
 
 namespace Frontend.Model
 {
-    public class BackendController
+    public class BoardController
     {
         private readonly ServiceFactory _serviceFactory;
 
-        public BackendController()
+        public BoardController (ServiceFactory serviceFactory)
         {
-            _serviceFactory = new();
-            _serviceFactory.GetBoardService().LoadData();
+            _serviceFactory = serviceFactory;
         }
-
-        public UserModel SignIn(string email, string password)
-        {
-            UserSL userSl = ExecuteServiceCall<UserSL>(() => _serviceFactory.GetUserService().Login(email, password));
-            return new(this, userSl);
-        }
-
-        public UserModel SignUp(string email, string password)
-        {
-            UserSL userSl = ExecuteServiceCall<UserSL>(() => _serviceFactory.GetUserService().Register(email, password));
-            return new(this, userSl);
-        }
-
-        public void Logout(string email)
-        {
-            ExecuteServiceCall<UserSL>(() => _serviceFactory.GetUserService().Logout(email));
-        }
-
         public BoardModel CreateBoard(string email, string newBoardName)
         {
             BoardSL boardSl = ExecuteServiceCall<BoardSL>(() => _serviceFactory.GetBoardService().CreateBoard(email, newBoardName));
@@ -40,7 +26,6 @@ namespace Frontend.Model
         {
             ExecuteServiceCall<BoardSL>(() => _serviceFactory.GetBoardService().DeleteBoard(email, name));
         }
-
         private T ExecuteServiceCall<T>(Func<string> serviceCall)
         {
             string json = serviceCall();

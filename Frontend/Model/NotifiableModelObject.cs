@@ -1,10 +1,10 @@
 ﻿namespace Frontend.Model
 {
-    public abstract class NotifiableModelObject : NotifiableObject
+    public abstract class NotifiableModelObject<TController> : NotifiableObject
     {
-        public BackendController Controller { get; private set; }
+        public TController Controller { get; }
 
-        protected NotifiableModelObject(BackendController controller) =>
+        protected NotifiableModelObject(TController controller) =>
             Controller = controller;
     }
 }

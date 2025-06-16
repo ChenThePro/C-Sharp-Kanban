@@ -3,7 +3,7 @@ using System.Collections.ObjectModel;
 
 namespace Frontend.Model
 {
-    public class BoardModel : NotifiableModelObject
+    public class BoardModel : NotifiableModelObject<BoardController>
     {
         private bool _isExpanded;
 
@@ -13,7 +13,7 @@ namespace Frontend.Model
         public ObservableCollection<ColumnModel> Columns { get; init; }
         public bool IsExpanded { get => _isExpanded; set { _isExpanded = value; RaisePropertyChanged(); } }
 
-        public BoardModel(BackendController controller, BoardSL board) : base(controller)
+        public BoardModel(BoardController controller, BoardSL board) : base(controller)
         {
             Name = board.Name;
             Owner = board.Owner;
