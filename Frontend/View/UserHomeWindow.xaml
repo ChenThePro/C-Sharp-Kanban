@@ -50,18 +50,45 @@
                     <ItemsControl.ItemTemplate>
                         <DataTemplate>
                             <materialDesign:Card Margin="0 0 0 10" Padding="20" materialDesign:ElevationAssist.Elevation="Dp2">
-                                <DockPanel>
-                                    <StackPanel DockPanel.Dock="Left">
-                                        <TextBlock Text="{Binding Name}" FontWeight="Bold" FontSize="16" />
-                                        <TextBlock Text="{Binding Owner}" FontWeight="Bold" FontSize="16" />
-                                        <TextBlock Text="{Binding Members}" FontWeight="Bold" FontSize="16" />
+                                <StackPanel>
+                                    <!-- Board Header -->
+                                    <StackPanel Orientation="Horizontal" VerticalAlignment="Center" HorizontalAlignment="Stretch" MouseLeftButtonDown="ToggleBoardExpand">
+                                        <StackPanel Width="800">
+                                            <TextBlock Text="{Binding Name, StringFormat='Name: {0}'}" FontWeight="Bold" FontSize="16" />
+                                            <TextBlock Text="{Binding Owner, StringFormat='Owner: {0}'}" FontSize="14" />
+                                            <TextBlock Text="{Binding Members, Converter={StaticResource MembersToStringConverter}}" FontSize="14" />
+                                        </StackPanel>
+                                        <TextBlock Text="▼" FontSize="16" Visibility="{Binding IsExpanded, Converter={StaticResource BoolToVisibilityConverter}}" />
+                                        <TextBlock Text="▶" FontSize="16" Visibility="{Binding IsExpanded, Converter={StaticResource InverseBoolToVisibilityConverter}}" />
                                     </StackPanel>
-                                    <Button Content="Delete"
-                                            Command="{Binding DataContext.DeleteBoardCommand, RelativeSource={RelativeSource AncestorType=Window}}"
-                                            CommandParameter="{Binding}"
-                                            Style="{StaticResource MaterialDesignOutlinedButton}"
-                                            HorizontalAlignment="Right" />
-                                </DockPanel>
+
+                                    <!-- Columns Section -->
+                                    <ItemsControl ItemsSource="{Binding Columns}" Visibility="{Binding IsExpanded, Converter={StaticResource BoolToVisibilityConverter}}">
+                                        <ItemsControl.ItemTemplate>
+                                            <DataTemplate>
+                                                <materialDesign:Card Margin="10 5" Padding="10" materialDesign:ElevationAssist.Elevation="Dp1">
+                                                    <StackPanel>
+                                                        <TextBlock Text="{Binding Name, StringFormat='Column: {0}'}" FontWeight="Bold" FontSize="14" MouseLeftButtonDown="ToggleColumnExpand" />
+                                                        <ItemsControl ItemsSource="{Binding Tasks}" Visibility="{Binding IsExpanded, Converter={StaticResource BoolToVisibilityConverter}}">
+                                                            <ItemsControl.ItemTemplate>
+                                                                <DataTemplate>
+                                                                    <Border BorderThickness="0 0 0 1" BorderBrush="Gray" Padding="5">
+                                                                        <StackPanel>
+                                                                            <TextBlock Text="{Binding Title, StringFormat='Title: {0}'}" FontWeight="Bold"/>
+                                                                            <TextBlock Text="{Binding DueDate, StringFormat='Due: {0:MM/dd/yyyy}'}"/>
+                                                                            <TextBlock Text="{Binding CreatedAt, StringFormat='Created: {0:MM/dd/yyyy}'}"/>
+                                                                            <TextBlock Text="{Binding Assignee, StringFormat='Assignee: {0}'}"/>
+                                                                        </StackPanel>
+                                                                    </Border>
+                                                                </DataTemplate>
+                                                            </ItemsControl.ItemTemplate>
+                                                        </ItemsControl>
+                                                    </StackPanel>
+                                                </materialDesign:Card>
+                                            </DataTemplate>
+                                        </ItemsControl.ItemTemplate>
+                                    </ItemsControl>
+                                </StackPanel>
                             </materialDesign:Card>
                         </DataTemplate>
                     </ItemsControl.ItemTemplate>

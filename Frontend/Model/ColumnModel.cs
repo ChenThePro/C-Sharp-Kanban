@@ -8,6 +8,7 @@ namespace Frontend.Model
         public string Name { get; init; }
         public int Limit { get; set; }
         public ObservableCollection<TaskModel> Tasks { get; init; }
+        public bool IsExpanded { get; set; } = false;
 
         public ColumnModel(BackendController controller, ColumnSL column) : base(controller)
         {

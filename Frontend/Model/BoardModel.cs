@@ -9,6 +9,7 @@ namespace Frontend.Model
         public string Owner { get; set; }
         public ObservableCollection<string> Members { get; init; }
         public ObservableCollection<ColumnModel> Columns { get; init; }
+        public bool IsExpanded { get; set; } = false;
 
         public BoardModel(BackendController controller, BoardSL board) : base(controller)
         {

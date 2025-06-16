@@ -10,6 +10,7 @@
                 <materialDesign:BundledTheme BaseTheme="Dark" PrimaryColor="Cyan" SecondaryColor="Indigo" />
                 <ResourceDictionary Source="pack://application:,,,/MaterialDesignThemes.Wpf;component/Themes/MaterialDesign3.Defaults.xaml" />
             </ResourceDictionary.MergedDictionaries>
+            <local:MembersToStringConverter x:Key="MembersToStringConverter"/>
         </ResourceDictionary>
     </Application.Resources>
 </Application>
