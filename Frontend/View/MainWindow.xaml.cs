@@ -7,18 +7,18 @@ namespace Frontend.View
 {
     public partial class MainWindow : Window
     {
-        private readonly MainWindowViewModel viewModel;
-        private readonly UserController controller;
+        private readonly MainWindowViewModel _viewModel;
+        private readonly UserController _controller;
 
         public MainWindow()
         {
             InitializeComponent();
-            controller = new UserController();
-            viewModel = new(controller)
+            _controller = new();
+            _viewModel = new(_controller)
             {
                 CloseAction = Close
             };
-            DataContext = viewModel;
+            DataContext = _viewModel;
         }
 
         private void PasswordBox_PasswordChanged(object sender, RoutedEventArgs e)

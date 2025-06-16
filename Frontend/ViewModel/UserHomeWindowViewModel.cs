@@ -19,9 +19,9 @@ namespace Frontend.ViewModel
         public ICommand DeleteBoardCommand { get; }
         public ICommand LogoutCommand { get; }
 
-        public UserHomeWindowViewModel(UserModel user, BoardController controller)
+        public UserHomeWindowViewModel(BoardController controller)
         {
-            _user = user;
+            _user = (UserModel)Application.Current.Properties["CurrentUser"]!;
             _controller = controller;
             _newBoardName = string.Empty;
             LogoutCommand = new RelayCommand(_ => ExecuteLogout());

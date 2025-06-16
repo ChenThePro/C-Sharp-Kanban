@@ -21,6 +21,5 @@ namespace Frontend.Model
             Columns = new(board.Columns.Select(c => new ColumnModel(controller, c)));
             IsExpanded = false;
         }
-
     }
 }

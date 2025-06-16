@@ -12,7 +12,7 @@ namespace Frontend.Model
         public UserModel(UserController controller, UserSL user) : base(controller)
         {
             _email = user.Email;
-            Boards = new(user.Boards.Select(b => new BoardModel(controller, b)));
+            Boards = new(user.Boards.Select(b => new BoardModel(null!, b)));
         }
     }
 }
