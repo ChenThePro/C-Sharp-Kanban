@@ -1,17 +1,19 @@
-﻿using System;
-using System.Collections.ObjectModel;
+﻿using System.Collections.ObjectModel;
 using System.Globalization;
 using System.Windows.Data;
 
-public class MembersToStringConverter : IValueConverter
+namespace Frontend
 {
-    public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
+    public class MembersToStringConverter : IValueConverter
     {
-        if (value is ObservableCollection<string> members)
-            return "Members: " + string.Join(", ", members);
-        return "Members: None";
-    }
+        public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
+        {
+            if (value is ObservableCollection<string> members)
+                return "Members: " + string.Join(", ", members);
+            return "Members: None";
+        }
 
-    public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture) =>
-        throw new NotImplementedException();
+        public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture) =>
+            throw new NotImplementedException();
+    }
 }

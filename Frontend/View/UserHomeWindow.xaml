@@ -51,7 +51,6 @@
                         <DataTemplate>
                             <materialDesign:Card Margin="0 0 0 10" Padding="20" materialDesign:ElevationAssist.Elevation="Dp2">
                                 <StackPanel>
-                                    <!-- Board Header -->
                                     <StackPanel Orientation="Horizontal" VerticalAlignment="Center" HorizontalAlignment="Stretch" MouseLeftButtonDown="ToggleBoardExpand">
                                         <StackPanel Width="800">
                                             <TextBlock Text="{Binding Name, StringFormat='Name: {0}'}" FontWeight="Bold" FontSize="16" />
@@ -62,7 +61,6 @@
                                         <TextBlock Text="▶" FontSize="16" Visibility="{Binding IsExpanded, Converter={StaticResource InverseBoolToVisibilityConverter}}" />
                                     </StackPanel>
 
-                                    <!-- Columns Section -->
                                     <ItemsControl ItemsSource="{Binding Columns}" Visibility="{Binding IsExpanded, Converter={StaticResource BoolToVisibilityConverter}}">
                                         <ItemsControl.ItemTemplate>
                                             <DataTemplate>
