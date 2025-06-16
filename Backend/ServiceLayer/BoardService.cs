@@ -41,7 +41,13 @@ namespace IntroSE.Kanban.Backend.ServiceLayer
             try
             {
                 _boardFacade.CreateBoard(email, boardName);
-                return ToResponseJson(null, new BoardSL(email, boardName, new List<string>{email}, new List<ColumnSL>()));
+                List<ColumnSL> lst = new()
+                {
+                    new("backlog", -1, new List<TaskSL>()),
+                    new("in progress", -1, new List<TaskSL>()),
+                    new("done", -1, new List<TaskSL>())
+                };
+                return ToResponseJson(null, new BoardSL(email, boardName, new List<string>{email}, lst));
             }
             catch (Exception ex)
             {
