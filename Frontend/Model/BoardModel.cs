@@ -5,10 +5,13 @@ namespace Frontend.Model
 {
     public class BoardModel : NotifiableModelObject
     {
+        private bool _isExpanded;
+
         public string Name { get; init; }
         public string Owner { get; set; }
         public ObservableCollection<string> Members { get; init; }
         public ObservableCollection<ColumnModel> Columns { get; init; }
+        public bool IsExpanded { get => _isExpanded; set { _isExpanded = value; RaisePropertyChanged(); } }
 
         public BoardModel(BackendController controller, BoardSL board) : base(controller)
         {
@@ -16,6 +19,7 @@ namespace Frontend.Model
             Owner = board.Owner;
             Members = new(board.Members);
             Columns = new(board.Columns.Select(c => new ColumnModel(controller, c)));
+            IsExpanded = false;
         }
     }
 }
