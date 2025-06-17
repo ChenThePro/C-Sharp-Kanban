@@ -1,7 +1,7 @@
 ﻿using System.ComponentModel;
 using System.Runtime.CompilerServices;
 
-namespace Frontend
+namespace Frontend.Utils
 {
     public abstract class NotifiableObject : INotifyPropertyChanged
     {

@@ -8,16 +8,11 @@ namespace Frontend.View
     public partial class MainWindow : Window
     {
         private readonly MainWindowViewModel _viewModel;
-        private readonly UserController _controller;
 
         public MainWindow()
         {
             InitializeComponent();
-            _controller = new();
-            _viewModel = new(_controller)
-            {
-                CloseAction = Close
-            };
+            _viewModel = new();
             DataContext = _viewModel;
         }
 
@@ -31,6 +26,41 @@ namespace Frontend.View
         {
             if (DataContext is MainWindowViewModel vm)
                 vm.ConfirmPassword = ((PasswordBox)sender).Password;
+        }
+
+        private void SignIn_Click(object sender, RoutedEventArgs e)
+        {
+            UserModel? user = _viewModel.SignIn();
+            if (user != null)
+            {
+                Application.Current.Properties["CurrentUser"] = user;
+                MessageBox.Show($"Signed in as {user.Email}", "Success", MessageBoxButton.OK, MessageBoxImage.Information);
+                UserHomeWindow userHome = new();
+                Application.Current.MainWindow = userHome;
+                Close();
+                userHome.Show();
+            }
+            else MessageBox.Show(_viewModel.ErrorMessage, "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+        }
+
+        private void SignUp_Click(object sender, RoutedEventArgs e)
+        {
+            if (!_viewModel.ValidatePasswords())
+                MessageBox.Show(_viewModel.ErrorMessage, "Warning", MessageBoxButton.OK, MessageBoxImage.Warning);
+            else
+            {
+                UserModel? user = _viewModel.SignUp();
+                if (user != null)
+                {
+                    Application.Current.Properties["CurrentUser"] = user;
+                    MessageBox.Show($"Registered as {user.Email}", "Success", MessageBoxButton.OK, MessageBoxImage.Information);
+                    UserHomeWindow userHome = new();
+                    Application.Current.MainWindow = userHome;
+                    Close();
+                    userHome.Show();
+                }
+                else MessageBox.Show(_viewModel.ErrorMessage, "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+            }
         }
     }
 }

@@ -1,81 +1,74 @@
 ﻿using System.Collections.ObjectModel;
-using Frontend.Command;
 using Frontend.Model;
-using System.Windows.Input;
 using System.Windows;
-using Frontend.View;
+using Frontend.Controllers;
+using Frontend.Utils;
 
 namespace Frontend.ViewModel
 {
-    internal class UserHomeWindowViewModel : NotifiableObject
+    public class UserHomeWindowViewModel : NotifiableObject
     {
+        private string _newBoardName, _errorMessage;
+
+        public string NewBoardName { get => _newBoardName; set { _newBoardName = value; RaisePropertyChanged(nameof(NewBoardName)); } }
+        public string ErrorMessage { get => _errorMessage; set { _errorMessage = value; RaisePropertyChanged(nameof(ErrorMessage)); } }
+        public ObservableCollection<BoardModel> Boards => _user.Boards;
+
         private readonly UserModel _user;
         private readonly BoardController _controller;
-        private string _newBoardName;
 
-        public ObservableCollection<BoardModel> Boards => _user.Boards;
-        public string NewBoardName { get => _newBoardName; set { _newBoardName = value; RaisePropertyChanged(); } }
-        public ICommand CreateBoardCommand { get; }
-        public ICommand DeleteBoardCommand { get; }
-        public ICommand LogoutCommand { get; }
-
-        public UserHomeWindowViewModel(BoardController controller)
+        public UserHomeWindowViewModel()
         {
-            _user = (UserModel)Application.Current.Properties["CurrentUser"]!;
-            _controller = controller;
             _newBoardName = string.Empty;
-            LogoutCommand = new RelayCommand(_ => ExecuteLogout());
-            CreateBoardCommand = new RelayCommand(_ => ExecuteCreateBoard());
-            DeleteBoardCommand = new RelayCommand(b => ExecuteDeleteBoard(b as BoardModel));
+            _errorMessage = string.Empty;
+            _user = (UserModel)Application.Current.Properties["CurrentUser"]!;
+            _controller = ControllerFactory.Instance.BoardController;
         }
 
-        private void ExecuteCreateBoard()
+        public BoardModel? CreateBoard()
         {
+            BoardModel? board = null;
             try
             {
-                BoardModel newBoard = _controller.CreateBoard(_user.Email, NewBoardName);
-                Boards.Add(newBoard);
+                board = _controller.CreateBoard(_user.Email, NewBoardName);
+                Boards.Add(board);
                 NewBoardName = string.Empty;
-            }
+            }   
             catch (Exception ex)
             {
-                MessageBox.Show($"Failed to create board: {ex.Message}", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+                ErrorMessage = $"Failed to create board: {ex.Message}";
             }
+            return board;
         }
 
-        private void ExecuteDeleteBoard(BoardModel? board)
+        public bool DeleteBoard(BoardModel? board)
         {
-            if (board == null) return;
+            if (board == null) return false;
             try
             {
-                _controller.DeleteBoard(_user.Email, board.Name);
+                board.Controller.DeleteBoard(_user.Email, board.Name);
                 Boards.Remove(board);
+                return true;
             }
             catch (Exception ex)
             {
-                MessageBox.Show($"Failed to delete board: {ex.Message}", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+                ErrorMessage = $"Failed to delete board: {ex.Message}";
+                return false;
             }
         }
 
-        private void ExecuteLogout()
+        public bool Logout()
         {
             try
             {
                 _user.Controller.Logout(_user.Email);
-                Application.Current.Properties["CurrentUser"] = null;
-                MainWindow mainWindow = new();
-                Application.Current.MainWindow = mainWindow;
-                CloseWindow();
-                mainWindow.Show();
+                return true;
             }
             catch (Exception ex)
             {
-                MessageBox.Show($"Logout failed: {ex.Message}", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+                ErrorMessage = $"Logout failed: {ex.Message}";
+                return false;
             }
         }
-
-        public Action? CloseAction { get; set; }
-
-        private void CloseWindow() => CloseAction?.Invoke();
     }
 }

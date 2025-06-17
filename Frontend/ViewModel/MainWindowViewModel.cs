@@ -1,79 +1,66 @@
-﻿using System.Windows.Input;
-using Frontend.Command;
+﻿using Frontend.Controllers;
 using Frontend.Model;
-using System.Windows;
-using Frontend.View;
+using Frontend.Utils;
 
 namespace Frontend.ViewModel
 {
     public class MainWindowViewModel : NotifiableObject
     {
-        private string _email;
-        private string _password;
-        private string _confirmPassword;
+        private string _email, _password, _confirmPassword, _errorMessage;
 
-        public string Email { get => _email; set { _email = value; RaisePropertyChanged(); } }
-        public string Password { get => _password; set { _password = value; RaisePropertyChanged(); } }
-        public string ConfirmPassword { get => _confirmPassword; set { _confirmPassword = value; RaisePropertyChanged(); } }
+        public string Email { get => _email; set { _email = value; RaisePropertyChanged(nameof(Email)); } }
+        public string Password { get => _password; set { _password = value; RaisePropertyChanged(nameof(Password)); } }
+        public string ConfirmPassword { get => _confirmPassword; set { _confirmPassword = value; RaisePropertyChanged(nameof(ConfirmPassword)); } }
+        public string ErrorMessage { get => _errorMessage; set { _errorMessage = value; RaisePropertyChanged(nameof(ErrorMessage)); } }
+
 
         private readonly UserController _controller;
 
-        public ICommand SignInCommand { get; }
-        public ICommand SignUpCommand { get; }
-
-        public MainWindowViewModel(UserController controller)
+        public MainWindowViewModel()
         {
             _email = string.Empty;
             _password = string.Empty;
             _confirmPassword = string.Empty;
-            _controller = controller;
-            SignInCommand = new RelayCommand(_ => SignIn());
-            SignUpCommand = new RelayCommand(_ => SignUp());
+            _errorMessage = string.Empty;
+            _controller = ControllerFactory.Instance.UserController;
         }
 
-        private void SignIn()
+        public UserModel? SignIn()
         {
+            UserModel? user = null;
             try
             {
-                UserModel user = _controller.SignIn(Email, Password);
-                Application.Current.Properties["CurrentUser"] = user;
-                MessageBox.Show($"Signed in as {user.Email}");
-                UserHomeWindow userHome = new(user);
-                Application.Current.MainWindow = userHome;
-                userHome.Show();
-                CloseWindow();
+                user = _controller.SignIn(Email, Password);
+            }
+            catch (Exception)
+            {
+                ErrorMessage = "Error signing in: email or password are incorrect";
+            }
+            return user;
+        }
+
+        public UserModel? SignUp()
+        {
+            UserModel? user = null;
+            try
+            {
+                user = _controller.SignUp(Email, Password);
             }
             catch (Exception ex)
             {
-                MessageBox.Show($"Error registering: {ex.Message}", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+                ErrorMessage = $"Error registering: {ex.Message}";
             }
+            return user;
         }
 
-        private void SignUp()
+        public bool ValidatePasswords()
         {
             if (Password != ConfirmPassword)
             {
-                MessageBox.Show("Passwords do not match", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
-                return;
+                ErrorMessage = "Passwords do not match";
+                return false;
             }
-            try
-            {
-                UserModel user = _controller.SignUp(Email, Password);
-                Application.Current.Properties["CurrentUser"] = user;
-                MessageBox.Show($"Registered as {user.Email}");
-                UserHomeWindow userHome = new(user);
-                Application.Current.MainWindow = userHome;
-                userHome.Show();
-                CloseWindow();
-            }
-            catch (Exception ex)
-            {
-                MessageBox.Show($"Error registering: {ex.Message}", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
-            }
+            return true;
         }
-
-        public Action? CloseAction { get; set; }
-
-        private void CloseWindow() => CloseAction?.Invoke();
     }
 }

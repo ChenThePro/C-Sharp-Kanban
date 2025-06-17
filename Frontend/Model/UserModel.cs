@@ -1,4 +1,6 @@
-﻿using IntroSE.Kanban.Backend.ServiceLayer;
+﻿using Frontend.Controllers;
+using Frontend.Utils;
+using IntroSE.Kanban.Backend.ServiceLayer;
 using System.Collections.ObjectModel;
 
 namespace Frontend.Model
@@ -6,13 +8,14 @@ namespace Frontend.Model
     public class UserModel : NotifiableModelObject<UserController> 
     {
         private string _email;
+
         public string Email { get => _email; set { _email = value; RaisePropertyChanged(nameof(Email)); } }
         public ObservableCollection<BoardModel> Boards { get; init; }
 
         public UserModel(UserController controller, UserSL user) : base(controller)
         {
             _email = user.Email;
-            Boards = new(user.Boards.Select(b => new BoardModel(null!, b)));
+            Boards = new(user.Boards.Select(b => new BoardModel(ControllerFactory.Instance.BoardController, b)));
         }
     }
 }

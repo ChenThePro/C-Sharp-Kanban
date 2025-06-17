@@ -5,35 +5,69 @@ using System.Windows.Input;
 
 namespace Frontend.View
 {
-    /// <summary>
-    /// Interaction logic for UserHomeWindow.xaml
-    /// </summary>
     public partial class UserHomeWindow : Window
     {
         private readonly UserHomeWindowViewModel _viewModel;
-        private readonly BoardController _controller;
 
-
-        public UserHomeWindow(UserModel user)
+        public UserHomeWindow()
         {
             InitializeComponent();
-            _controller = new(user.Controller.GetFactory());
-            _viewModel = new(_controller)
-            {
-                CloseAction = () => Close()
-            };
+            _viewModel = new();
             DataContext = _viewModel;
         }
+
         private void ToggleBoardExpand(object sender, MouseButtonEventArgs e)
         {
-            if ((sender as FrameworkElement)?.DataContext is BoardModel board)
+            if (sender is FrameworkElement { DataContext: BoardModel board })
                 board.IsExpanded = !board.IsExpanded;
         }
 
         private void ToggleColumnExpand(object sender, MouseButtonEventArgs e)
         {
-            if ((sender as FrameworkElement)?.DataContext is ColumnModel column)
+            if (sender is FrameworkElement { DataContext: ColumnModel column })
                 column.IsExpanded = !column.IsExpanded;
+        }
+
+        private void Logout_Click(object sender, RoutedEventArgs e)
+        {
+            MessageBoxResult result = MessageBox.Show(
+                "Are you sure you want to logout?",
+                "Logout",
+                MessageBoxButton.YesNo,
+                MessageBoxImage.Warning);
+            if (result != MessageBoxResult.Yes)
+                return;
+            if (_viewModel.Logout())
+            {
+                Application.Current.Properties["CurrentUser"] = null;
+                MainWindow mainWindow = new();
+                Application.Current.MainWindow = mainWindow;
+                Close();
+                mainWindow.Show();
+            }
+            else MessageBox.Show(_viewModel.ErrorMessage, "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+        }
+
+        private void CreateBoard_Click(object sender, RoutedEventArgs e)
+        {
+            BoardModel? board = _viewModel.CreateBoard();
+            if (board != null)
+                MessageBox.Show($"Board '{board.Name}' created successfully!", "Success", MessageBoxButton.OK, MessageBoxImage.Information);
+            else MessageBox.Show(_viewModel.ErrorMessage, "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+        }
+
+        private void DeleteBoard_Click(object sender, RoutedEventArgs e)
+        {
+            MessageBoxResult result = MessageBox.Show(
+                "Are you sure you want to delete this board?",
+                "Deletion",
+                MessageBoxButton.YesNo,
+                MessageBoxImage.Warning);
+            if (result != MessageBoxResult.Yes)
+                return;
+            if (_viewModel.DeleteBoard((sender as FrameworkElement)?.DataContext as BoardModel))
+                MessageBox.Show("Board deleted successfully!", "Success", MessageBoxButton.OK, MessageBoxImage.Information);
+            else MessageBox.Show(_viewModel.ErrorMessage, "Error", MessageBoxButton.OK, MessageBoxImage.Error);
         }
     }
 }
