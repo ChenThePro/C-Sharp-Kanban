@@ -2,7 +2,7 @@
 using System.Globalization;
 using System.Windows.Data;
 
-namespace Frontend
+namespace Frontend.Utils
 {
     public class MembersToStringConverter : IValueConverter
     {
