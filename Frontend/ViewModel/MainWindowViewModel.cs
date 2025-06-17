@@ -1,6 +1,7 @@
 ﻿using Frontend.Controllers;
 using Frontend.Model;
 using Frontend.Utils;
+using IntroSE.Kanban.Backend.ServiceLayer;
 
 namespace Frontend.ViewModel
 {
@@ -15,6 +16,19 @@ namespace Frontend.ViewModel
 
 
         private readonly UserController _controller;
+        private string _generatedCode;
+        private string _newPassword;
+       
+        public string NewPassword
+        {
+            get => _newPassword;
+            set
+            {
+                _newPassword = value;
+                RaisePropertyChanged(nameof(NewPassword));
+            }
+        }
+
 
         public MainWindowViewModel()
         {
@@ -61,6 +75,40 @@ namespace Frontend.ViewModel
                 return false;
             }
             return true;
+        }
+
+        public bool UpdatePassword(string email, string newPassword)
+        {
+            try
+            {
+                _controller.changePassword(email, newPassword);
+                Password = newPassword;
+            }
+            catch (Exception ex) {
+                ErrorMessage = $"Error changing password: {ex.Message}";
+                return false;
+            }
+            return true;
+        }
+
+
+        public bool SendResetCodeToEmail(string email)
+        {
+            try
+            {
+                _controller.AuthenticateUser(email); // Optional validation
+
+                _generatedCode = new Random().Next(100000, 999999).ToString(); // 6-digit code
+
+                TempData.Save(email, _generatedCode);
+
+                return new EmailService().SendResetCode(email, _generatedCode);
+            }
+            catch (Exception ex)
+            {
+                ErrorMessage = $"Error sending reset code: {ex.Message}";
+                return false;
+            }
         }
     }
 }

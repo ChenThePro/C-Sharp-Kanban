@@ -24,8 +24,8 @@ namespace IntroSE.Kanban.Backend.BuisnessLayer.UserPackage
             AuthenticateString(email, "Email");
             if (!_emails.ContainsKey(email))
             {
-                Log.Error(email + " doesn't exist.");
-                throw new KeyNotFoundException(email + " doesn't exist.");
+                Log.Error(email + " doesn't exist in the system.");
+                throw new KeyNotFoundException(email + " doesn't exist in the system.");
             }
         }
 
@@ -121,6 +121,14 @@ namespace IntroSE.Kanban.Backend.BuisnessLayer.UserPackage
                 Log.Error($"{name} cannot be null or empty.");
                 throw new ArgumentNullException($"{name} cannot be null or empty.");
             }
+        }
+
+        internal void ChangePassword(string email, string newPassword)
+        {
+            AuthenticateUser(email);
+            ValidatePassword(newPassword);
+            UserBL user = _emails[email];
+            user.Password = newPassword;
         }
     }
 }

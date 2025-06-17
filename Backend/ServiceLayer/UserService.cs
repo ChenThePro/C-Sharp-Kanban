@@ -94,5 +94,31 @@ namespace IntroSE.Kanban.Backend.ServiceLayer
                 return ToJsonResponse(ex.Message);
             }
         }
+
+        public string changePassword(string email, string newPassword)
+        {
+            try
+            {
+                _userFacade.ChangePassword(email, newPassword);
+                return ToJsonResponse();
+            }
+            catch (Exception ex)
+            {
+                return ToJsonResponse(ex.Message);
+            }
+        }
+
+        public string AuthenticateUser(string email)
+        {
+            try
+            {
+                _userFacade.AuthenticateUser(email);
+                return ToJsonResponse();
+            }
+            catch (Exception ex)
+            {
+                return ToJsonResponse(ex.Message);
+            }
+        }
     }
 }

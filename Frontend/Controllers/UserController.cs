@@ -25,5 +25,9 @@ namespace Frontend.Controllers
                 throw new(response.ErrorMessage);
             return response.ReturnValue is null ? default! : ((JsonElement)response.ReturnValue).Deserialize<T>()!;
         }
+
+        internal void changePassword(string email, string password) => Call<object>(() => _userService.changePassword(email,password));
+
+        internal void AuthenticateUser(string email) => Call<object>(() => _userService.AuthenticateUser(email));
     }
 }
