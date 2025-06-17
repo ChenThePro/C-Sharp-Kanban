@@ -22,7 +22,7 @@ namespace IntroSE.Kanban.Backend.BuisnessLayer.UserPackage
 
         internal string Password { 
             get => _password; 
-            private set { _password = value; _userDTO.Password = value; } 
+            set { _password = value; _userDTO.Password = value; } 
         }
 
         internal bool LoggedIn { 

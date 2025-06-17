@@ -28,21 +28,6 @@ namespace Frontend.View
                 vm.ConfirmPassword = ((PasswordBox)sender).Password;
         }
 
-        private void SignIn_Click(object sender, RoutedEventArgs e)
-        {
-            UserModel? user = _viewModel.SignIn();
-            if (user != null)
-            {
-                Application.Current.Properties["CurrentUser"] = user;
-                MessageBox.Show($"Signed in as {user.Email}", "Success", MessageBoxButton.OK, MessageBoxImage.Information);
-                UserHomeWindow userHome = new();
-                Application.Current.MainWindow = userHome;
-                Close();
-                userHome.Show();
-            }
-            else MessageBox.Show(_viewModel.ErrorMessage, "Error", MessageBoxButton.OK, MessageBoxImage.Error);
-        }
-
         private void SignUp_Click(object sender, RoutedEventArgs e)
         {
             if (!_viewModel.ValidatePasswords())
@@ -62,5 +47,30 @@ namespace Frontend.View
                 else MessageBox.Show(_viewModel.ErrorMessage, "Error", MessageBoxButton.OK, MessageBoxImage.Error);
             }
         }
+        private void SignIn_Click(object sender, RoutedEventArgs e)
+        {
+            UserModel? user = _viewModel.SignIn();
+            if (user != null)
+            {
+                Application.Current.Properties["CurrentUser"] = user;
+                MessageBox.Show($"Signed in as {user.Email}", "Success", MessageBoxButton.OK, MessageBoxImage.Information);
+                UserHomeWindow userHome = new();
+                Application.Current.MainWindow = userHome;
+                Close();
+                userHome.Show();
+            }
+            else
+            {
+                MessageBox.Show(_viewModel.ErrorMessage, "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+                ForgotPasswordButton.Visibility = Visibility.Visible;
+            }
+        }
+
+        private void ForgotPassword_Click(object sender, RoutedEventArgs e)
+        {
+            ResetPasswordWindow resetWindow = new();
+            resetWindow.ShowDialog();
+        }
+
     }
 }
