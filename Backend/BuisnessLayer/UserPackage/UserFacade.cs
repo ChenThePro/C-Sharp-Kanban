@@ -123,7 +123,7 @@ namespace IntroSE.Kanban.Backend.BuisnessLayer.UserPackage
             }
         }
 
-        internal void ChangePassword(string email, string newPassword)
+        internal void ResetPassword(string email, string newPassword)
         {
             AuthenticateUser(email);
             ValidatePassword(newPassword);

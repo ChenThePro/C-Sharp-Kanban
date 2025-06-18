@@ -26,7 +26,7 @@
                             Margin="0 10"
                             Style="{StaticResource MaterialDesignFloatingHintPasswordBox}"
                             materialDesign:HintAssist.Hint="Password"
-                            PasswordChanged="PasswordBox_PasswordChanged" />
+                            PasswordChanged="PasswordBox_PasswordChanged"/>
 
                         <Button
                             x:Name="ForgotPasswordButton"
@@ -62,7 +62,7 @@
                             Margin="0 10"
                             Style="{StaticResource MaterialDesignFloatingHintPasswordBox}"
                             materialDesign:HintAssist.Hint="Password"
-                            PasswordChanged="PasswordBox_PasswordChanged" />
+                            PasswordChanged="PasswordBox_PasswordChanged"/>
 
                         <PasswordBox
                             Margin="0 10"

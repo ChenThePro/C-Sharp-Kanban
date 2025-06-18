@@ -18,16 +18,16 @@ namespace Frontend.Controllers
 
         public void Logout(string email) => Call<object>(() => _userService.Logout(email));
 
+        internal void ResetPassword(string email, string password) => Call<object>(() => _userService.ResetPassword(email, password));
+
+        internal void AuthenticateUser(string email) => Call<object>(() => _userService.AuthenticateUser(email));
+
         private T Call<T>(Func<string> serviceCall)
         {
             var response = JsonSerializer.Deserialize<Response>(serviceCall())!;
-            if (!string.IsNullOrEmpty(response.ErrorMessage))
+            if (response.ErrorMessage != null)
                 throw new(response.ErrorMessage);
             return response.ReturnValue is null ? default! : ((JsonElement)response.ReturnValue).Deserialize<T>()!;
         }
-
-        internal void changePassword(string email, string password) => Call<object>(() => _userService.changePassword(email,password));
-
-        internal void AuthenticateUser(string email) => Call<object>(() => _userService.AuthenticateUser(email));
     }
 }

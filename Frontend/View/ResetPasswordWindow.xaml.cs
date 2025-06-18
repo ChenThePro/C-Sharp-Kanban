@@ -1,40 +1,32 @@
-﻿using System.Windows;
-using System.Windows.Controls;
+﻿using Frontend.Utils;
 using Frontend.ViewModel;
+using System.Windows;
 
 namespace Frontend.View
 {
     public partial class ResetPasswordWindow : Window
     {
-        private readonly MainWindowViewModel _viewModel;
+        private readonly ResetPasswordWindowViewModel _viewModel;
+        private readonly InMemoryTempCodeService _codeService;
 
-        public ResetPasswordWindow()
+        public ResetPasswordWindow(InMemoryTempCodeService codeService)
         {
+            _codeService = codeService;
             InitializeComponent();
-            _viewModel = new();
+            _viewModel = new(_codeService);
             DataContext = _viewModel;
-        }
-
-        private void EmailBox_TextChanged(object sender, TextChangedEventArgs e)
-        {
-            if (sender is TextBox box)
-                _viewModel.Email = box.Text;
         }
 
         private void SendCode_Click(object sender, RoutedEventArgs e)
         {
-            if (_viewModel.SendResetCodeToEmail(_viewModel.Email))
+            if (_viewModel.SendResetCode())
             {
-                MessageBox.Show("A code has been sent to your email.", "Success");
-                VerificationWindow verifyWindow = new(_viewModel.Email);
+                MessageBox.Show(_viewModel.Message, _viewModel.Status, MessageBoxButton.OK, MessageBoxImage.Information);
+                VerificationWindow verifyWindow = new(_viewModel.Email, _codeService);
                 verifyWindow.Show();
                 Close();
             }
-            else
-            {
-                MessageBox.Show(_viewModel.ErrorMessage, "Error");
-            }
+            else MessageBox.Show(_viewModel.Message, _viewModel.Status, MessageBoxButton.OK, MessageBoxImage.Error);
         }
-
     }
 }
