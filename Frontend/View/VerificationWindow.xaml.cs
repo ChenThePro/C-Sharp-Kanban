@@ -1,46 +1,30 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using Frontend.Utils;
+using Frontend.ViewModel;
 using System.Windows;
-using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
-using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Shapes;
 
 namespace Frontend.View
 {
-    /// <summary>
-    /// Interaction logic for VerificationWindow.xaml
-    /// </summary>
     public partial class VerificationWindow : Window
     {
-        private readonly string _email;
-        public VerificationWindow(string email)
+        private readonly VerificationWindowViewModel _viewModel;
+
+        public VerificationWindow(string email, InMemoryTempCodeService codeService)
         {
             InitializeComponent();
-            _email = email;
+            _viewModel = new(email, codeService);
+            DataContext = _viewModel;
         }
 
         private void Verify_Click(object sender, RoutedEventArgs e)
         {
-            var inputCode = CodeBox.Text;
-
-            if (TempData.TryGetCode(_email, out string code) && inputCode == code)
+            if (_viewModel.Verify())
             {
-                TempData.Remove(_email);
-                var newPasswordWindow = new NewPasswordWindow(_email);
-                newPasswordWindow.Show();
+                MessageBox.Show(_viewModel.Message, _viewModel.Status, MessageBoxButton.OK, MessageBoxImage.Information);
+                NewPasswordWindow newPasswordWindow = new(_viewModel.Email);
                 Close();
+                newPasswordWindow.Show();
             }
-            else
-            {
-                MessageBox.Show("Invalid code.", "Error");
-            }
+            else MessageBox.Show(_viewModel.Message, _viewModel.Status, MessageBoxButton.OK, MessageBoxImage.Error);
         }
     }
 }

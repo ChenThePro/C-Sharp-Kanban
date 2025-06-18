@@ -6,7 +6,7 @@
     <Grid>
         <StackPanel Margin="20">
             <TextBlock Text="Enter the code sent to your email:"/>
-            <TextBox x:Name="CodeBox" Margin="0 10"/>
+            <TextBox Margin="0 10" Text="{Binding InputCode, Mode=TwoWay,UpdateSourceTrigger=PropertyChanged}" />
             <Button Content="Verify" Click="Verify_Click" Width="100" HorizontalAlignment="Center"/>
         </StackPanel>
     </Grid>

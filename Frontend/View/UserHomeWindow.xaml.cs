@@ -28,6 +28,28 @@ namespace Frontend.View
                 column.IsExpanded = !column.IsExpanded;
         }
 
+        private void CreateBoard_Click(object sender, RoutedEventArgs e)
+        {
+            BoardModel? board = _viewModel.CreateBoard();
+            if (board != null)
+                MessageBox.Show(_viewModel.Message, _viewModel.Status, MessageBoxButton.OK, MessageBoxImage.Information);
+            else MessageBox.Show(_viewModel.Message, _viewModel.Status, MessageBoxButton.OK, MessageBoxImage.Error);
+        }
+
+        private void DeleteBoard_Click(object sender, RoutedEventArgs e)
+        {
+            MessageBoxResult result = MessageBox.Show(
+                "Are you sure you want to delete this board?",
+                "Deletion",
+                MessageBoxButton.YesNo,
+                MessageBoxImage.Warning);
+            if (result != MessageBoxResult.Yes)
+                return;
+            if (_viewModel.DeleteBoard((sender as FrameworkElement)?.DataContext as BoardModel))
+                MessageBox.Show(_viewModel.Message, _viewModel.Status, MessageBoxButton.OK, MessageBoxImage.Information);
+            else MessageBox.Show(_viewModel.Message, _viewModel.Status, MessageBoxButton.OK, MessageBoxImage.Error);
+        }
+
         private void Logout_Click(object sender, RoutedEventArgs e)
         {
             MessageBoxResult result = MessageBox.Show(
@@ -45,29 +67,7 @@ namespace Frontend.View
                 Close();
                 mainWindow.Show();
             }
-            else MessageBox.Show(_viewModel.ErrorMessage, "Error", MessageBoxButton.OK, MessageBoxImage.Error);
-        }
-
-        private void CreateBoard_Click(object sender, RoutedEventArgs e)
-        {
-            BoardModel? board = _viewModel.CreateBoard();
-            if (board != null)
-                MessageBox.Show($"Board '{board.Name}' created successfully!", "Success", MessageBoxButton.OK, MessageBoxImage.Information);
-            else MessageBox.Show(_viewModel.ErrorMessage, "Error", MessageBoxButton.OK, MessageBoxImage.Error);
-        }
-
-        private void DeleteBoard_Click(object sender, RoutedEventArgs e)
-        {
-            MessageBoxResult result = MessageBox.Show(
-                "Are you sure you want to delete this board?",
-                "Deletion",
-                MessageBoxButton.YesNo,
-                MessageBoxImage.Warning);
-            if (result != MessageBoxResult.Yes)
-                return;
-            if (_viewModel.DeleteBoard((sender as FrameworkElement)?.DataContext as BoardModel))
-                MessageBox.Show("Board deleted successfully!", "Success", MessageBoxButton.OK, MessageBoxImage.Information);
-            else MessageBox.Show(_viewModel.ErrorMessage, "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+            else MessageBox.Show(_viewModel.Message, _viewModel.Status, MessageBoxButton.OK, MessageBoxImage.Error);
         }
     }
 }

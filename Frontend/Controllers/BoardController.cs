@@ -19,7 +19,7 @@ namespace Frontend.Controllers
         private T Call<T>(Func<string> serviceCall)
         {
             var response = JsonSerializer.Deserialize<Response>(serviceCall())!;
-            if (!string.IsNullOrEmpty(response.ErrorMessage))
+            if (response.ErrorMessage != null)
                 throw new(response.ErrorMessage);
             return response.ReturnValue is null ? default! : ((JsonElement)response.ReturnValue).Deserialize<T>()!;
         }

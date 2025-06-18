@@ -1,38 +1,37 @@
 ﻿using System.Net;
 using System.Net.Mail;
 
-public class EmailService
+namespace Frontend.Utils
 {
-    private readonly string _from = "max_shor@yahoo.com";
-    private readonly string _smtpHost = "smtp.mail.yahoo.com";
-    private readonly int _smtpPort = 587;
-    private readonly string _smtpUser = "max_shor@yahoo.com";
-    private readonly string _smtpPass = "bvyx rpsb lfsl ursr";
-
-    public bool SendResetCode(string toEmail, string code)
+    public class EmailService
     {
-        try
-        {
-            using var client = new SmtpClient(_smtpHost, _smtpPort)
-            {
-                Credentials = new NetworkCredential(_smtpUser, _smtpPass),
-                EnableSsl = true
-            };
+        private const string FROM = "max_shor@yahoo.com";
+        private const string SMTP_HOST = "smtp.mail.yahoo.com";
+        private const int SMTP_PORT = 587;
+        private const string SMTP_PASS = "bvyx rpsb lfsl ursr";
 
-            var mail = new MailMessage(_from, toEmail)
-            {
-                Subject = "Password Reset Code",
-                Body = $"Your password reset code is: {code}",
-                IsBodyHtml = false
-            };
-
-            client.Send(mail);
-            return true;
-        }
-        catch
+        public bool SendResetCode(string toEmail, string code)
         {
-            return false;
+            try
+            {
+                using SmtpClient client = new(SMTP_HOST, SMTP_PORT)
+                {
+                    Credentials = new NetworkCredential(FROM, SMTP_PASS),
+                    EnableSsl = true
+                };
+                MailMessage mail = new(FROM, toEmail)
+                {
+                    Subject = "Password Reset Code",
+                    Body = $"Your password reset code is: {code}, next time don't forget it you kuku!",
+                    IsBodyHtml = false
+                };
+                client.Send(mail);
+                return true;
+            }
+            catch
+            {
+                return false;
+            }
         }
     }
-
 }

@@ -95,11 +95,11 @@ namespace IntroSE.Kanban.Backend.ServiceLayer
             }
         }
 
-        public string changePassword(string email, string newPassword)
+        public string ResetPassword(string email, string newPassword)
         {
             try
             {
-                _userFacade.ChangePassword(email, newPassword);
+                _userFacade.ResetPassword(email, newPassword);
                 return ToJsonResponse();
             }
             catch (Exception ex)

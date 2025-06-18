@@ -86,7 +86,13 @@
                                                                     </Setter>
                                                                     <Style.Triggers>
                                                                         <DataTrigger Binding="{Binding Limit}" Value="-1">
-                                                                            <Setter Property="Text" Value="Limit: No Limit" />
+                                                                            <Setter Property="Text">
+                                                                                <Setter.Value>
+                                                                                    <MultiBinding StringFormat="No Limit ({0} Tasks)">
+                                                                                        <Binding Path="Tasks.Count" />
+                                                                                    </MultiBinding>
+                                                                                </Setter.Value>
+                                                                            </Setter>
                                                                             <Setter Property="Foreground" Value="#FF3399CC" />
                                                                         </DataTrigger>
                                                                     </Style.Triggers>
@@ -100,8 +106,8 @@
                                                                     <Border Background="Navy" BorderThickness="1" CornerRadius="4" Padding="10" Margin="5 5">
                                                                         <StackPanel>
                                                                             <TextBlock Text="{Binding Title, StringFormat='Title: {0}'}" FontWeight="Bold"/>
-                                                                            <TextBlock Text="{Binding DueDate, StringFormat='DueDate: {0:MM/dd/yyyy}'}"/>
-                                                                            <TextBlock Text="{Binding CreatedAt, StringFormat='CreatedAt: {0:MM/dd/yyyy}'}"/>
+                                                                            <TextBlock Text="{Binding DueDate, StringFormat='DueDate: {0:dd/MM/yyyy}'}"/>
+                                                                            <TextBlock Text="{Binding CreatedAt, StringFormat='CreatedAt: {0:dd/MM/yyyy}'}"/>
                                                                             <TextBlock Text="{Binding Assignee, StringFormat='Assignee: {0}'}"/>
                                                                         </StackPanel>
                                                                     </Border>
