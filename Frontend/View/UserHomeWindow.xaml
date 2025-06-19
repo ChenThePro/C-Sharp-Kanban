@@ -10,13 +10,13 @@
         Style="{StaticResource MaterialDesignWindow}"
         Title="Kanban Dashboard" Height="800" Width="1000">
 
-    <DockPanel Background="{DynamicResource MaterialDesignPaper}">
+    <DockPanel Background="White">
 
-        <materialDesign:Card DockPanel.Dock="Top" Margin="20 20 20 10" Padding="20" materialDesign:ElevationAssist.Elevation="Dp2">
+        <materialDesign:Card DockPanel.Dock="Top" Margin="20 20 20 10" Padding="20" materialDesign:ElevationAssist.Elevation="Dp2" Background="#F0F8FF">
             <Grid>
-                <TextBlock Text="Kanban Dashboard" FontSize="24" FontWeight="Bold" VerticalAlignment="Center" HorizontalAlignment="Left" />
+                <TextBlock Text="Kanban Dashboard" FontSize="24" FontWeight="Bold" VerticalAlignment="Center" HorizontalAlignment="Left" Foreground="Black"/>
                 <Button
-                    Content="Logout" 
+                    Content="Logout"
                     Click="Logout_Click"
                     Style="{StaticResource MaterialDesignOutlinedButton}"
                     HorizontalAlignment="Right"
@@ -24,106 +24,132 @@
                     materialDesign:ButtonAssist.CornerRadius="20"
                     Padding="20 5"
                     Height="32"
-                    Margin="0,0,10,0" />
+                    Margin="0,0,10,0"
+                    Foreground="#00E5FF" />
             </Grid>
         </materialDesign:Card>
 
         <ScrollViewer DockPanel.Dock="Top" Margin="20 10 20 20">
             <StackPanel>
 
-                <materialDesign:Card Margin="0 0 0 20" Padding="30" materialDesign:ElevationAssist.Elevation="Dp3">
-                    <TextBlock Text="Welcome to your Kanban board!" FontSize="18" HorizontalAlignment="Center" Foreground="{DynamicResource MaterialDesignBodyLight}" />
+                <materialDesign:Card Margin="0 0 0 20" Padding="30" materialDesign:ElevationAssist.Elevation="Dp3" Background="#E0F7FA">
+                    <TextBlock Text="Welcome to your Kanban board!" FontSize="18" HorizontalAlignment="Center" Foreground="Black" />
                 </materialDesign:Card>
 
                 <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" Margin="0 0 0 10">
                     <TextBox Width="200"
                              Margin="0 10 10 0"
+                             Foreground="Black"
+                             Background="White"
+                             CaretBrush="Black"
                              Text="{Binding NewBoardName, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
                              materialDesign:HintAssist.Hint="New Board Name"
-                             Style="{StaticResource MaterialDesignFloatingHintTextBox}" />
+                             Style="{StaticResource MaterialDesignFloatingHintTextBox}"/>
                     <Button Content="Create Board"
                             Click="CreateBoard_Click"
-                            Style="{StaticResource MaterialDesignOutlinedButton}" />
+                            Style="{StaticResource MaterialDesignOutlinedButton}"/>
                 </StackPanel>
 
                 <ItemsControl ItemsSource="{Binding Boards}">
                     <ItemsControl.ItemTemplate>
                         <DataTemplate>
-                            <materialDesign:Card Background="LightBlue" Margin="0 0 0 20" Padding="20" materialDesign:ElevationAssist.Elevation="Dp2">
+                            <materialDesign:Card Background="#E3F2FD" BorderBrush="#81D4FA" BorderThickness="1" Margin="0 0 0 20" Padding="20" materialDesign:ElevationAssist.Elevation="Dp1">
                                 <StackPanel>
                                     <DockPanel MouseLeftButtonDown="ToggleBoardExpand">
                                         <StackPanel DockPanel.Dock="Left" Width="800">
-                                            <TextBlock Text="{Binding Name, StringFormat='Name: {0}'}" FontWeight="Bold" FontSize="16"  Foreground="DarkBlue" />
-                                            <TextBlock Text="{Binding Owner, StringFormat='Owner: {0}'}" FontSize="14" />
-                                            <TextBlock Text="{Binding Members, Converter={StaticResource MembersToStringConverter}}" FontSize="14" />
+                                            <TextBlock Text="{Binding Name, StringFormat='Name: {0}'}" FontWeight="Bold" FontSize="16"  Foreground="Black" />
+                                            <TextBlock Text="{Binding Owner, StringFormat='Owner: {0}'}" FontSize="14" Foreground="Black" />
+                                            <TextBlock Text="{Binding Members, Converter={StaticResource MembersToStringConverter}}" FontSize="14" Foreground="Black" />
                                         </StackPanel>
                                         <StackPanel DockPanel.Dock="Right" Orientation="Horizontal" HorizontalAlignment="Right">
-                                            <Button Content="Delete"
+                                            <Button Content="❌"
                                                     Click="DeleteBoard_Click"
                                                     CommandParameter="{Binding}"
-                                                    Style="{StaticResource MaterialDesignOutlinedButton}" />
+                                                    Style="{StaticResource MaterialDesignFlatButton}"
+                                                    Foreground="#00B8D4"/>
                                             <TextBlock Text="▼" FontSize="16" Visibility="{Binding IsExpanded, Converter={StaticResource BoolToVisibilityConverter}}" />
                                             <TextBlock Text="▶" FontSize="16" Visibility="{Binding IsExpanded, Converter={StaticResource InverseBoolToVisibilityConverter}}" />
                                         </StackPanel>
                                     </DockPanel>
 
-                                    <ItemsControl ItemsSource="{Binding Columns}" Visibility="{Binding IsExpanded, Converter={StaticResource BoolToVisibilityConverter}}">
-                                        <ItemsControl.ItemTemplate>
-                                            <DataTemplate>
-                                                <materialDesign:Card Background="LightGray" Margin="10 5" Padding="10" materialDesign:ElevationAssist.Elevation="Dp1">
-                                                    <StackPanel>
-                                                        <TextBlock Text="{Binding Name, StringFormat='Column: {0}'}" FontWeight="Bold" FontSize="14" Foreground="Black" MouseLeftButtonDown="ToggleColumnExpand" Cursor="Hand" IsHitTestVisible="True" />
-                                                        <TextBlock FontSize="12">
-                                                            <TextBlock.Style>
-                                                                <Style TargetType="TextBlock">
-                                                                    <Setter Property="Text">
-                                                                        <Setter.Value>
-                                                                            <MultiBinding StringFormat="Limit: {0} / {1}">
-                                                                                <Binding Path="Tasks.Count" />
-                                                                                <Binding Path="Limit" />
-                                                                            </MultiBinding>
-                                                                        </Setter.Value>
-                                                                    </Setter>
-                                                                    <Style.Triggers>
-                                                                        <DataTrigger Binding="{Binding Limit}" Value="-1">
-                                                                            <Setter Property="Text">
-                                                                                <Setter.Value>
-                                                                                    <MultiBinding StringFormat="No Limit ({0} Tasks)">
-                                                                                        <Binding Path="Tasks.Count" />
-                                                                                    </MultiBinding>
-                                                                                </Setter.Value>
-                                                                            </Setter>
-                                                                            <Setter Property="Foreground" Value="#FF3399CC" />
-                                                                        </DataTrigger>
-                                                                    </Style.Triggers>
-                                                                </Style>
-                                                            </TextBlock.Style>
-                                                        </TextBlock>
+                                    <ScrollViewer Visibility="{Binding IsExpanded, Converter={StaticResource BoolToVisibilityConverter}}" HorizontalScrollBarVisibility="Auto">
+                                        <ItemsControl ItemsSource="{Binding Columns}">
+                                            <ItemsControl.ItemsPanel>
+                                                <ItemsPanelTemplate>
+                                                    <StackPanel Orientation="Horizontal"/>
+                                                </ItemsPanelTemplate>
+                                            </ItemsControl.ItemsPanel>
+                                            <ItemsControl.ItemTemplate>
+                                                <DataTemplate>
+                                                    <materialDesign:Card Background="White" Margin="10 5" Padding="10" Width="300" BorderBrush="#B3E5FC" BorderThickness="1" materialDesign:ElevationAssist.Elevation="Dp1">
+                                                        <StackPanel>
+                                                            <TextBlock Text="{Binding Name, StringFormat='Column: {0}'}"
+                                                                       FontWeight="Bold"
+                                                                       FontSize="14"
+                                                                       Foreground="Black"
+                                                                       MouseLeftButtonDown="ToggleColumnExpand"
+                                                                       Cursor="Hand"
+                                                                       IsHitTestVisible="True"
+                                                                       Margin="0 0 0 10"/>
+                                                            <TextBlock FontSize="12" Foreground="#0097A7">
+                                                                <TextBlock.Style>
+                                                                    <Style TargetType="TextBlock">
+                                                                        <Setter Property="Text">
+                                                                            <Setter.Value>
+                                                                                <MultiBinding StringFormat="Tasks: {0}/{1}">
+                                                                                    <Binding Path="Tasks.Count" />
+                                                                                    <Binding Path="Limit" />
+                                                                                </MultiBinding>
+                                                                            </Setter.Value>
+                                                                        </Setter>
+                                                                        <Style.Triggers>
+                                                                            <DataTrigger Binding="{Binding Limit}" Value="-1">
+                                                                                <Setter Property="Text">
+                                                                                    <Setter.Value>
+                                                                                        <MultiBinding StringFormat="Tasks: {0}/No Limit">
+                                                                                            <Binding Path="Tasks.Count" />
+                                                                                        </MultiBinding>
+                                                                                    </Setter.Value>
+                                                                                </Setter>
+                                                                            </DataTrigger>
+                                                                        </Style.Triggers>
+                                                                    </Style>
+                                                                </TextBlock.Style>
+                                                            </TextBlock>
 
-                                                        <ItemsControl ItemsSource="{Binding Tasks}" Visibility="{Binding IsExpanded, Converter={StaticResource BoolToVisibilityConverter}}">
-                                                            <ItemsControl.ItemTemplate>
-                                                                <DataTemplate>
-                                                                    <Border Background="Navy" BorderThickness="1" CornerRadius="4" Padding="10" Margin="5 5">
-                                                                        <StackPanel>
-                                                                            <TextBlock Text="{Binding Title, StringFormat='Title: {0}'}" FontWeight="Bold"/>
-                                                                            <TextBlock Text="{Binding DueDate, StringFormat='DueDate: {0:dd/MM/yyyy}'}"/>
-                                                                            <TextBlock Text="{Binding CreatedAt, StringFormat='CreatedAt: {0:dd/MM/yyyy}'}"/>
-                                                                            <TextBlock Text="{Binding Assignee, StringFormat='Assignee: {0}'}"/>
-                                                                        </StackPanel>
-                                                                    </Border>
-                                                                </DataTemplate>
-                                                            </ItemsControl.ItemTemplate>
-                                                        </ItemsControl>
-                                                    </StackPanel>
-                                                </materialDesign:Card>
-                                            </DataTemplate>
-                                        </ItemsControl.ItemTemplate>
-                                    </ItemsControl>
+                                                            <ItemsControl ItemsSource="{Binding Tasks}" Visibility="{Binding IsExpanded, Converter={StaticResource BoolToVisibilityConverter}}">
+                                                                <ItemsControl.ItemTemplate>
+                                                                    <DataTemplate>
+                                                                        <Border Background="#FFFFF7D1"
+                                                                                BorderBrush="#FFF3D156"
+                                                                                BorderThickness="1"
+                                                                                CornerRadius="8"
+                                                                                Padding="10"
+                                                                                Margin="5"
+                                                                                Effect="{DynamicResource MaterialDesignShadowDepth1}">
+                                                                            <StackPanel>
+                                                                                <TextBlock Text="{Binding Title, StringFormat='📌 {0}'}" FontWeight="Bold" Foreground="Black"/>
+                                                                                <TextBlock Text="{Binding DueDate, StringFormat='📅 {0:dd/MM/yyyy}'}" Foreground="Black"/>
+                                                                                <TextBlock Text="{Binding CreatedAt, StringFormat='🕓 {0:dd/MM/yyyy}'}" Foreground="Black"/>
+                                                                                <TextBlock Text="{Binding Assignee, StringFormat='👤 {0}'}" Foreground="Black"/>
+                                                                            </StackPanel>
+                                                                        </Border>
+                                                                    </DataTemplate>
+                                                                </ItemsControl.ItemTemplate>
+                                                            </ItemsControl>
+                                                        </StackPanel>
+                                                    </materialDesign:Card>
+                                                </DataTemplate>
+                                            </ItemsControl.ItemTemplate>
+                                        </ItemsControl>
+                                    </ScrollViewer>
+
                                 </StackPanel>
                             </materialDesign:Card>
                         </DataTemplate>
                     </ItemsControl.ItemTemplate>
                 </ItemsControl>
+
             </StackPanel>
         </ScrollViewer>
     </DockPanel>
