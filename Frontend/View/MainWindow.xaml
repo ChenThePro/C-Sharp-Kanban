@@ -9,77 +9,85 @@
         WindowStartupLocation="CenterScreen"
         Style="{StaticResource MaterialDesignWindow}">
 
-    <Grid Background="{DynamicResource MaterialDesignPaper}">
-        <materialDesign:Card Margin="40" Padding="40" materialDesign:ElevationAssist.Elevation="Dp4">
-            <TabControl>
+    <Grid Background="#F5FAFF">
+        <Border CornerRadius="20" Background="#FFFFFF" Margin="40" Padding="40" BorderBrush="#D0E3F0" BorderThickness="1">
+            <TabControl Background="Transparent" FontSize="14" BorderThickness="0">
+                <TabControl.Resources>
+                    <Style TargetType="TabItem">
+                        <Setter Property="Foreground" Value="Black"/>
+                        <Setter Property="Padding" Value="15,8"/>
+                        <Setter Property="FontWeight" Value="Normal"/>
+                        <Setter Property="Background" Value="Transparent"/>
+                        <Setter Property="BorderBrush" Value="Transparent"/>
+                        <Style.Triggers>
+                            <Trigger Property="IsSelected" Value="True">
+                                <Setter Property="FontWeight" Value="Bold"/>
+                                <Setter Property="Foreground" Value="#00ACC1"/>
+                                <Setter Property="BorderBrush" Value="#00ACC1"/>
+                                <Setter Property="BorderThickness" Value="0 0 0 2"/>
+                            </Trigger>
+                        </Style.Triggers>
+                    </Style>
+                </TabControl.Resources>
+
                 <TabItem Header="Sign In">
-                    <StackPanel Margin="10" VerticalAlignment="Center">
-                        <TextBlock Text="Welcome Back" FontSize="24" FontWeight="Bold" Margin="0 0 0 30" HorizontalAlignment="Center"/>
+                    <StackPanel Margin="30" VerticalAlignment="Center">
+                        <TextBlock Text="Welcome Back" FontSize="26" FontWeight="Bold" Margin="0 0 0 30" HorizontalAlignment="Center" Foreground="#263238"/>
 
-                        <TextBox
-                            Margin="0 10"
-                            Style="{StaticResource MaterialDesignFloatingHintTextBox}"
-                            materialDesign:HintAssist.Hint="Email"
-                            Text="{Binding Email, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+                        <TextBox Margin="0 10"
+                                 Style="{StaticResource MaterialDesignFloatingHintTextBox}"
+                                 materialDesign:HintAssist.Hint="Email"
+                                 materialDesign:HintAssist.IsFloating="True"
+                                 Background="White"
+                                 Foreground="Black"
+                                 CaretBrush="Black"
+                                 Text="{Binding Email, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
 
-                        <PasswordBox
-                            Margin="0 10"
-                            Style="{StaticResource MaterialDesignFloatingHintPasswordBox}"
-                            materialDesign:HintAssist.Hint="Password"
-                            PasswordChanged="PasswordBox_PasswordChanged"/>
+                        <Grid Margin="0 10" x:Name="SignInPasswordGrid" />
 
-                        <Button
-                            x:Name="ForgotPasswordButton"
-                            Content="Forgot Password?"
-                            Click="ForgotPassword_Click"
-                            Visibility="Collapsed"
-                            Style="{StaticResource MaterialDesignFlatButton}"
-                            HorizontalAlignment="Center"
-                            Margin="0 10 0 0"/>
+                        <Button x:Name="ForgotPasswordButton" Content="Forgot Password?" Click="ForgotPassword_Click"
+                                Visibility="Collapsed"
+                                Style="{StaticResource MaterialDesignFlatButton}"
+                                HorizontalAlignment="Center" Margin="0 10 0 0" Foreground="#00ACC1"/>
 
-
-                        <Button
-                            Content="Sign In"
-                            Click="SignIn_Click"
-                            Style="{StaticResource MaterialDesignRaisedButton}"
-                            Margin="0 30"
-                            HorizontalAlignment="Center"
-                            Width="150" />
+                        <Button Content="Sign In" Click="SignIn_Click"
+                                Margin="0 30"
+                                HorizontalAlignment="Center"
+                                Width="150" Height="45"
+                                Foreground="White" Background="#00ACC1"
+                                FontWeight="Bold" FontSize="16"
+                                Style="{StaticResource MaterialDesignRaisedButton}"
+                                materialDesign:ButtonAssist.CornerRadius="20" />
                     </StackPanel>
                 </TabItem>
 
                 <TabItem Header="Sign Up">
-                    <StackPanel Margin="10" VerticalAlignment="Center">
-                        <TextBlock Text="Create an Account" FontSize="24" FontWeight="Bold" Margin="0 0 0 30" HorizontalAlignment="Center"/>
+                    <StackPanel Margin="30" VerticalAlignment="Center">
+                        <TextBlock Text="Create an Account" FontSize="26" FontWeight="Bold" Margin="0 0 0 30" HorizontalAlignment="Center" Foreground="#263238"/>
 
-                        <TextBox
-                            Margin="0 10"
-                            Style="{StaticResource MaterialDesignFloatingHintTextBox}"
-                            materialDesign:HintAssist.Hint="Email"
-                            Text="{Binding Email, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+                        <TextBox Margin="0 10"
+                                 Style="{StaticResource MaterialDesignFloatingHintTextBox}"
+                                 materialDesign:HintAssist.Hint="Email"
+                                 materialDesign:HintAssist.IsFloating="True"
+                                 Background="White"
+                                 Foreground="Black"
+                                 CaretBrush="Black"
+                                 Text="{Binding Email, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
 
-                        <PasswordBox
-                            Margin="0 10"
-                            Style="{StaticResource MaterialDesignFloatingHintPasswordBox}"
-                            materialDesign:HintAssist.Hint="Password"
-                            PasswordChanged="PasswordBox_PasswordChanged"/>
+                        <Grid Margin="0 10" x:Name="SignUpPasswordGrid" />
+                        <Grid Margin="0 10" x:Name="ConfirmPasswordGrid" />
 
-                        <PasswordBox
-                            Margin="0 10"
-                            Style="{StaticResource MaterialDesignFloatingHintPasswordBox}"
-                            materialDesign:HintAssist.Hint="Confirm Password"
-                            PasswordChanged="ConfirmPasswordBox_PasswordChanged" />
-
-                        <Button
-                            Content="Sign Up"
-                            Click="SignUp_Click"
-                            Style="{StaticResource MaterialDesignRaisedButton}"
-                            Margin="0 30"
-                            HorizontalAlignment="Center"
-                            Width="150" />
+                        <Button Content="Sign Up" Click="SignUp_Click"
+                                Margin="0 30"
+                                HorizontalAlignment="Center"
+                                Width="150" Height="45"
+                                Foreground="White" Background="#00ACC1"
+                                FontWeight="Bold" FontSize="16"
+                                Style="{StaticResource MaterialDesignRaisedButton}"
+                                materialDesign:ButtonAssist.CornerRadius="20" />
                     </StackPanel>
                 </TabItem>
             </TabControl>
-        </materialDesign:Card>
+        </Border>
     </Grid>
 </Window>

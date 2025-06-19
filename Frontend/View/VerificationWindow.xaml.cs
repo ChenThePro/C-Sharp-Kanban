@@ -7,10 +7,12 @@ namespace Frontend.View
     public partial class VerificationWindow : Window
     {
         private readonly VerificationWindowViewModel _viewModel;
+        private readonly InMemoryTempCodeService _codeService; 
 
         public VerificationWindow(string email, InMemoryTempCodeService codeService)
         {
             InitializeComponent();
+            _codeService = codeService; 
             _viewModel = new(email, codeService);
             DataContext = _viewModel;
         }
@@ -20,7 +22,7 @@ namespace Frontend.View
             if (_viewModel.Verify())
             {
                 MessageBox.Show(_viewModel.Message, _viewModel.Status, MessageBoxButton.OK, MessageBoxImage.Information);
-                NewPasswordWindow newPasswordWindow = new(_viewModel.Email);
+                NewPasswordWindow newPasswordWindow = new(_viewModel.Email, _codeService);
                 Close();
                 newPasswordWindow.Show();
             }
