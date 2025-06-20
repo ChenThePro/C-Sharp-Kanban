@@ -16,6 +16,12 @@ namespace Frontend.Controllers
         public void DeleteBoard(string email, string boardName) =>
             Call<object>(() => _boardService.DeleteBoard(email, boardName));
 
+        public void LoadData()
+        {
+            Call<object>(() => _boardService.DeleteRAM());
+            Call<object>(() => _boardService.LoadData());
+        }
+
         private T Call<T>(Func<string> serviceCall)
         {
             var response = JsonSerializer.Deserialize<Response>(serviceCall())!;

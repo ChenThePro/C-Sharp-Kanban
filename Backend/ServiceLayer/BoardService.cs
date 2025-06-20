@@ -331,5 +331,18 @@ namespace IntroSE.Kanban.Backend.ServiceLayer
                 return ToResponseJson(ex.Message);
             }
         }
+
+        public string DeleteRAM()
+        {
+            try
+            {
+                _boardFacade.DeleteRAM();
+                return ToResponseJson();
+            }
+            catch (Exception ex)
+            {
+                return ToResponseJson(ex.Message);
+            }
+        }
     }
 }

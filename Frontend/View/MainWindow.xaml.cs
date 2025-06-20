@@ -1,13 +1,14 @@
-﻿using System.Windows;
-using System.Windows.Controls;
-using System.Windows.Controls.Primitives;
-using System.Windows.Input;
-using System.Windows.Media;
+﻿using Frontend.Controllers;
 using Frontend.Model;
 using Frontend.Utils;
 using Frontend.ViewModel;
 using MahApps.Metro.IconPacks;
 using MaterialDesignThemes.Wpf;
+using System.Windows;
+using System.Windows.Controls;
+using System.Windows.Controls.Primitives;
+using System.Windows.Input;
+using System.Windows.Media;
 
 namespace Frontend.View
 {
@@ -44,6 +45,7 @@ namespace Frontend.View
             }
             else
             {
+                ControllerFactory.Instance.BoardController.LoadData();
                 UserModel? user = _viewModel.SignUp();
                 if (user != null)
                 {
@@ -63,6 +65,7 @@ namespace Frontend.View
 
         private void SignIn_Click(object sender, RoutedEventArgs e)
         {
+            ControllerFactory.Instance.BoardController.LoadData();
             UserModel? user = _viewModel.SignIn();
             if (user != null)
             {

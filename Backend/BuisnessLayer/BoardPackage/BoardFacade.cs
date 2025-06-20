@@ -220,6 +220,12 @@ namespace IntroSE.Kanban.Backend.BuisnessLayer.BoardPackage
             _userfacade._emails.Clear();
         }
 
+        internal void DeleteRAM()
+        {
+            _boards.Clear();
+            _userfacade._emails.Clear();
+        }
+
         private void AuthenticateString(string value, string name)
         {
             if (string.IsNullOrWhiteSpace(value))
