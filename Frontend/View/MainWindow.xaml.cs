@@ -30,6 +30,10 @@ namespace Frontend.View
             TogglePasswordVisibility(ConfirmPasswordGrid, _isConfirmPasswordVisible, _viewModel.ConfirmPassword, "Confirm Password", ConfirmPasswordBox_PasswordChanged, ToggleConfirmPasswordVisibility);
         }
 
+        private void ThemeToggle_Checked(object sender, RoutedEventArgs e) => App.SwitchTheme(true);
+
+        private void ThemeToggle_Unchecked(object sender, RoutedEventArgs e) => App.SwitchTheme(false);
+
         private void PasswordBox_PasswordChanged(object sender, RoutedEventArgs e) =>
             _viewModel.Password = ((PasswordBox)sender).Password;
 
@@ -52,6 +56,9 @@ namespace Frontend.View
                     Application.Current.MainWindow = userHome;
                     Close();
                     userHome.Show();
+                    if (user.IsDark)
+                        App.SwitchTheme(true);
+                    else App.SwitchTheme(false);
                 }
                 else MessageBox.Show(_viewModel.Message, _viewModel.Status, MessageBoxButton.OK, MessageBoxImage.Error);
             }
@@ -68,6 +75,9 @@ namespace Frontend.View
                 Application.Current.MainWindow = userHome;
                 Close();
                 userHome.Show();
+                if (user.IsDark)
+                    App.SwitchTheme(true);
+                else App.SwitchTheme(false);
             }
             else
             {

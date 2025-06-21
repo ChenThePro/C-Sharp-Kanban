@@ -22,6 +22,8 @@ namespace Frontend.Controllers
 
         internal void AuthenticateUser(string email) => Call<object>(() => _userService.AuthenticateUser(email));
 
+        internal void ChangeTheme(string email) => Call<object>(() => _userService.ChangeTheme(email));
+
         private T Call<T>(Func<string> serviceCall)
         {
             var response = JsonSerializer.Deserialize<Response>(serviceCall())!;

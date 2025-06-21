@@ -16,6 +16,28 @@ namespace Frontend.View
             DataContext = _viewModel;
         }
 
+        private void ThemeToggle_Checked(object sender, RoutedEventArgs e)
+        {
+            if (!((UserModel)Application.Current.Properties["CurrentUser"]!).IsDark)
+            {
+                App.SwitchTheme(true);
+                Controllers.ControllerFactory.Instance.UserController.ChangeTheme(((UserModel)Application.Current.Properties["CurrentUser"]!).Email);
+                ((UserModel)Application.Current.Properties["CurrentUser"]!).IsDark = !(((UserModel)Application.Current.Properties["CurrentUser"]!).IsDark);
+                MessageBox.Show("Theme changed successfully to dark!", "Success", MessageBoxButton.OK, MessageBoxImage.Information);
+            }
+        }
+
+        private void ThemeToggle_Unchecked(object sender, RoutedEventArgs e)
+        {
+            if (((UserModel)Application.Current.Properties["CurrentUser"]!).IsDark)
+            {
+                App.SwitchTheme(false);
+                Controllers.ControllerFactory.Instance.UserController.ChangeTheme(((UserModel)Application.Current.Properties["CurrentUser"]!).Email);
+                ((UserModel)Application.Current.Properties["CurrentUser"]!).IsDark = !(((UserModel)Application.Current.Properties["CurrentUser"]!).IsDark);
+                MessageBox.Show("Theme changed successfully to light!", "Success", MessageBoxButton.OK, MessageBoxImage.Information);
+            }
+        }
+
         private void ToggleBoardExpand(object sender, MouseButtonEventArgs e)
         {
             if (sender is FrameworkElement { DataContext: BoardModel board })
@@ -63,11 +85,13 @@ namespace Frontend.View
             if (result != MessageBoxResult.OK) return;
             if (_viewModel.Logout())
             {
-                Application.Current.Properties["CurrentUser"] = null;
                 MainWindow mainWindow = new();
                 Application.Current.MainWindow = mainWindow;
                 Close();
                 mainWindow.Show();
+                if (((UserModel)Application.Current.Properties["CurrentUser"]!).IsDark)
+                    App.SwitchTheme(true);
+                Application.Current.Properties["CurrentUser"] = null;
             }
             else MessageBox.Show(_viewModel.Message, _viewModel.Status, MessageBoxButton.OK, MessageBoxImage.Error);
         }

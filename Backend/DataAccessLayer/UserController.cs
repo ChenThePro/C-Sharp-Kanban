@@ -9,7 +9,7 @@ namespace IntroSE.Kanban.Backend.DataAccessLayer
 
         protected override UserDTO ConvertReaderToDTO(SqliteDataReader reader)
         {
-            return new UserDTO(reader.GetString(0), reader.GetString(1), reader.GetBoolean(2));
+            return new UserDTO(reader.GetString(0), reader.GetString(1), reader.GetBoolean(2), reader.GetBoolean(3));
         }
     }
 }

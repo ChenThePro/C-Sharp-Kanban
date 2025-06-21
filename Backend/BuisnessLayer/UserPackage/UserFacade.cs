@@ -130,5 +130,12 @@ namespace IntroSE.Kanban.Backend.BuisnessLayer.UserPackage
             UserBL user = _emails[email];
             user.Password = newPassword;
         }
+
+        internal void ChangeTheme(string email)
+        {
+            AuthenticateUser(email);
+            UserBL user = _emails[email];
+            user.ChangeTheme();
+        }
     }
 }
