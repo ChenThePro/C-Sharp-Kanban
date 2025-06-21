@@ -17,14 +17,14 @@
                              Margin="20 20 20 10"
                              Padding="20"
                              materialDesign:ElevationAssist.Elevation="Dp3"
-                             Background="{DynamicResource BackgroundBrush}">
+                             Background="#E6DAF0">
             <Grid>
                 <TextBlock Text="Kanban Dashboard"
                            FontSize="24"
                            FontWeight="Bold"
                            VerticalAlignment="Center"
                            HorizontalAlignment="Left"
-                           Foreground="{DynamicResource ForegroundBrush}"/>
+                           Foreground="{DynamicResource PrimaryBrush}"/>
 
                 <StackPanel Orientation="Horizontal" 
                            HorizontalAlignment="Right" 
@@ -69,7 +69,7 @@
                             materialDesign:ButtonAssist.CornerRadius="20"
                             Padding="20 5"
                             Height="32"
-                            Foreground="{DynamicResource SecondaryBrush}"
+                            Foreground="{DynamicResource PrimaryBrush}"
                             FontWeight="Bold"/>
                 </StackPanel>
             </Grid>
@@ -78,14 +78,14 @@
         <ScrollViewer DockPanel.Dock="Top" Margin="20 10 20 20">
             <StackPanel>
 
-                <materialDesign:Card Margin="0 0 0 20"
+                <materialDesign:Card
                                      Padding="30"
                                      materialDesign:ElevationAssist.Elevation="Dp2"
-                                     Background="{DynamicResource BackgroundBrush}">
+                                     Background="#E6DAF0" Width="960">
                     <TextBlock Text="Welcome to your Kanban board!"
                                FontSize="18"
                                HorizontalAlignment="Center"
-                               Foreground="{DynamicResource ForegroundBrush}"/>
+                               Foreground="{DynamicResource PrimaryBrush}"/>
                 </materialDesign:Card>
 
                 <StackPanel Orientation="Horizontal"
@@ -117,11 +117,11 @@
                                 <StackPanel>
                                     <DockPanel MouseLeftButtonDown="ToggleBoardExpand">
                                         <StackPanel DockPanel.Dock="Left" Width="800">
-                                            <TextBlock Text="{Binding Name, StringFormat='Name: {0}'}"
+                                            <TextBlock Text="{Binding Name, StringFormat=Name: \{0\}}"
                                                        FontWeight="Bold"
                                                        FontSize="16"
                                                        Foreground="{DynamicResource ForegroundBrush}" />
-                                            <TextBlock Text="{Binding Owner, StringFormat='Owner: {0}'}"
+                                            <TextBlock Text="{Binding Owner, StringFormat=Owner: \{0\}}"
                                                        FontSize="14"
                                                        Foreground="{DynamicResource ForegroundBrush}" />
                                             <TextBlock Text="{Binding Members, Converter={StaticResource MembersToStringConverter}}"
@@ -160,11 +160,11 @@
                                                                          Padding="10"
                                                                          Width="300"
                                                                          VerticalAlignment="Top"
-                                                                         BorderBrush="{DynamicResource SecondaryBrush}"
+                                                                         BorderBrush="{DynamicResource PrimaryBrush}"
                                                                          BorderThickness="1"
                                                                          materialDesign:ElevationAssist.Elevation="Dp1">
                                                         <StackPanel>
-                                                            <TextBlock Text="{Binding Name, StringFormat='Column: {0}'}"
+                                                            <TextBlock Text="{Binding Name, StringFormat=Column: \{0\}}"
                                                                        FontWeight="Bold"
                                                                        FontSize="14"
                                                                        Foreground="{DynamicResource ForegroundBrush}"
@@ -174,9 +174,9 @@
                                                                        Margin="0 0 0 10"/>
 
                                                             <TextBlock FontSize="12"
-                                                                       Foreground="{DynamicResource SecondaryBrush}">
+                                                                       Foreground="{DynamicResource PrimaryBrush}">
                                                                 <TextBlock.Style>
-                                                                    <Style TargetType="TextBlock">
+                                                                    <Style TargetType="{x:Type TextBlock}">
                                                                         <Setter Property="Text">
                                                                             <Setter.Value>
                                                                                 <MultiBinding StringFormat="Tasks: {0}/{1}">
@@ -205,21 +205,21 @@
                                                                 <ItemsControl.ItemTemplate>
                                                                     <DataTemplate>
                                                                         <Border Background="{DynamicResource BackgroundBrush}"
-                                                                                BorderBrush="{DynamicResource SecondaryBrush}"
+                                                                                BorderBrush="{DynamicResource PrimaryBrush}"
                                                                                 BorderThickness="1"
                                                                                 CornerRadius="8"
                                                                                 Padding="10"
                                                                                 Margin="5"
                                                                                 Effect="{DynamicResource MaterialDesignShadowDepth1}">
                                                                             <StackPanel>
-                                                                                <TextBlock Text="{Binding Title, StringFormat='📌 {0}'}"
+                                                                                <TextBlock Text="{Binding Title, StringFormat=📌 \{0\}}"
                                                                                            FontWeight="Bold"
                                                                                            Foreground="{DynamicResource ForegroundBrush}"/>
-                                                                                <TextBlock Text="{Binding DueDate, StringFormat='📅 {0:dd/MM/yyyy}'}"
+                                                                                <TextBlock Text="{Binding DueDate, StringFormat=📅 \{0:dd/MM/yyyy\}}"
                                                                                            Foreground="{DynamicResource ForegroundBrush}"/>
-                                                                                <TextBlock Text="{Binding CreatedAt, StringFormat='🕓 {0:dd/MM/yyyy}'}"
+                                                                                <TextBlock Text="{Binding CreatedAt, StringFormat=🕓 \{0:dd/MM/yyyy\}}"
                                                                                            Foreground="{DynamicResource ForegroundBrush}"/>
-                                                                                <TextBlock Text="{Binding Assignee, StringFormat='👤 {0}'}"
+                                                                                <TextBlock Text="{Binding Assignee, StringFormat=👤 \{0\}}"
                                                                                            Foreground="{DynamicResource ForegroundBrush}"/>
                                                                             </StackPanel>
                                                                         </Border>

@@ -8,14 +8,14 @@
         Height="800" Width="1000"
         WindowStartupLocation="CenterScreen"
         Style="{StaticResource MaterialDesignWindow}"
-        Background="{DynamicResource BackgroundBrush}">
+        Background="#E6DAF0">
 
     <Grid>
         <ToggleButton x:Name="ThemeToggle"
-                      Width="50" Height="50"
+                      Width="151" Height="114"
                       HorizontalAlignment="Right"
                       VerticalAlignment="Top"
-                      Margin="0,15,15,0"
+                      Margin="0,-18,-37,0"
                       IsChecked="{Binding IsDarkTheme, Mode=TwoWay}"
                       Checked="ThemeToggle_Checked"
                       Unchecked="ThemeToggle_Unchecked"
@@ -46,7 +46,7 @@
 
         <materialDesign:Card
                              Background="{DynamicResource BackgroundBrush}"
-                             Margin="40"
+                             Margin="55,51,55,51"
                              Padding="40"
                              BorderBrush="{DynamicResource ForegroundBrush}"
                              BorderThickness="1"
@@ -101,7 +101,7 @@
                                    FontWeight="Bold"
                                    Margin="0 0 0 30"
                                    HorizontalAlignment="Center"
-                                   Foreground="{DynamicResource ForegroundBrush}"/>
+                                   Foreground="{DynamicResource PrimaryBrush}"/>
 
                         <TextBox Margin="0 10"
                                  Style="{StaticResource MaterialDesignFloatingHintTextBox}"
@@ -118,7 +118,7 @@
                                 Style="{StaticResource MaterialDesignFlatButton}"
                                 HorizontalAlignment="Center"
                                 Margin="0 10 0 0"
-                                Foreground="{DynamicResource SecondaryBrush}"/>
+                                Foreground="{DynamicResource PrimaryBrush}"/>
 
                         <Button Content="Sign In"
                                 Click="SignIn_Click"

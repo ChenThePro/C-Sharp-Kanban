@@ -1,35 +1,70 @@
 ﻿<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
-                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-                    xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes">
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
 
-    <Color x:Key="PrimaryColor">#00BCD4</Color>
-    <Color x:Key="SecondaryColor">#FF4081</Color>
-    <Color x:Key="BackgroundColor">#1E1E2F</Color>
-    <Color x:Key="ForegroundColor">#E0E0E0</Color>
+    <!-- צבעים -->
+    <Color x:Key="PrimaryColor">#C390D4</Color>
+    <!-- לילך בולט -->
+    <Color x:Key="BackgroundColor">#1E1E1E</Color>
+    <!-- רקע כללי -->
+    <Color x:Key="ForegroundColor">#D8B7DD</Color>
+    <!-- טקסט לילך -->
+    <Color x:Key="PanelBackground">#2A2A2A</Color>
+    <!-- אפור כהה לרובריקות -->
 
-    <SolidColorBrush x:Key="PrimaryBrush" Color="{StaticResource PrimaryColor}"/>
-    <SolidColorBrush x:Key="SecondaryBrush" Color="{StaticResource SecondaryColor}"/>
-    <SolidColorBrush x:Key="BackgroundBrush" Color="{StaticResource BackgroundColor}"/>
-    <SolidColorBrush x:Key="ForegroundBrush" Color="{StaticResource ForegroundColor}"/>
+    <!-- מברשות -->
+    <SolidColorBrush x:Key="PrimaryBrush" Color="{StaticResource PrimaryColor}" />
+    <SolidColorBrush x:Key="BackgroundBrush" Color="{StaticResource BackgroundColor}" />
+    <SolidColorBrush x:Key="ForegroundBrush" Color="{StaticResource ForegroundColor}" />
+    <SolidColorBrush x:Key="PanelBrush" Color="{StaticResource PanelBackground}" />
 
+    <!-- טקסט -->
     <Style TargetType="TextBlock">
-        <Setter Property="Foreground" Value="{StaticResource ForegroundBrush}"/>
+        <Setter Property="Foreground" Value="{StaticResource ForegroundBrush}" />
     </Style>
+
+    <!-- כפתורים -->
     <Style TargetType="Button">
-        <Setter Property="Foreground" Value="{StaticResource ForegroundBrush}"/>
-        <Setter Property="Background" Value="{StaticResource PrimaryBrush}"/>
+        <Setter Property="Foreground" Value="{StaticResource BackgroundBrush}" />
+        <Setter Property="Background" Value="{StaticResource PrimaryBrush}" />
+        <Setter Property="FontWeight" Value="Bold" />
+        <Setter Property="Padding" Value="10,5" />
+        <Setter Property="Margin" Value="5" />
+        <Setter Property="Cursor" Value="Hand" />
+        <Setter Property="BorderThickness" Value="2" />
+        <Setter Property="BorderBrush" Value="White" />
+        <Style.Triggers>
+            <Trigger Property="IsMouseOver" Value="True">
+                <Setter Property="Background" Value="White" />
+                <Setter Property="Foreground" Value="{StaticResource PrimaryBrush}" />
+            </Trigger>
+        </Style.Triggers>
     </Style>
+
+    <!-- TextBox -->
     <Style TargetType="TextBox">
-        <Setter Property="Background" Value="#1E1E1E"/>
-        <Setter Property="Foreground" Value="#FFFFFF"/>
-        <Setter Property="CaretBrush" Value="#FFFFFF"/>
+        <Setter Property="Background" Value="{StaticResource BackgroundBrush}" />
+        <Setter Property="Foreground" Value="{StaticResource ForegroundBrush}" />
+        <Setter Property="CaretBrush" Value="{StaticResource PrimaryBrush}" />
+        <Setter Property="BorderBrush" Value="{StaticResource PrimaryBrush}" />
     </Style>
+
+    <!-- PasswordBox -->
     <Style TargetType="PasswordBox">
-        <Setter Property="Background" Value="#1E1E1E"/>
-        <Setter Property="Foreground" Value="#FFFFFF"/>
-        <Setter Property="CaretBrush" Value="#FFFFFF"/>
+        <Setter Property="Background" Value="{StaticResource BackgroundBrush}" />
+        <Setter Property="Foreground" Value="{StaticResource PrimaryBrush}" />
+        <!-- צבע הנקודות -->
+        <Setter Property="CaretBrush" Value="{StaticResource PrimaryBrush}" />
+        <Setter Property="BorderBrush" Value="{StaticResource PrimaryBrush}" />
     </Style>
-    <Style TargetType="materialDesign:Card">
-        <Setter Property="Background" Value="{StaticResource BackgroundBrush}"/>
+
+    <!-- רובריקות / לוחות -->
+    <Style x:Key="BoardPanelStyle" TargetType="Border">
+        <Setter Property="Background" Value="{StaticResource PanelBrush}" />
+        <Setter Property="BorderBrush" Value="{StaticResource PrimaryBrush}" />
+        <Setter Property="BorderThickness" Value="2" />
+        <Setter Property="CornerRadius" Value="6" />
+        <Setter Property="Margin" Value="10" />
+        <Setter Property="Padding" Value="10" />
     </Style>
+
 </ResourceDictionary>
