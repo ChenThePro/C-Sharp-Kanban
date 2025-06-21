@@ -1,5 +1,4 @@
-﻿using Frontend.Controllers;
-using Frontend.Model;
+﻿using Frontend.Model;
 using Frontend.ViewModel;
 using System.Windows;
 using System.Windows.Input;
@@ -20,7 +19,11 @@ namespace Frontend.View
         private void ToggleBoardExpand(object sender, MouseButtonEventArgs e)
         {
             if (sender is FrameworkElement { DataContext: BoardModel board })
+            {
                 board.IsExpanded = !board.IsExpanded;
+                if (!board.IsExpanded)
+                    board.Columns.ToList().ForEach(c => c.IsExpanded = false);
+            }
         }
 
         private void ToggleColumnExpand(object sender, MouseButtonEventArgs e)
@@ -42,10 +45,9 @@ namespace Frontend.View
             MessageBoxResult result = MessageBox.Show(
                 "Are you sure you want to delete this board?",
                 "Deletion",
-                MessageBoxButton.YesNo,
+                MessageBoxButton.OKCancel,
                 MessageBoxImage.Warning);
-            if (result != MessageBoxResult.Yes)
-                return;
+            if (result != MessageBoxResult.OK) return;
             if (_viewModel.DeleteBoard((sender as FrameworkElement)?.DataContext as BoardModel))
                 MessageBox.Show(_viewModel.Message, _viewModel.Status, MessageBoxButton.OK, MessageBoxImage.Information);
             else MessageBox.Show(_viewModel.Message, _viewModel.Status, MessageBoxButton.OK, MessageBoxImage.Error);
@@ -56,10 +58,9 @@ namespace Frontend.View
             MessageBoxResult result = MessageBox.Show(
                 "Are you sure you want to logout?",
                 "Logout",
-                MessageBoxButton.YesNo,
+                MessageBoxButton.OKCancel,
                 MessageBoxImage.Warning);
-            if (result != MessageBoxResult.Yes)
-                return;
+            if (result != MessageBoxResult.OK) return;
             if (_viewModel.Logout())
             {
                 Application.Current.Properties["CurrentUser"] = null;

@@ -22,7 +22,7 @@ namespace Frontend.View
             if (_viewModel.Verify())
             {
                 MessageBox.Show(_viewModel.Message, _viewModel.Status, MessageBoxButton.OK, MessageBoxImage.Information);
-                NewPasswordWindow newPasswordWindow = new(_viewModel.Email, _codeService);
+                NewPasswordWindow newPasswordWindow = new(_viewModel.Email);
                 Close();
                 newPasswordWindow.Show();
             }

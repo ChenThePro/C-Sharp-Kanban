@@ -1,13 +1,38 @@
 ﻿<Window x:Class="Frontend.View.VerificationWindow"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-        Title="Verify Code" Height="200" Width="400"
-        WindowStartupLocation="CenterScreen">
+        xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
+        Title="Verify Code"
+        Height="300" Width="600"
+        WindowStartupLocation="CenterScreen"
+        Style="{StaticResource MaterialDesignWindow}"
+        Background="#121212">
+
     <Grid>
-        <StackPanel Margin="20">
-            <TextBlock Text="Enter the code sent to your email:"/>
-            <TextBox Margin="0 10" Text="{Binding InputCode, Mode=TwoWay,UpdateSourceTrigger=PropertyChanged}" />
-            <Button Content="Verify" Click="Verify_Click" Width="100" HorizontalAlignment="Center"/>
-        </StackPanel>
+        <materialDesign:Card Margin="20" Padding="20" Background="#2A2D3E" materialDesign:ElevationAssist.Elevation="Dp2">
+            <StackPanel>
+                <TextBlock Text="Enter the code sent to your email:"
+                           FontSize="16"
+                           Margin="0 0 0 10"
+                           Foreground="#E0E0E0"/>
+
+                <TextBox Margin="0 10"
+                         Style="{StaticResource MaterialDesignFloatingHintTextBox}"
+                         materialDesign:HintAssist.Hint="Verification Code"
+                         Text="{Binding InputCode, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+
+                <Button Content="Verify"
+                        Click="Verify_Click"
+                        Width="100"
+                        HorizontalAlignment="Center"
+                        Style="{StaticResource MaterialDesignRaisedButton}"
+                        Background="#00ACC1"
+                        Foreground="White"
+                        FontWeight="Bold"
+                        FontSize="14"
+                        materialDesign:ButtonAssist.CornerRadius="20"
+                        Margin="10 20 0 0"/>
+            </StackPanel>
+        </materialDesign:Card>
     </Grid>
 </Window>

@@ -7,87 +7,132 @@
         Title="Welcome to Kanban"
         Height="800" Width="1000"
         WindowStartupLocation="CenterScreen"
-        Style="{StaticResource MaterialDesignWindow}">
+        Style="{StaticResource MaterialDesignWindow}"
+        Background="#121212">
 
-    <Grid Background="#F5FAFF">
-        <Border CornerRadius="20" Background="#FFFFFF" Margin="40" Padding="40" BorderBrush="#D0E3F0" BorderThickness="1">
+    <Grid>
+        <materialDesign:Card
+                             Background="#2A2D3E"
+                             Margin="40"
+                             Padding="40"
+                             BorderBrush="#424242"
+                             BorderThickness="1"
+                             materialDesign:ElevationAssist.Elevation="Dp3">
+
             <TabControl Background="Transparent" FontSize="14" BorderThickness="0">
                 <TabControl.Resources>
-                    <Style TargetType="TabItem">
-                        <Setter Property="Foreground" Value="Black"/>
+                    <Style TargetType="TabItem" BasedOn="{StaticResource MaterialDesignTabItem}">
+                        <Setter Property="Template">
+                            <Setter.Value>
+                                <ControlTemplate TargetType="TabItem">
+                                    <Grid>
+                                        <Border Background="Transparent"
+                            BorderThickness="{TemplateBinding BorderThickness}"
+                            BorderBrush="{TemplateBinding BorderBrush}">
+                                            <ContentPresenter x:Name="ContentSite"
+                                          VerticalAlignment="Center"
+                                          HorizontalAlignment="Center"
+                                          ContentSource="Header"
+                                          RecognizesAccessKey="True"
+                                          Margin="{TemplateBinding Padding}" />
+                                        </Border>
+                                        <Border x:Name="SelectedIndicator"
+                            Height="2"
+                            VerticalAlignment="Bottom"
+                            Background="Transparent" />
+                                    </Grid>
+                                    <ControlTemplate.Triggers>
+                                        <Trigger Property="IsSelected" Value="True">
+                                            <Setter TargetName="ContentSite" Property="TextElement.Foreground" Value="#3F51B5"/>
+                                            <Setter TargetName="SelectedIndicator" Property="Background" Value="#3F51B5"/>
+                                        </Trigger>
+                                        <Trigger Property="IsMouseOver" Value="True">
+                                            <Setter TargetName="ContentSite" Property="TextElement.Foreground" Value="#9FA8DA"/>
+                                        </Trigger>
+                                    </ControlTemplate.Triggers>
+                                </ControlTemplate>
+                            </Setter.Value>
+                        </Setter>
                         <Setter Property="Padding" Value="15,8"/>
-                        <Setter Property="FontWeight" Value="Normal"/>
+                        <Setter Property="Foreground" Value="#E0E0E0"/>
                         <Setter Property="Background" Value="Transparent"/>
                         <Setter Property="BorderBrush" Value="Transparent"/>
-                        <Style.Triggers>
-                            <Trigger Property="IsSelected" Value="True">
-                                <Setter Property="FontWeight" Value="Bold"/>
-                                <Setter Property="Foreground" Value="#00ACC1"/>
-                                <Setter Property="BorderBrush" Value="#00ACC1"/>
-                                <Setter Property="BorderThickness" Value="0 0 0 2"/>
-                            </Trigger>
-                        </Style.Triggers>
+                        <Setter Property="BorderThickness" Value="0"/>
                     </Style>
                 </TabControl.Resources>
 
                 <TabItem Header="Sign In">
                     <StackPanel Margin="30" VerticalAlignment="Center">
-                        <TextBlock Text="Welcome Back" FontSize="26" FontWeight="Bold" Margin="0 0 0 30" HorizontalAlignment="Center" Foreground="#263238"/>
+                        <TextBlock Text="Welcome Back"
+                                   FontSize="26"
+                                   FontWeight="Bold"
+                                   Margin="0 0 0 30"
+                                   HorizontalAlignment="Center"
+                                   Foreground="#E0E0E0"/>
 
                         <TextBox Margin="0 10"
                                  Style="{StaticResource MaterialDesignFloatingHintTextBox}"
                                  materialDesign:HintAssist.Hint="Email"
                                  materialDesign:HintAssist.IsFloating="True"
-                                 Background="White"
-                                 Foreground="Black"
-                                 CaretBrush="Black"
                                  Text="{Binding Email, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
 
                         <Grid Margin="0 10" x:Name="SignInPasswordGrid" />
 
-                        <Button x:Name="ForgotPasswordButton" Content="Forgot Password?" Click="ForgotPassword_Click"
+                        <Button x:Name="ForgotPasswordButton"
+                                Content="Forgot Password?"
+                                Click="ForgotPassword_Click"
                                 Visibility="Collapsed"
                                 Style="{StaticResource MaterialDesignFlatButton}"
-                                HorizontalAlignment="Center" Margin="0 10 0 0" Foreground="#00ACC1"/>
+                                HorizontalAlignment="Center"
+                                Margin="0 10 0 0"
+                                Foreground="#80DEEA"/>
 
-                        <Button Content="Sign In" Click="SignIn_Click"
+                        <Button Content="Sign In"
+                                Click="SignIn_Click"
                                 Margin="0 30"
                                 HorizontalAlignment="Center"
                                 Width="150" Height="45"
-                                Foreground="White" Background="#00ACC1"
-                                FontWeight="Bold" FontSize="16"
+                                Background="#00ACC1"
+                                Foreground="White"
+                                FontWeight="Bold"
+                                FontSize="16"
                                 Style="{StaticResource MaterialDesignRaisedButton}"
-                                materialDesign:ButtonAssist.CornerRadius="20" />
+                                materialDesign:ButtonAssist.CornerRadius="20"/>
                     </StackPanel>
                 </TabItem>
 
                 <TabItem Header="Sign Up">
                     <StackPanel Margin="30" VerticalAlignment="Center">
-                        <TextBlock Text="Create an Account" FontSize="26" FontWeight="Bold" Margin="0 0 0 30" HorizontalAlignment="Center" Foreground="#263238"/>
+                        <TextBlock Text="Create an Account"
+                                   FontSize="26"
+                                   FontWeight="Bold"
+                                   Margin="0 0 0 30"
+                                   HorizontalAlignment="Center"
+                                   Foreground="#E0E0E0"/>
 
                         <TextBox Margin="0 10"
                                  Style="{StaticResource MaterialDesignFloatingHintTextBox}"
                                  materialDesign:HintAssist.Hint="Email"
                                  materialDesign:HintAssist.IsFloating="True"
-                                 Background="White"
-                                 Foreground="Black"
-                                 CaretBrush="Black"
                                  Text="{Binding Email, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
 
                         <Grid Margin="0 10" x:Name="SignUpPasswordGrid" />
                         <Grid Margin="0 10" x:Name="ConfirmPasswordGrid" />
 
-                        <Button Content="Sign Up" Click="SignUp_Click"
+                        <Button Content="Sign Up"
+                                Click="SignUp_Click"
                                 Margin="0 30"
                                 HorizontalAlignment="Center"
                                 Width="150" Height="45"
-                                Foreground="White" Background="#00ACC1"
-                                FontWeight="Bold" FontSize="16"
+                                Background="#00ACC1"
+                                Foreground="White"
+                                FontWeight="Bold"
+                                FontSize="16"
                                 Style="{StaticResource MaterialDesignRaisedButton}"
-                                materialDesign:ButtonAssist.CornerRadius="20" />
+                                materialDesign:ButtonAssist.CornerRadius="20"/>
                     </StackPanel>
                 </TabItem>
             </TabControl>
-        </Border>
+        </materialDesign:Card>
     </Grid>
 </Window>

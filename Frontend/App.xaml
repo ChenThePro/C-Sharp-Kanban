@@ -8,12 +8,38 @@
     <Application.Resources>
         <ResourceDictionary>
             <ResourceDictionary.MergedDictionaries>
-                <materialDesign:BundledTheme BaseTheme="Dark" PrimaryColor="Cyan" SecondaryColor="Indigo" />
+                <materialDesign:BundledTheme BaseTheme="Dark" PrimaryColor="DeepPurple" SecondaryColor="Teal" />
                 <ResourceDictionary Source="pack://application:,,,/MaterialDesignThemes.Wpf;component/Themes/MaterialDesign3.Defaults.xaml" />
             </ResourceDictionary.MergedDictionaries>
+
             <utils:MembersToStringConverter x:Key="MembersToStringConverter"/>
             <utils:BoolToVisibilityConverter x:Key="BoolToVisibilityConverter"/>
             <utils:InverseBoolToVisibilityConverter x:Key="InverseBoolToVisibilityConverter"/>
+
+            <Style TargetType="TextBlock">
+                <Setter Property="Foreground" Value="#E0E0E0"/>
+            </Style>
+
+            <Style TargetType="Button">
+                <Setter Property="Foreground" Value="White"/>
+            </Style>
+
+            <Style TargetType="TextBox">
+                <Setter Property="Background" Value="#1E1E1E"/>
+                <Setter Property="Foreground" Value="#FFFFFF"/>
+                <Setter Property="CaretBrush" Value="White"/>
+            </Style>
+
+            <Style TargetType="PasswordBox">
+                <Setter Property="Background" Value="#1E1E1E"/>
+                <Setter Property="Foreground" Value="White"/>
+                <Setter Property="CaretBrush" Value="White"/>
+            </Style>
+
+            <Style TargetType="materialDesign:Card">
+                <Setter Property="Background" Value="#2A2D3E"/>
+                <Setter Property="materialDesign:ElevationAssist.Elevation" Value="Dp2"/>
+            </Style>
         </ResourceDictionary>
     </Application.Resources>
 </Application>

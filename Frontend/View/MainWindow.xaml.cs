@@ -25,7 +25,6 @@ namespace Frontend.View
             InitializeComponent();
             _viewModel = new();
             DataContext = _viewModel;
-
             TogglePasswordVisibility(SignInPasswordGrid, _isSignInPasswordVisible, _viewModel.Password, "Password", PasswordBox_PasswordChanged, ToggleSignInPasswordVisibility);
             TogglePasswordVisibility(SignUpPasswordGrid, _isSignUpPasswordVisible, _viewModel.Password, "Password", PasswordBox_PasswordChanged, ToggleSignUpPasswordVisibility);
             TogglePasswordVisibility(ConfirmPasswordGrid, _isConfirmPasswordVisible, _viewModel.ConfirmPassword, "Confirm Password", ConfirmPasswordBox_PasswordChanged, ToggleConfirmPasswordVisibility);
@@ -40,9 +39,7 @@ namespace Frontend.View
         private void SignUp_Click(object sender, RoutedEventArgs e)
         {
             if (!_viewModel.ValidatePasswords())
-            {
                 MessageBox.Show(_viewModel.Message, _viewModel.Status, MessageBoxButton.OK, MessageBoxImage.Warning);
-            }
             else
             {
                 ControllerFactory.Instance.BoardController.LoadData();
@@ -56,16 +53,12 @@ namespace Frontend.View
                     Close();
                     userHome.Show();
                 }
-                else
-                {
-                    MessageBox.Show(_viewModel.Message, _viewModel.Status, MessageBoxButton.OK, MessageBoxImage.Error);
-                }
+                else MessageBox.Show(_viewModel.Message, _viewModel.Status, MessageBoxButton.OK, MessageBoxImage.Error);
             }
         }
 
         private void SignIn_Click(object sender, RoutedEventArgs e)
         {
-            ControllerFactory.Instance.BoardController.LoadData();
             UserModel? user = _viewModel.SignIn();
             if (user != null)
             {
@@ -110,10 +103,9 @@ namespace Frontend.View
         private void TogglePasswordVisibility(Grid grid, bool isVisible, string currentValue, string hintText, RoutedEventHandler changedHandler, RoutedEventHandler toggleHandler)
         {
             grid.Children.Clear();
-
             if (isVisible)
             {
-                var textBox = new TextBox
+                TextBox textBox = new()
                 {
                     Text = currentValue,
                     Style = (Style)FindResource("MaterialDesignFloatingHintTextBox"),
@@ -123,20 +115,18 @@ namespace Frontend.View
                 };
                 HintAssist.SetHint(textBox, hintText);
                 HintAssist.SetIsFloating(textBox, true);
-
                 textBox.TextChanged += (s, e) =>
                 {
                     if (toggleHandler == ToggleConfirmPasswordVisibility)
                         _viewModel.ConfirmPassword = textBox.Text;
-                    else
-                        _viewModel.Password = textBox.Text;
+                    else _viewModel.Password = textBox.Text;
                 };
                 grid.Children.Add(textBox);
                 AddEyeToggle(grid, toggleHandler, true);
             }
             else
             {
-                var passwordBox = new PasswordBox
+                PasswordBox passwordBox = new()
                 {
                     Password = currentValue,
                     Style = (Style)FindResource("MaterialDesignFloatingHintPasswordBox"),
@@ -146,7 +136,6 @@ namespace Frontend.View
                 };
                 HintAssist.SetHint(passwordBox, hintText);
                 HintAssist.SetIsFloating(passwordBox, true);
-
                 passwordBox.PasswordChanged += changedHandler;
                 grid.Children.Add(passwordBox);
                 AddEyeToggle(grid, toggleHandler, false);
@@ -155,31 +144,28 @@ namespace Frontend.View
 
         private void AddEyeToggle(Grid parent, RoutedEventHandler toggleHandler, bool isVisible)
         {
-            var toggleButton = new ToggleButton
+            ToggleButton toggleButton = new()
             {
                 Width = 30,
                 Height = 30,
                 VerticalAlignment = VerticalAlignment.Center,
                 HorizontalAlignment = HorizontalAlignment.Right,
-                Margin = new Thickness(0, 0, 10, 0),
+                Margin = new(0, 0, 10, 0),
                 IsChecked = isVisible,
                 Background = Brushes.Transparent,
                 BorderBrush = Brushes.Transparent,
-                BorderThickness = new Thickness(0),
+                BorderThickness = new(0),
                 Cursor = Cursors.Hand,
                 Style = (Style)FindResource("MaterialDesignToolButton") 
             };
-
             RippleAssist.SetFeedback(toggleButton, Brushes.Transparent);
-
-            var icon = new PackIconMaterial
+            PackIconMaterial icon = new()
             {
                 Kind = isVisible ? PackIconMaterialKind.EyeOff : PackIconMaterialKind.Eye,
                 Width = 20,
                 Height = 20,
                 Foreground = new SolidColorBrush(Color.FromRgb(0, 184, 212))
             };
-
             toggleButton.Content = icon;
             toggleButton.Click += toggleHandler;
             parent.Children.Add(toggleButton);
