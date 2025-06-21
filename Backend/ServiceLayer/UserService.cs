@@ -41,7 +41,7 @@ namespace IntroSE.Kanban.Backend.ServiceLayer
             {
                 UserBL user = _userFacade.Login(email, password);
                 List<BoardSL> boards = user.Boards.Select(b => new BoardSL(b.Owner, b.Name, b.Members, ConvertColumns(b))).ToList();
-                return ToJsonResponse(null, new UserSL(email, password, boards));
+                return ToJsonResponse(null, new UserSL(email, password, boards, user.UserDTO.IsDark));
             }
             catch (Exception ex)
             {
@@ -64,8 +64,8 @@ namespace IntroSE.Kanban.Backend.ServiceLayer
         {
             try
             {
-                _userFacade.Register(email, password);
-                return ToJsonResponse(null, new UserSL(email, password, new List<BoardSL>()));
+                UserBL user = _userFacade.Register(email, password);
+                return ToJsonResponse(null, new UserSL(email, password, new List<BoardSL>(), user.UserDTO.IsDark));
             }
             catch (Exception ex)
             {
@@ -113,6 +113,19 @@ namespace IntroSE.Kanban.Backend.ServiceLayer
             try
             {
                 _userFacade.AuthenticateUser(email);
+                return ToJsonResponse();
+            }
+            catch (Exception ex)
+            {
+                return ToJsonResponse(ex.Message);
+            }
+        }
+
+        public string ChangeTheme(string email)
+        {
+            try
+            {
+                _userFacade.ChangeTheme(email);
                 return ToJsonResponse();
             }
             catch (Exception ex)

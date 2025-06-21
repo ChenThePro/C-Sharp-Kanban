@@ -17,22 +17,22 @@ namespace IntroSE.Kanban.Backend.BuisnessLayer.UserPackage
 
         internal string Email { 
             get => _email; 
-            private set { _email = value; _userDTO.Email = value; } 
+            private set { _email = value; UserDTO.Email = value; } 
         }
 
         internal string Password { 
             get => _password; 
-            set { _password = value; _userDTO.Password = value; } 
+            set { _password = value; UserDTO.Password = value; } 
         }
 
         internal bool LoggedIn { 
             get => _loggedIn; 
-            private set { _loggedIn = value; _userDTO.LoggedIn = value; } 
+            private set { _loggedIn = value; UserDTO.LoggedIn = value; } 
         }
 
         internal List<BoardBL> Boards { get; init; }
 
-        private readonly UserDTO _userDTO;
+        internal readonly UserDTO UserDTO;
 
         internal UserBL(string email, string password)
         {
@@ -40,8 +40,8 @@ namespace IntroSE.Kanban.Backend.BuisnessLayer.UserPackage
             _password = password;
             _loggedIn = true;
             Boards = new();
-            _userDTO = new(_email, _password, _loggedIn);
-            _userDTO.Insert();
+            UserDTO = new(_email, _password, _loggedIn, false);
+            UserDTO.Insert();
             Log.Info($"User created and logged in: {_email}");
         }
 
@@ -50,7 +50,7 @@ namespace IntroSE.Kanban.Backend.BuisnessLayer.UserPackage
             _email = userDTO.Email;
             _password = userDTO.Password;
             _loggedIn = userDTO.LoggedIn;
-            _userDTO = userDTO;
+            UserDTO = userDTO;
             Boards = new();
             List<int> boardIds = new BoardUserDTO(Email).GetBoards();
             List<BoardDTO> allBoards = new BoardDTO().SelectAll();
@@ -132,6 +132,13 @@ namespace IntroSE.Kanban.Backend.BuisnessLayer.UserPackage
         {
             Boards.Remove(board);
             Log.Info($"Board '{board.Name}' removed from user '{_email}'.");
+        }
+
+        internal void ChangeTheme()
+        {
+            if (!LoggedIn)
+                throw new InvalidOperationException("User must be logged in to change theme.");
+            UserDTO.IsDark = !UserDTO.IsDark;
         }
     }
 }
