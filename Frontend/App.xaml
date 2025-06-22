@@ -8,14 +8,12 @@
     <Application.Resources>
         <ResourceDictionary>
             <ResourceDictionary.MergedDictionaries>
-                <!-- נושא MaterialDesign3 -->
                 <ResourceDictionary Source="pack://application:,,,/MaterialDesignThemes.Wpf;component/Themes/MaterialDesign3.Defaults.xaml" />
 
-                <!-- ערכת עיצוב אישית שלך (צבעים וכו') -->
                 <ResourceDictionary Source="Themes/Light.xaml" />
             </ResourceDictionary.MergedDictionaries>
 
-            <!-- קונברטרים -->
+           
             <utils:MembersToStringConverter x:Key="MembersToStringConverter"/>
             <utils:BoolToVisibilityConverter x:Key="BoolToVisibilityConverter"/>
             <utils:InverseBoolToVisibilityConverter x:Key="InverseBoolToVisibilityConverter"/>
