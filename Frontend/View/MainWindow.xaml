@@ -7,21 +7,21 @@
         Title="Welcome to Kanban"
         Height="800" Width="1000"
         WindowStartupLocation="CenterScreen"
-        Background="{DynamicResource BackgroundBrush}">
+        Background="{DynamicResource BackgroundBrush}"
+        Foreground="{DynamicResource ForegroundBrush}">
 
     <Grid>
+        <!-- Theme toggle positioned better -->
         <ToggleButton x:Name="ThemeToggle"
-                      Width="151" Height="114"
+                      Style="{StaticResource ThemeToggleStyle}"
+                      Width="50" Height="50"
                       HorizontalAlignment="Right"
                       VerticalAlignment="Top"
-                      Margin="0,-18,-37,0"
+                      Margin="20,20,20,0"
                       IsChecked="{Binding IsDarkTheme, Mode=TwoWay}"
                       Checked="ThemeToggle_Checked"
                       Unchecked="ThemeToggle_Unchecked"
-                      ToolTip="Toggle theme"
-                      Style="{StaticResource MaterialDesignActionToggleButton}"
-                      Background="Transparent"
-                      BorderBrush="Transparent">
+                      ToolTip="Toggle theme">
             <Grid>
                 <TextBlock Text="☀"
                            FontSize="24"
@@ -38,102 +38,124 @@
             </Grid>
         </ToggleButton>
 
-        <materialDesign:Card>
-            <TabControl Background="Transparent" FontSize="14" BorderThickness="0">
-                <TabControl.Resources>
-                    <Style TargetType="TabItem" BasedOn="{StaticResource MaterialDesignTabItem}">
-                        <Setter Property="Template">
-                            <Setter.Value>
-                                <ControlTemplate TargetType="TabItem">
-                                    <Grid>
-                                        <Border Background="Transparent"
-                                                BorderThickness="{TemplateBinding BorderThickness}"
-                                                BorderBrush="{TemplateBinding BorderBrush}">
-                                            <ContentPresenter x:Name="ContentSite"
-                                                              VerticalAlignment="Center"
-                                                              HorizontalAlignment="Center"
-                                                              ContentSource="Header"
-                                                              RecognizesAccessKey="True"
-                                                              Margin="{TemplateBinding Padding}" />
-                                        </Border>
-                                        <Border x:Name="SelectedIndicator"
-                                                Height="2"
-                                                VerticalAlignment="Bottom"
-                                                Background="Transparent" />
-                                    </Grid>
-                                    <ControlTemplate.Triggers>
-                                        <Trigger Property="IsSelected" Value="True">
-                                            <Setter TargetName="ContentSite" Property="TextElement.Foreground" Value="{DynamicResource PrimaryBrush}"/>
-                                            <Setter TargetName="SelectedIndicator" Property="Background" Value="{DynamicResource PrimaryBrush}"/>
-                                        </Trigger>
-                                        <Trigger Property="IsMouseOver" Value="True">
-                                            <Setter TargetName="ContentSite" Property="TextElement.Foreground" Value="{DynamicResource PrimaryLightBrush}"/>
-                                        </Trigger>
-                                    </ControlTemplate.Triggers>
-                                </ControlTemplate>
-                            </Setter.Value>
-                        </Setter>
-                        <Setter Property="Padding" Value="15,8"/>
-                        <Setter Property="Foreground" Value="{DynamicResource ForegroundBrush}"/>
-                        <Setter Property="Background" Value="Transparent"/>
-                        <Setter Property="BorderBrush" Value="Transparent"/>
-                        <Setter Property="BorderThickness" Value="0"/>
-                    </Style>
-                </TabControl.Resources>
+        <!-- Welcome card with gradient background -->
+        <materialDesign:Card Style="{StaticResource WelcomeCardStyle}"
+                             VerticalAlignment="Top"
+                             HorizontalAlignment="Center"
+                             Margin="50,120,50,0"
+                             MaxWidth="900">
+            <StackPanel HorizontalAlignment="Center">
+                <TextBlock Text="🎯 Kanban Board Manager"
+                           FontSize="32"
+                           FontWeight="Bold"
+                           HorizontalAlignment="Center"
+                           Foreground="White"
+                           Margin="0,0,0,10"/>
+                <TextBlock Text="Streamline your workflow with our powerful task management system"
+                           FontSize="16"
+                           HorizontalAlignment="Center"
+                           Foreground="#E0E0E0"
+                           TextAlignment="Center"
+                           TextWrapping="Wrap"/>
+            </StackPanel>
+        </materialDesign:Card>
 
+        <!-- Main content card -->
+        <materialDesign:Card Margin="50,280,50,50"
+                             MaxWidth="500"
+                             HorizontalAlignment="Center"
+                             VerticalAlignment="Top">
+
+            <!-- Tab control with proper styling -->
+            <TabControl Background="Transparent">
                 <TabItem Header="Sign In">
-                    <StackPanel Margin="30" VerticalAlignment="Center">
+                    <StackPanel Margin="40,30">
                         <TextBlock Text="Welcome Back"
-                                   FontSize="26"
-                                   FontWeight="Bold"
-                                   Margin="0 0 0 30"
+                                   Style="{StaticResource HeaderTextStyle}"
+                                   FontSize="28"
                                    HorizontalAlignment="Center"
-                                   Foreground="{DynamicResource ForegroundBrush}"/>
+                                   Margin="0,0,0,30"/>
 
-                        <TextBox Margin="0 10"
-                                 materialDesign:HintAssist.Hint="Email"
+                        <TextBox Margin="0,15"
+                                 materialDesign:HintAssist.Hint="Email Address"
                                  materialDesign:HintAssist.IsFloating="True"
                                  Text="{Binding Email, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
 
-                        <Grid Margin="0 10" x:Name="SignInPasswordGrid" />
+                        <Grid Margin="0,15" x:Name="SignInPasswordGrid">
+                            <!-- Password will be added programmatically -->
+                        </Grid>
 
                         <Button x:Name="ForgotPasswordButton"
                                 Content="Forgot Password?"
+                                Style="{StaticResource LinkButtonStyle}"
                                 Click="ForgotPassword_Click"
                                 Visibility="Collapsed"
-                                HorizontalAlignment="Center"/>
+                                HorizontalAlignment="Center"
+                                Margin="0,10"/>
 
                         <Button Content="Sign In"
                                 Click="SignIn_Click"
-                                Margin="0 30"
-                                HorizontalAlignment="Center"/>
+                                Margin="0,30,0,0"
+                                HorizontalAlignment="Center"
+                                MinWidth="200"/>
+
+                        <TextBlock Text="Don't have an account? Sign up to get started!"
+                                   Style="{StaticResource CaptionTextStyle}"
+                                   HorizontalAlignment="Center"
+                                   TextAlignment="Center"
+                                   TextWrapping="Wrap"
+                                   Margin="0,20,0,0"/>
                     </StackPanel>
                 </TabItem>
 
                 <TabItem Header="Sign Up">
-                    <StackPanel Margin="30" VerticalAlignment="Center">
-                        <TextBlock Text="Create an Account"
-                                   FontSize="26"
-                                   FontWeight="Bold"
-                                   Margin="0 0 0 30"
+                    <StackPanel Margin="40,30">
+                        <TextBlock Text="Create Account"
+                                   Style="{StaticResource HeaderTextStyle}"
+                                   FontSize="28"
                                    HorizontalAlignment="Center"
-                                   Foreground="{DynamicResource ForegroundBrush}"/>
+                                   Margin="0,0,0,30"/>
 
-                        <TextBox Margin="0 10"
-                                 materialDesign:HintAssist.Hint="Email"
+                        <TextBox Margin="0,15"
+                                 materialDesign:HintAssist.Hint="Email Address"
                                  materialDesign:HintAssist.IsFloating="True"
                                  Text="{Binding Email, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
 
-                        <Grid Margin="0 10" x:Name="SignUpPasswordGrid" />
-                        <Grid Margin="0 10" x:Name="ConfirmPasswordGrid" />
+                        <Grid Margin="0,15" x:Name="SignUpPasswordGrid">
+                            <!-- Password will be added programmatically -->
+                        </Grid>
 
-                        <Button Content="Sign Up"
+                        <Grid Margin="0,15" x:Name="ConfirmPasswordGrid">
+                            <!-- Confirm password will be added programmatically -->
+                        </Grid>
+
+                        <Button Content="Create Account"
                                 Click="SignUp_Click"
-                                Margin="0 30"
-                                HorizontalAlignment="Center"/>
+                                Margin="0,30,0,0"
+                                HorizontalAlignment="Center"
+                                MinWidth="200"/>
+
+                        <TextBlock Text="Already have an account? Sign in instead!"
+                                   Style="{StaticResource CaptionTextStyle}"
+                                   HorizontalAlignment="Center"
+                                   TextAlignment="Center"
+                                   TextWrapping="Wrap"
+                                   Margin="0,20,0,0"/>
                     </StackPanel>
                 </TabItem>
             </TabControl>
         </materialDesign:Card>
+
+        <!-- Decorative elements -->
+        <Border Background="{StaticResource DividerBrush}"
+                Height="1"
+                VerticalAlignment="Bottom"
+                Margin="0,0,0,100"/>
+
+        <TextBlock Text="© 2025 Kanban Board Manager - Organize. Prioritize. Achieve."
+                   Style="{StaticResource CaptionTextStyle}"
+                   HorizontalAlignment="Center"
+                   VerticalAlignment="Bottom"
+                   Margin="0,0,0,20"/>
     </Grid>
 </Window>
