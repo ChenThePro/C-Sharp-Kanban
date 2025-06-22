@@ -13,11 +13,6 @@ namespace Frontend
             base.OnExit(e);
         }
 
-        private void Application_Startup(object sender, StartupEventArgs e)
-        {
-            SwitchTheme(false);
-        }
-
         public static void SwitchTheme(bool isDark)
         {
             var dicts = Current.Resources.MergedDictionaries;

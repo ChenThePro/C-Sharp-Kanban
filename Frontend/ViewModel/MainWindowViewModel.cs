@@ -13,6 +13,7 @@ namespace Frontend.ViewModel
         public string ConfirmPassword { get; set; }
         public string Message { get; private set; }
         public string Status { get; private set; }
+        public bool IsDarkTheme { get; set; }
 
         private readonly UserController _controller;
 
@@ -23,6 +24,7 @@ namespace Frontend.ViewModel
             ConfirmPassword = string.Empty;
             Message = string.Empty;
             Status = string.Empty;
+            IsDarkTheme = false;
             _controller = ControllerFactory.Instance.UserController;
         }
 

@@ -21,6 +21,7 @@ namespace Frontend.View
             if (!((UserModel)Application.Current.Properties["CurrentUser"]!).IsDark)
             {
                 App.SwitchTheme(true);
+                _viewModel.IsDarkTheme = true;
                 Controllers.ControllerFactory.Instance.UserController.ChangeTheme(((UserModel)Application.Current.Properties["CurrentUser"]!).Email);
                 ((UserModel)Application.Current.Properties["CurrentUser"]!).IsDark = !(((UserModel)Application.Current.Properties["CurrentUser"]!).IsDark);
                 MessageBox.Show("Theme changed successfully to dark!", "Success", MessageBoxButton.OK, MessageBoxImage.Information);
@@ -32,6 +33,7 @@ namespace Frontend.View
             if (((UserModel)Application.Current.Properties["CurrentUser"]!).IsDark)
             {
                 App.SwitchTheme(false);
+                _viewModel.IsDarkTheme = false;
                 Controllers.ControllerFactory.Instance.UserController.ChangeTheme(((UserModel)Application.Current.Properties["CurrentUser"]!).Email);
                 ((UserModel)Application.Current.Properties["CurrentUser"]!).IsDark = !(((UserModel)Application.Current.Properties["CurrentUser"]!).IsDark);
                 MessageBox.Show("Theme changed successfully to light!", "Success", MessageBoxButton.OK, MessageBoxImage.Information);
