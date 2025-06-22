@@ -2,34 +2,53 @@
                     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
                     xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes">
 
-    <Color x:Key="PrimaryColor">#9C27B0</Color>
+    <!-- צבעים -->
+    <Color x:Key="PrimaryColor">#00ACC1</Color>
+    <!-- כחול ניאון -->
     <Color x:Key="SecondaryColor">#80CBC4</Color>
-    <Color x:Key="BackgroundColor">#FFFDFD</Color>
-    <Color x:Key="ForegroundColor">#212121</Color>
+    <Color x:Key="BackgroundColor">#FFFFFF</Color>
+    <Color x:Key="ForegroundColor">#000000</Color>
 
+    <!-- מברשות -->
     <SolidColorBrush x:Key="PrimaryBrush" Color="{StaticResource PrimaryColor}"/>
     <SolidColorBrush x:Key="SecondaryBrush" Color="{StaticResource SecondaryColor}"/>
     <SolidColorBrush x:Key="BackgroundBrush" Color="{StaticResource BackgroundColor}"/>
     <SolidColorBrush x:Key="ForegroundBrush" Color="{StaticResource ForegroundColor}"/>
 
+    <!-- טקסט -->
     <Style TargetType="TextBlock">
         <Setter Property="Foreground" Value="{StaticResource ForegroundBrush}"/>
     </Style>
-    <Style TargetType="Button">
-        <Setter Property="Foreground" Value="{StaticResource ForegroundBrush}"/>
+
+    <!-- כפתור -->
+    <Style TargetType="Button" BasedOn="{StaticResource MaterialDesignButton}">
+        <Setter Property="Foreground" Value="White"/>
         <Setter Property="Background" Value="{StaticResource PrimaryBrush}"/>
+        <Setter Property="materialDesign:ButtonAssist.CornerRadius" Value="8"/>
     </Style>
-    <Style TargetType="TextBox">
+
+    <!-- תיבת טקסט -->
+    <Style TargetType="TextBox" BasedOn="{StaticResource MaterialDesignOutlinedTextBox}">
         <Setter Property="Background" Value="#FAFAFA"/>
-        <Setter Property="Foreground" Value="#000000"/>
-        <Setter Property="CaretBrush" Value="#000000"/>
+        <Setter Property="Foreground" Value="{StaticResource ForegroundBrush}"/>
+        <Setter Property="CaretBrush" Value="{StaticResource ForegroundBrush}"/>
     </Style>
-    <Style TargetType="PasswordBox">
+
+    <!-- תיבת סיסמה -->
+    <Style TargetType="PasswordBox" BasedOn="{StaticResource MaterialDesignOutlinedPasswordBox}">
         <Setter Property="Background" Value="#FAFAFA"/>
-        <Setter Property="Foreground" Value="#000000"/>
-        <Setter Property="CaretBrush" Value="#000000"/>
+        <Setter Property="Foreground" Value="{StaticResource ForegroundBrush}"/>
+        <Setter Property="CaretBrush" Value="{StaticResource ForegroundBrush}"/>
     </Style>
+
+    <!-- כרטיסים -->
     <Style TargetType="materialDesign:Card">
         <Setter Property="Background" Value="{StaticResource BackgroundBrush}"/>
+    </Style>
+
+    <!-- חלונות -->
+    <Style TargetType="Window" x:Key="CustomWindowStyle">
+        <Setter Property="Background" Value="{StaticResource BackgroundBrush}"/>
+        <Setter Property="Foreground" Value="{StaticResource ForegroundBrush}"/>
     </Style>
 </ResourceDictionary>

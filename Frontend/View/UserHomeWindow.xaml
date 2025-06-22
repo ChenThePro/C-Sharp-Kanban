@@ -17,7 +17,7 @@
                              Margin="20 20 20 10"
                              Padding="20"
                              materialDesign:ElevationAssist.Elevation="Dp3"
-                             Background="#E6DAF0">
+                             Background="#E6F2F8">
             <Grid>
                 <TextBlock Text="Kanban Dashboard"
                            FontSize="24"
@@ -66,6 +66,7 @@
                     <Button Content="Logout"
                             Click="Logout_Click"
                             Style="{StaticResource MaterialDesignOutlinedButton}"
+                            Background="{DynamicResource PrimaryBrush}"
                             materialDesign:ButtonAssist.CornerRadius="20"
                             Padding="20 5"
                             Height="32"
@@ -81,7 +82,7 @@
                 <materialDesign:Card
                                      Padding="30"
                                      materialDesign:ElevationAssist.Elevation="Dp2"
-                                     Background="#E6DAF0" Width="960">
+                                     Background="#E6F2F8" Width="960">
                     <TextBlock Text="Welcome to your Kanban board!"
                                FontSize="18"
                                HorizontalAlignment="Center"
@@ -108,7 +109,7 @@
                 <ItemsControl ItemsSource="{Binding Boards}">
                     <ItemsControl.ItemTemplate>
                         <DataTemplate>
-                            <materialDesign:Card Background="{DynamicResource BackgroundBrush}"
+                            <materialDesign:Card Background="#E6F2F8"
                                                  BorderBrush="{DynamicResource ForegroundBrush}"
                                                  BorderThickness="1"
                                                  Margin="0 0 0 20"
@@ -155,7 +156,7 @@
                                             </ItemsControl.ItemsPanel>
                                             <ItemsControl.ItemTemplate>
                                                 <DataTemplate>
-                                                    <materialDesign:Card Background="{DynamicResource BackgroundBrush}"
+                                                    <materialDesign:Card Background="white"
                                                                          Margin="10 5"
                                                                          Padding="10"
                                                                          Width="300"
@@ -204,7 +205,7 @@
                                                                           Visibility="{Binding IsExpanded, Converter={StaticResource BoolToVisibilityConverter}}">
                                                                 <ItemsControl.ItemTemplate>
                                                                     <DataTemplate>
-                                                                        <Border Background="{DynamicResource BackgroundBrush}"
+                                                                        <Border Background="#FFF9C4"
                                                                                 BorderBrush="{DynamicResource PrimaryBrush}"
                                                                                 BorderThickness="1"
                                                                                 CornerRadius="8"
