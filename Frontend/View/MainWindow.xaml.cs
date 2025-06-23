@@ -25,28 +25,11 @@ namespace Frontend.View
             InitializeComponent();
             _viewModel = new();
             DataContext = _viewModel;
+            UpdateThemeIcon();
             TogglePasswordVisibility(SignInPasswordGrid, _isSignInPasswordVisible, _viewModel.Password, "Password", PasswordBox_PasswordChanged, ToggleSignInPasswordVisibility);
             TogglePasswordVisibility(SignUpPasswordGrid, _isSignUpPasswordVisible, _viewModel.Password, "Password", PasswordBox_PasswordChanged, ToggleSignUpPasswordVisibility);
             TogglePasswordVisibility(ConfirmPasswordGrid, _isConfirmPasswordVisible, _viewModel.ConfirmPassword, "Confirm Password", ConfirmPasswordBox_PasswordChanged, ToggleConfirmPasswordVisibility);
         }
-
-        private void ThemeToggle_Checked(object sender, RoutedEventArgs e)
-        {
-            App.SwitchTheme(true);
-            _viewModel.IsDarkTheme = true;
-        }
-
-        private void ThemeToggle_Unchecked(object sender, RoutedEventArgs e)
-        {
-            App.SwitchTheme(false);
-            _viewModel.IsDarkTheme = false;
-        }
-
-        private void PasswordBox_PasswordChanged(object sender, RoutedEventArgs e) =>
-            _viewModel.Password = ((PasswordBox)sender).Password;
-
-        private void ConfirmPasswordBox_PasswordChanged(object sender, RoutedEventArgs e) =>
-            _viewModel.ConfirmPassword = ((PasswordBox)sender).Password;
 
         private void SignUp_Click(object sender, RoutedEventArgs e)
         {
@@ -94,6 +77,46 @@ namespace Frontend.View
             }
         }
 
+        private void ThemeToggle_Click(object sender, RoutedEventArgs e)
+        {
+            _viewModel.IsDarkTheme = !_viewModel.IsDarkTheme;
+            App.SwitchTheme(_viewModel.IsDarkTheme);
+            UpdateThemeIcon();
+            RefreshPasswordBoxes(SignInPasswordGrid);
+            RefreshPasswordBoxes(SignUpPasswordGrid);
+            RefreshPasswordBoxes(ConfirmPasswordGrid);
+        }
+
+        private void RefreshPasswordBoxes(Grid grid)
+        {
+            foreach (var child in grid.Children.OfType<PasswordBox>())
+            {
+                var foreground = TryFindResource("ForegroundBrush") as Brush;
+                child.Foreground = foreground;
+                child.CaretBrush = TryFindResource("PrimaryBrush") as SolidColorBrush;
+            }
+        }
+
+        private void UpdateThemeIcon()
+        {
+            if (_viewModel.IsDarkTheme)
+            {
+                MoonIcon.Visibility = Visibility.Collapsed;
+                SunIcon.Visibility = Visibility.Visible;
+            }
+            else
+            {
+                MoonIcon.Visibility = Visibility.Visible;
+                SunIcon.Visibility = Visibility.Collapsed;
+            }
+        }
+
+        private void PasswordBox_PasswordChanged(object sender, RoutedEventArgs e) =>
+            _viewModel.Password = ((PasswordBox)sender).Password;
+
+        private void ConfirmPasswordBox_PasswordChanged(object sender, RoutedEventArgs e) =>
+            _viewModel.ConfirmPassword = ((PasswordBox)sender).Password;
+
         private void ForgotPassword_Click(object sender, RoutedEventArgs e)
         {
             ResetPasswordWindow resetWindow = new(new InMemoryTempCodeService());
@@ -127,17 +150,28 @@ namespace Frontend.View
                 {
                     Text = currentValue,
                     Style = (Style)FindResource("MaterialDesignFloatingHintTextBox"),
-                    Foreground = Brushes.Black,
-                    CaretBrush = Brushes.Black,
+                    Foreground = (Brush)TryFindResource("ForegroundBrush"),
+                    CaretBrush = (Brush)TryFindResource("PrimaryBrush"),
                     VerticalContentAlignment = VerticalAlignment.Center
                 };
                 HintAssist.SetHint(textBox, hintText);
                 HintAssist.SetIsFloating(textBox, true);
+                textBox.GotFocus += (s, e) =>
+                {
+                    var accent = TryFindResource("AccentBrush") as Brush;
+                    TextFieldAssist.SetUnderlineBrush(textBox, accent!);
+                };
+                textBox.LostFocus += (s, e) =>
+                {
+                    var primary = TryFindResource("PrimaryBrush") as Brush;
+                    TextFieldAssist.SetUnderlineBrush(textBox, primary!);
+                };
                 textBox.TextChanged += (s, e) =>
                 {
                     if (toggleHandler == ToggleConfirmPasswordVisibility)
                         _viewModel.ConfirmPassword = textBox.Text;
-                    else _viewModel.Password = textBox.Text;
+                    else
+                        _viewModel.Password = textBox.Text;
                 };
                 grid.Children.Add(textBox);
                 AddEyeToggle(grid, toggleHandler, true);
@@ -148,12 +182,22 @@ namespace Frontend.View
                 {
                     Password = currentValue,
                     Style = (Style)FindResource("MaterialDesignFloatingHintPasswordBox"),
-                    Foreground = Brushes.Black,
-                    CaretBrush = Brushes.Black,
+                    Foreground = (Brush)TryFindResource("ForegroundBrush"),
+                    CaretBrush = (Brush)TryFindResource("PrimaryBrush"),
                     VerticalContentAlignment = VerticalAlignment.Center
                 };
                 HintAssist.SetHint(passwordBox, hintText);
                 HintAssist.SetIsFloating(passwordBox, true);
+                passwordBox.GotFocus += (s, e) =>
+                {
+                    var accent = TryFindResource("AccentBrush") as Brush;
+                    TextFieldAssist.SetUnderlineBrush(passwordBox, accent!);
+                };
+                passwordBox.LostFocus += (s, e) =>
+                {
+                    var primary = TryFindResource("PrimaryBrush") as Brush;
+                    TextFieldAssist.SetUnderlineBrush(passwordBox, primary!);
+                };
                 passwordBox.PasswordChanged += changedHandler;
                 grid.Children.Add(passwordBox);
                 AddEyeToggle(grid, toggleHandler, false);
