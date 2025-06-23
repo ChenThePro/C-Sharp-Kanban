@@ -16,27 +16,27 @@ namespace Frontend.View
             DataContext = _viewModel;
         }
 
-        private void ThemeToggle_Checked(object sender, RoutedEventArgs e)
+        private void ThemeToggle_Click(object sender, RoutedEventArgs e)
         {
-            if (!((UserModel)Application.Current.Properties["CurrentUser"]!).IsDark)
-            {
-                App.SwitchTheme(true);
-                _viewModel.IsDarkTheme = true;
-                Controllers.ControllerFactory.Instance.UserController.ChangeTheme(((UserModel)Application.Current.Properties["CurrentUser"]!).Email);
-                ((UserModel)Application.Current.Properties["CurrentUser"]!).IsDark = !(((UserModel)Application.Current.Properties["CurrentUser"]!).IsDark);
-                MessageBox.Show("Theme changed successfully to dark!", "Success", MessageBoxButton.OK, MessageBoxImage.Information);
-            }
+            _viewModel.IsDarkTheme = !_viewModel.IsDarkTheme;
+            App.SwitchTheme(_viewModel.IsDarkTheme);
+            Controllers.ControllerFactory.Instance.UserController.ChangeTheme(((UserModel)Application.Current.Properties["CurrentUser"]!).Email);
+            ((UserModel)Application.Current.Properties["CurrentUser"]!).IsDark = !(((UserModel)Application.Current.Properties["CurrentUser"]!).IsDark);
+            UpdateThemeIcon();
+            MessageBox.Show("Theme changed successfully!", "Success", MessageBoxButton.OK, MessageBoxImage.Information);
         }
 
-        private void ThemeToggle_Unchecked(object sender, RoutedEventArgs e)
+        private void UpdateThemeIcon()
         {
-            if (((UserModel)Application.Current.Properties["CurrentUser"]!).IsDark)
+            if (_viewModel.IsDarkTheme)
             {
-                App.SwitchTheme(false);
-                _viewModel.IsDarkTheme = false;
-                Controllers.ControllerFactory.Instance.UserController.ChangeTheme(((UserModel)Application.Current.Properties["CurrentUser"]!).Email);
-                ((UserModel)Application.Current.Properties["CurrentUser"]!).IsDark = !(((UserModel)Application.Current.Properties["CurrentUser"]!).IsDark);
-                MessageBox.Show("Theme changed successfully to light!", "Success", MessageBoxButton.OK, MessageBoxImage.Information);
+                MoonIcon.Visibility = Visibility.Collapsed;
+                SunIcon.Visibility = Visibility.Visible;
+            }
+            else
+            {
+                MoonIcon.Visibility = Visibility.Visible;
+                SunIcon.Visibility = Visibility.Collapsed;
             }
         }
 

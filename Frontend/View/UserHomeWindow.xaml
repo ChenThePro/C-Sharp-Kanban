@@ -25,29 +25,33 @@
                             HorizontalAlignment="Right" 
                             VerticalAlignment="Center">
 
-                    <ToggleButton x:Name="ThemeToggle"
-                                  Style="{DynamicResource ThemeToggleStyle}"
-                                  Width="45" Height="45"
-                                  Margin="0,0,15,0"
-                                  IsChecked="{Binding IsDarkTheme, Mode=TwoWay}"
-                                  Checked="ThemeToggle_Checked"
-                                  Unchecked="ThemeToggle_Unchecked"
-                                  ToolTip="Toggle theme">
+                    <Button x:Name="ThemeToggle"
+               Width="50" Height="50"
+               HorizontalAlignment="Right"
+               VerticalAlignment="Top"
+               Margin="0,0,15,0"
+               Click="ThemeToggle_Click"
+               ToolTip="Toggle theme"
+               Background="Transparent"
+               BorderThickness="2"
+               BorderBrush="{DynamicResource PrimaryBrush}"
+               Style="{StaticResource MaterialDesignFlatButton}">
                         <Grid>
-                            <TextBlock Text="☀"
-                                       FontSize="22"
-                                       HorizontalAlignment="Center"
-                                       VerticalAlignment="Center"
-                                       Foreground="{DynamicResource PrimaryBrush}"
-                                       Visibility="{Binding IsDarkTheme, Converter={StaticResource InverseBoolToVisibilityConverter}}"/>
-                            <TextBlock Text="☾"
-                                       FontSize="22"
-                                       HorizontalAlignment="Center"
-                                       VerticalAlignment="Center"
-                                       Foreground="{DynamicResource PrimaryBrush}"
-                                       Visibility="{Binding IsDarkTheme, Converter={StaticResource BoolToVisibilityConverter}}"/>
+                            <materialDesign:PackIcon x:Name="MoonIcon"
+                        Kind="WeatherNight"
+                        Width="21"
+                        Height="21"
+                        Foreground="{DynamicResource PrimaryBrush}"/>
+
+                            <materialDesign:PackIcon x:Name="SunIcon"
+                        Kind="WhiteBalanceSunny"
+                        Width="19"
+                        Height="19"
+                        Foreground="{DynamicResource PrimaryBrush}"
+                        Visibility="Collapsed"/>
+
                         </Grid>
-                    </ToggleButton>
+                    </Button>
 
                     <Button Content="Logout"
                             Click="Logout_Click"/>
@@ -95,9 +99,6 @@
                                             <TextBlock Text="{Binding Owner, StringFormat=Owner: \{0\}}"
                                                        Style="{StaticResource CaptionTextStyle}"
                                                        Margin="0,2"/>
-                                            <TextBlock Text="{Binding Members, Converter={StaticResource MembersToStringConverter}}"
-                                                       Style="{DynamicResource CaptionTextStyle}"
-                                                       Margin="0,2"/>
                                         </StackPanel>
 
                                         <StackPanel DockPanel.Dock="Right" Orientation="Horizontal" HorizontalAlignment="Right">
@@ -119,6 +120,12 @@
                                                        Visibility="{Binding IsExpanded, Converter={StaticResource InverseBoolToVisibilityConverter}}"/>
                                         </StackPanel>
                                     </DockPanel>
+
+                                    <!-- Show members only when board is expanded -->
+                                    <TextBlock Text="{Binding Members, Converter={StaticResource MembersToStringConverter}}"
+                                               Style="{DynamicResource CaptionTextStyle}"
+                                               Margin="10,5,0,0"
+                                               Visibility="{Binding IsExpanded, Converter={StaticResource BoolToVisibilityConverter}}"/>
 
                                     <ScrollViewer Visibility="{Binding IsExpanded, Converter={StaticResource BoolToVisibilityConverter}}"
                                                   HorizontalScrollBarVisibility="Auto"
@@ -157,7 +164,7 @@
 
                                                             <TextBlock Margin="0,0,0,10">
                                                                 <TextBlock.Style>
-                                                                    <Style TargetType="TextBlock" BasedOn="{DynamicResource CaptionTextStyle}">
+                                                                    <Style TargetType="TextBlock" BasedOn="{StaticResource CaptionTextStyle}">
                                                                         <Setter Property="Foreground" Value="{DynamicResource PrimaryBrush}"/>
                                                                         <Setter Property="Text">
                                                                             <Setter.Value>

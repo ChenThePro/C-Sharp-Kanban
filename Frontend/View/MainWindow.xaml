@@ -26,7 +26,7 @@
                 Background="Transparent"
                 BorderThickness="2"
                 BorderBrush="{DynamicResource PrimaryBrush}"
-                Style="{DynamicResource MaterialDesignFlatButton}">
+                Style="{StaticResource MaterialDesignFlatButton}">
             <Grid>
                 <materialDesign:PackIcon x:Name="MoonIcon"
                          Kind="WeatherNight"

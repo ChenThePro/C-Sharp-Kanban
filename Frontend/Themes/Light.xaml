@@ -2,50 +2,39 @@
                     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
                     xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes">
 
-    <Color x:Key="PrimaryColor">#8B5CF6</Color>
-    <Color x:Key="PrimaryLightColor">#A78BFA</Color>
-    <Color x:Key="PrimaryDarkColor">#7C3AED</Color>
-    <Color x:Key="AccentColor">#06B6D4</Color>
+    <Color x:Key="PrimaryColor">#5C6BC0</Color>
+    <Color x:Key="PrimaryLightColor">#C5CAE9</Color>
+    <Color x:Key="PrimaryDarkColor">#303F9F</Color>
+    <Color x:Key="AccentColor">#FF8A65</Color>
 
-    <Color x:Key="WindowBackgroundColor">#FAFBFF</Color>
     <Color x:Key="CardBackgroundColor">#FFFFFF</Color>
-    <Color x:Key="BackgroundColor">#F8FAFC</Color>
-    <Color x:Key="SurfaceColor">#FFFFFF</Color>
+    <Color x:Key="BackgroundColor">#FAFAFA</Color>
+    <Color x:Key="SurfaceColor">#F1F3F4</Color>
 
-    <Color x:Key="BorderColor">#E2E8F0</Color>
-    <Color x:Key="DividerColor">#F1F5F9</Color>
+    <Color x:Key="BorderColor">#E0E0E0</Color>
 
-    <Color x:Key="TextColor">#1E293B</Color>
-    <Color x:Key="TextSecondaryColor">#64748B</Color>
-    <Color x:Key="HintTextColor">#06B6D4</Color>
-
-    <Color x:Key="ErrorColor">#EF4444</Color>
-    <Color x:Key="SuccessColor">#10B981</Color>
-    <Color x:Key="WarningColor">#F59E0B</Color>
+    <Color x:Key="TextColor">#212121</Color>
+    <Color x:Key="TextSecondaryColor">#757575</Color>
+    <Color x:Key="ErrorColor">#E53935</Color>
 
     <SolidColorBrush x:Key="PrimaryBrush" Color="{StaticResource PrimaryColor}"/>
     <SolidColorBrush x:Key="PrimaryLightBrush" Color="{StaticResource PrimaryLightColor}"/>
     <SolidColorBrush x:Key="PrimaryDarkBrush" Color="{StaticResource PrimaryDarkColor}"/>
     <SolidColorBrush x:Key="AccentBrush" Color="{StaticResource AccentColor}"/>
 
-    <SolidColorBrush x:Key="WindowBackgroundBrush" Color="{StaticResource WindowBackgroundColor}"/>
     <SolidColorBrush x:Key="BackgroundBrush" Color="{StaticResource BackgroundColor}"/>
     <SolidColorBrush x:Key="CardBackgroundBrush" Color="{StaticResource CardBackgroundColor}"/>
     <SolidColorBrush x:Key="SurfaceBrush" Color="{StaticResource SurfaceColor}"/>
 
     <SolidColorBrush x:Key="BorderBrush" Color="{StaticResource BorderColor}"/>
-    <SolidColorBrush x:Key="DividerBrush" Color="{StaticResource DividerColor}"/>
+    <SolidColorBrush x:Key="DividerBrush" Color="#DDD"/>
 
     <SolidColorBrush x:Key="ForegroundBrush" Color="{StaticResource TextColor}"/>
     <SolidColorBrush x:Key="TextSecondaryBrush" Color="{StaticResource TextSecondaryColor}"/>
-    <SolidColorBrush x:Key="HintTextBrush" Color="{StaticResource HintTextColor}"/>
-
     <SolidColorBrush x:Key="ErrorBrush" Color="{StaticResource ErrorColor}"/>
-    <SolidColorBrush x:Key="SuccessBrush" Color="{StaticResource SuccessColor}"/>
-    <SolidColorBrush x:Key="WarningBrush" Color="{StaticResource WarningColor}"/>
 
     <Style TargetType="Window">
-        <Setter Property="Background" Value="{StaticResource WindowBackgroundBrush}"/>
+        <Setter Property="Background" Value="{StaticResource BackgroundBrush}"/>
         <Setter Property="Foreground" Value="{StaticResource ForegroundBrush}"/>
     </Style>
 
@@ -85,15 +74,6 @@
         </Style.Triggers>
     </Style>
 
-    <Style x:Key="SuccessButtonStyle" TargetType="Button" BasedOn="{StaticResource {x:Type Button}}">
-        <Setter Property="Background" Value="{StaticResource SuccessBrush}"/>
-        <Style.Triggers>
-            <Trigger Property="IsMouseOver" Value="True">
-                <Setter Property="Background" Value="#34D399"/>
-            </Trigger>
-        </Style.Triggers>
-    </Style>
-
     <Style x:Key="DeleteButtonStyle" TargetType="Button" BasedOn="{StaticResource MaterialDesignFlatButton}">
         <Setter Property="Foreground" Value="{StaticResource ErrorBrush}"/>
         <Setter Property="Background" Value="Transparent"/>
@@ -105,18 +85,7 @@
         <Setter Property="materialDesign:ButtonAssist.CornerRadius" Value="15"/>
         <Style.Triggers>
             <Trigger Property="IsMouseOver" Value="True">
-                <Setter Property="Background" Value="#1AEF4444"/>
-            </Trigger>
-        </Style.Triggers>
-    </Style>
-
-    <Style x:Key="FlatButtonStyle" TargetType="Button" BasedOn="{StaticResource MaterialDesignFlatButton}">
-        <Setter Property="Foreground" Value="{StaticResource HintTextBrush}"/>
-        <Setter Property="Background" Value="Transparent"/>
-        <Setter Property="BorderThickness" Value="0"/>
-        <Style.Triggers>
-            <Trigger Property="IsMouseOver" Value="True">
-                <Setter Property="Background" Value="#1A06B6D4"/>
+                <Setter Property="Background" Value="#1AE57373"/>
             </Trigger>
         </Style.Triggers>
     </Style>
@@ -130,7 +99,7 @@
         <Style.Triggers>
             <Trigger Property="IsMouseOver" Value="True">
                 <Setter Property="Foreground" Value="{StaticResource PrimaryLightBrush}"/>
-                <Setter Property="Background" Value="#1A8B5CF6"/>
+                <Setter Property="Background" Value="#1AC5CAE9"/>
             </Trigger>
         </Style.Triggers>
     </Style>
@@ -141,7 +110,7 @@
         <Setter Property="Foreground" Value="{StaticResource PrimaryBrush}"/>
         <Style.Triggers>
             <Trigger Property="IsMouseOver" Value="True">
-                <Setter Property="Background" Value="#1A8B5CF6"/>
+                <Setter Property="Background" Value="#1AC5CAE9"/>
             </Trigger>
         </Style.Triggers>
     </Style>
@@ -166,7 +135,7 @@
         <Setter Property="Background" Value="{StaticResource CardBackgroundBrush}"/>
         <Setter Property="BorderBrush" Value="{StaticResource BorderBrush}"/>
         <Setter Property="BorderThickness" Value="1"/>
-        <Setter Property="materialDesign:ElevationAssist.Elevation" Value="Dp3"/>
+        <Setter Property="materialDesign:ElevationAssist.Elevation" Value="Dp2"/>
     </Style>
 
     <Style x:Key="HeaderCardStyle" TargetType="materialDesign:Card" BasedOn="{StaticResource {x:Type materialDesign:Card}}">
@@ -183,7 +152,7 @@
             <Setter.Value>
                 <LinearGradientBrush StartPoint="0,0" EndPoint="1,1">
                     <GradientStop Color="{StaticResource PrimaryColor}" Offset="0"/>
-                    <GradientStop Color="#A78BFA" Offset="1"/>
+                    <GradientStop Color="{StaticResource PrimaryLightColor}" Offset="1"/>
                 </LinearGradientBrush>
             </Setter.Value>
         </Setter>
@@ -224,8 +193,8 @@
     </Style>
 
     <Style x:Key="TaskCardStyle" TargetType="Border">
-        <Setter Property="Background" Value="{StaticResource CardBackgroundBrush}"/>
-        <Setter Property="BorderBrush" Value="{StaticResource BorderBrush}"/>
+        <Setter Property="Background" Value="#FFFBEA"/>
+        <Setter Property="BorderBrush" Value="#FFD54F"/>
         <Setter Property="BorderThickness" Value="1"/>
         <Setter Property="CornerRadius" Value="8"/>
         <Setter Property="Padding" Value="12"/>
@@ -252,7 +221,7 @@
             <Setter.Value>
                 <LinearGradientBrush StartPoint="0,0" EndPoint="1,0">
                     <GradientStop Color="{StaticResource CardBackgroundColor}" Offset="0"/>
-                    <GradientStop Color="#1A8B5CF6" Offset="1"/>
+                    <GradientStop Color="#FFF3E0" Offset="1"/>
                 </LinearGradientBrush>
             </Setter.Value>
         </Setter>
@@ -268,6 +237,11 @@
     </Style>
 
     <Style TargetType="TabItem" BasedOn="{StaticResource MaterialDesignTabItem}">
+        <Setter Property="Padding" Value="15,8"/>
+        <Setter Property="Foreground" Value="{StaticResource ForegroundBrush}"/>
+        <Setter Property="Background" Value="Transparent"/>
+        <Setter Property="BorderBrush" Value="Transparent"/>
+        <Setter Property="BorderThickness" Value="0"/>
         <Setter Property="Template">
             <Setter.Value>
                 <ControlTemplate TargetType="TabItem">
@@ -299,14 +273,9 @@
                 </ControlTemplate>
             </Setter.Value>
         </Setter>
-        <Setter Property="Padding" Value="15,8"/>
-        <Setter Property="Foreground" Value="{StaticResource ForegroundBrush}"/>
-        <Setter Property="Background" Value="Transparent"/>
-        <Setter Property="BorderBrush" Value="Transparent"/>
-        <Setter Property="BorderThickness" Value="0"/>
     </Style>
 
-    <Style x:Key="HeaderTextStyle" TargetType="TextBlock" BasedOn="{StaticResource {x:Type TextBlock}}">
+    <Style x:Key="HeaderTextStyle" TargetType="TextBlock">
         <Setter Property="FontSize" Value="26"/>
         <Setter Property="FontWeight" Value="Bold"/>
         <Setter Property="Foreground" Value="{StaticResource ForegroundBrush}"/>
@@ -314,30 +283,15 @@
         <Setter Property="Margin" Value="0,0,0,30"/>
     </Style>
 
-    <Style x:Key="SubHeaderTextStyle" TargetType="TextBlock" BasedOn="{StaticResource {x:Type TextBlock}}">
+    <Style x:Key="SubHeaderTextStyle" TargetType="TextBlock">
         <Setter Property="FontSize" Value="18"/>
         <Setter Property="FontWeight" Value="SemiBold"/>
         <Setter Property="Foreground" Value="{StaticResource ForegroundBrush}"/>
     </Style>
 
-    <Style x:Key="CaptionTextStyle" TargetType="TextBlock" BasedOn="{StaticResource {x:Type TextBlock}}">
+    <Style x:Key="CaptionTextStyle" TargetType="TextBlock">
         <Setter Property="FontSize" Value="12"/>
         <Setter Property="Foreground" Value="{StaticResource TextSecondaryBrush}"/>
-    </Style>
-
-    <Style x:Key="SuccessTextStyle" TargetType="TextBlock" BasedOn="{StaticResource {x:Type TextBlock}}">
-        <Setter Property="Foreground" Value="{StaticResource SuccessBrush}"/>
-        <Setter Property="FontWeight" Value="SemiBold"/>
-    </Style>
-
-    <Style x:Key="ErrorTextStyle" TargetType="TextBlock" BasedOn="{StaticResource {x:Type TextBlock}}">
-        <Setter Property="Foreground" Value="{StaticResource ErrorBrush}"/>
-        <Setter Property="FontWeight" Value="SemiBold"/>
-    </Style>
-
-    <Style x:Key="WarningTextStyle" TargetType="TextBlock" BasedOn="{StaticResource {x:Type TextBlock}}">
-        <Setter Property="Foreground" Value="{StaticResource WarningBrush}"/>
-        <Setter Property="FontWeight" Value="SemiBold"/>
     </Style>
 
 </ResourceDictionary>

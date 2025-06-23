@@ -25,7 +25,6 @@ namespace Frontend.View
             InitializeComponent();
             _viewModel = new();
             DataContext = _viewModel;
-            UpdateThemeIcon();
             TogglePasswordVisibility(SignInPasswordGrid, _isSignInPasswordVisible, _viewModel.Password, "Password", PasswordBox_PasswordChanged, ToggleSignInPasswordVisibility);
             TogglePasswordVisibility(SignUpPasswordGrid, _isSignUpPasswordVisible, _viewModel.Password, "Password", PasswordBox_PasswordChanged, ToggleSignUpPasswordVisibility);
             TogglePasswordVisibility(ConfirmPasswordGrid, _isConfirmPasswordVisible, _viewModel.ConfirmPassword, "Confirm Password", ConfirmPasswordBox_PasswordChanged, ToggleConfirmPasswordVisibility);
@@ -85,6 +84,7 @@ namespace Frontend.View
             RefreshPasswordBoxes(SignInPasswordGrid);
             RefreshPasswordBoxes(SignUpPasswordGrid);
             RefreshPasswordBoxes(ConfirmPasswordGrid);
+            MessageBox.Show("Theme changed successfully!", "Success", MessageBoxButton.OK, MessageBoxImage.Information);
         }
 
         private void RefreshPasswordBoxes(Grid grid)
