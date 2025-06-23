@@ -263,4 +263,32 @@
         <Setter Property="Foreground" Value="{DynamicResource TextSecondaryBrush}"/>
     </Style>
 
+    <Style TargetType="ScrollBar" x:Key="HorizontalScrollBar" BasedOn="{x:Null}">
+        <Setter Property="Height" Value="12"/>
+        <Setter Property="Orientation" Value="Horizontal"/>
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="ScrollBar">
+                    <Grid Background="{DynamicResource PrimaryLightBrush}" Height="12">
+                        <Track Name="PART_Track"
+                           IsDirectionReversed="False"
+                           Focusable="False">
+                            <Track.Thumb>
+                                <Thumb Background="{DynamicResource PrimaryBrush}"
+                                   Height="12"
+                                   Margin="1,0"/>
+                            </Track.Thumb>
+                            <Track.IncreaseRepeatButton>
+                                <RepeatButton Width="0" IsTabStop="False"/>
+                            </Track.IncreaseRepeatButton>
+                            <Track.DecreaseRepeatButton>
+                                <RepeatButton Width="0" IsTabStop="False"/>
+                            </Track.DecreaseRepeatButton>
+                        </Track>
+                    </Grid>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+
 </ResourceDictionary>

@@ -127,9 +127,12 @@
                                                Margin="10,5,0,0"
                                                Visibility="{Binding IsExpanded, Converter={StaticResource BoolToVisibilityConverter}}"/>
 
-                                    <ScrollViewer Visibility="{Binding IsExpanded, Converter={StaticResource BoolToVisibilityConverter}}"
-                                                  HorizontalScrollBarVisibility="Auto"
-                                                  Margin="0,10,0,0">
+                                    <ScrollViewer HorizontalScrollBarVisibility="Auto"
+              Visibility="{Binding IsExpanded, Converter={StaticResource BoolToVisibilityConverter}}"
+              Margin="0,10,0,0">
+                                        <ScrollViewer.Resources>
+                                            <Style TargetType="ScrollBar" BasedOn="{StaticResource HorizontalScrollBar}"/>
+                                        </ScrollViewer.Resources>
                                         <ItemsControl ItemsSource="{Binding Columns}">
                                             <ItemsControl.ItemsPanel>
                                                 <ItemsPanelTemplate>

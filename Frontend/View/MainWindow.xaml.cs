@@ -43,13 +43,10 @@ namespace Frontend.View
                 {
                     MessageBox.Show(_viewModel.Message, _viewModel.Status, MessageBoxButton.OK, MessageBoxImage.Information);
                     Application.Current.Properties["CurrentUser"] = user;
-                    UserHomeWindow userHome = new();
+                    UserHomeWindow userHome = new(_viewModel.IsDarkTheme);
                     Application.Current.MainWindow = userHome;
                     Close();
                     userHome.Show();
-                    if (user.IsDark)
-                        App.SwitchTheme(true);
-                    else App.SwitchTheme(false);
                 }
                 else MessageBox.Show(_viewModel.Message, _viewModel.Status, MessageBoxButton.OK, MessageBoxImage.Error);
             }

@@ -19,6 +19,22 @@ namespace Frontend.ViewModel
         private readonly UserModel _user;
         private readonly BoardController _controller;
 
+        public UserHomeWindowViewModel(bool isDarkTheme)
+        {
+            _newBoardName = string.Empty;
+            Message = string.Empty;
+            Status = string.Empty;
+            _user = (UserModel)Application.Current.Properties["CurrentUser"]!;
+            IsDarkTheme = isDarkTheme;
+            _controller = ControllerFactory.Instance.BoardController;
+            if (IsDarkTheme)
+            {
+                App.SwitchTheme(IsDarkTheme);
+                ControllerFactory.Instance.UserController.ChangeTheme(_user.Email);
+                _user.IsDark = IsDarkTheme;
+            }
+        }
+
         public UserHomeWindowViewModel()
         {
             _newBoardName = string.Empty;

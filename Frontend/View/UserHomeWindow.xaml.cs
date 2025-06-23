@@ -9,6 +9,14 @@ namespace Frontend.View
     {
         private readonly UserHomeWindowViewModel _viewModel;
 
+        public UserHomeWindow(bool IsDarkTheme)
+        {
+            InitializeComponent();
+            _viewModel = new(IsDarkTheme);
+            DataContext = _viewModel;
+            UpdateThemeIcon();
+        }
+
         public UserHomeWindow()
         {
             InitializeComponent();
