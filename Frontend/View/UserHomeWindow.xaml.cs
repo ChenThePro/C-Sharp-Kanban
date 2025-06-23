@@ -14,6 +14,7 @@ namespace Frontend.View
             InitializeComponent();
             _viewModel = new();
             DataContext = _viewModel;
+            UpdateThemeIcon();
         }
 
         private void ThemeToggle_Click(object sender, RoutedEventArgs e)
@@ -91,8 +92,7 @@ namespace Frontend.View
                 Application.Current.MainWindow = mainWindow;
                 Close();
                 mainWindow.Show();
-                if (((UserModel)Application.Current.Properties["CurrentUser"]!).IsDark)
-                    App.SwitchTheme(true);
+                mainWindow.Theme();
                 Application.Current.Properties["CurrentUser"] = null;
             }
             else MessageBox.Show(_viewModel.Message, _viewModel.Status, MessageBoxButton.OK, MessageBoxImage.Error);

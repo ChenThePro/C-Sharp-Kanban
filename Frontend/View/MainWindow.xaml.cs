@@ -28,6 +28,7 @@ namespace Frontend.View
             TogglePasswordVisibility(SignInPasswordGrid, _isSignInPasswordVisible, _viewModel.Password, "Password", PasswordBox_PasswordChanged, ToggleSignInPasswordVisibility);
             TogglePasswordVisibility(SignUpPasswordGrid, _isSignUpPasswordVisible, _viewModel.Password, "Password", PasswordBox_PasswordChanged, ToggleSignUpPasswordVisibility);
             TogglePasswordVisibility(ConfirmPasswordGrid, _isConfirmPasswordVisible, _viewModel.ConfirmPassword, "Confirm Password", ConfirmPasswordBox_PasswordChanged, ToggleConfirmPasswordVisibility);
+            UpdateThemeIcon();
         }
 
         private void SignUp_Click(object sender, RoutedEventArgs e)
@@ -56,6 +57,7 @@ namespace Frontend.View
 
         private void SignIn_Click(object sender, RoutedEventArgs e)
         {
+            ControllerFactory.Instance.BoardController.LoadData();
             UserModel? user = _viewModel.SignIn();
             if (user != null)
             {
@@ -231,6 +233,16 @@ namespace Frontend.View
             toggleButton.Content = icon;
             toggleButton.Click += toggleHandler;
             parent.Children.Add(toggleButton);
+        }
+
+        public void Theme()
+        {
+            if (((UserModel)Application.Current.Properties["CurrentUser"]!).IsDark)
+            {
+                _viewModel.IsDarkTheme = true;
+                App.SwitchTheme(true);
+                UpdateThemeIcon();
+            }
         }
     }
 }
