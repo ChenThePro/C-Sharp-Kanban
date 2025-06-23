@@ -105,7 +105,7 @@ namespace Frontend.View
                 Kind = isVisible ? PackIconMaterialKind.EyeOff : PackIconMaterialKind.Eye,
                 Width = 20,
                 Height = 20,
-                Foreground = new SolidColorBrush(Color.FromRgb(0, 184, 212))
+                Foreground = (Brush)Application.Current.Resources["PrimaryBrush"]
             };
             toggleButton.Content = icon;
             toggleButton.Click += toggleHandler;

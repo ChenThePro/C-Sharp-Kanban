@@ -95,7 +95,7 @@
         <Setter Property="Margin" Value="0,10"/>
         <Style.Triggers>
             <Trigger Property="IsFocused" Value="True">
-                <Setter Property="materialDesign:TextFieldAssist.UnderlineBrush" Value="{DynamicResource AccentBrush}"/>
+                <Setter Property="materialDesign:TextFieldAssist.UnderlineBrush" Value="{DynamicResource BorderBrush}"/>
             </Trigger>
         </Style.Triggers>
     </Style>

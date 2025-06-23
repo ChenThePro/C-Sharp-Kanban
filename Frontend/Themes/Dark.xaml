@@ -4,13 +4,13 @@
     <Color x:Key="PrimaryColor">#3F51B5</Color>
     <Color x:Key="PrimaryLightColor">#9FA8DA</Color>
     <Color x:Key="PrimaryDarkColor">#303F9F</Color>
-    <Color x:Key="AccentColor">#00ACC1</Color>
+    <Color x:Key="AccentColor">#4B0082</Color>
 
     <Color x:Key="CardBackgroundColor">#2A2D3E</Color>
     <Color x:Key="BackgroundColor">#121212</Color>
     <Color x:Key="SurfaceColor">#2A2D3E</Color>
 
-    <Color x:Key="BorderColor">#424242</Color>
+    <Color x:Key="BorderColor">#00ACC1</Color>
 
     <Color x:Key="TextColor">#E0E0E0</Color>
     <Color x:Key="TextSecondaryColor">#B0BEC5</Color>

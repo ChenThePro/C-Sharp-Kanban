@@ -88,11 +88,22 @@ namespace Frontend.View
 
         private void RefreshPasswordBoxes(Grid grid)
         {
-            foreach (var child in grid.Children.OfType<PasswordBox>())
+            var foreground = TryFindResource("ForegroundBrush") as Brush;
+            var caret = TryFindResource("PrimaryBrush") as SolidColorBrush;
+            foreach (var child in grid.Children)
             {
-                var foreground = TryFindResource("ForegroundBrush") as Brush;
-                child.Foreground = foreground;
-                child.CaretBrush = TryFindResource("PrimaryBrush") as SolidColorBrush;
+                switch (child)
+                {
+                    case PasswordBox passwordBox:
+                        passwordBox.Foreground = foreground;
+                        passwordBox.CaretBrush = caret;
+                        break;
+
+                    case TextBox textBox:
+                        textBox.Foreground = foreground;
+                        textBox.CaretBrush = caret;
+                        break;
+                }
             }
         }
 
@@ -157,7 +168,7 @@ namespace Frontend.View
                 HintAssist.SetIsFloating(textBox, true);
                 textBox.GotFocus += (s, e) =>
                 {
-                    var accent = TryFindResource("AccentBrush") as Brush;
+                    var accent = TryFindResource("BorderBrush") as Brush;
                     TextFieldAssist.SetUnderlineBrush(textBox, accent!);
                 };
                 textBox.LostFocus += (s, e) =>
@@ -189,7 +200,7 @@ namespace Frontend.View
                 HintAssist.SetIsFloating(passwordBox, true);
                 passwordBox.GotFocus += (s, e) =>
                 {
-                    var accent = TryFindResource("AccentBrush") as Brush;
+                    var accent = TryFindResource("BorderBrush") as Brush;
                     TextFieldAssist.SetUnderlineBrush(passwordBox, accent!);
                 };
                 passwordBox.LostFocus += (s, e) =>
