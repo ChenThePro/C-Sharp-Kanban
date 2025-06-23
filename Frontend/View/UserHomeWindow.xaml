@@ -7,71 +7,54 @@
         xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
         mc:Ignorable="d"
         Title="Kanban Dashboard"
-        Height="800" Width="1000"
+        Height="825" Width="1000"
         WindowStartupLocation="CenterScreen"
-        Style="{StaticResource MaterialDesignWindow}"
-        Background="{DynamicResource BackgroundBrush}">
+        Background="{DynamicResource BackgroundBrush}"
+        Foreground="{DynamicResource ForegroundBrush}">
 
     <DockPanel>
         <materialDesign:Card DockPanel.Dock="Top"
-                             Margin="20 20 20 10"
-                             Padding="20"
-                             materialDesign:ElevationAssist.Elevation="Dp3"
-                             Background="#E6F2F8">
+                             Style="{DynamicResource HeaderCardStyle}">
             <Grid>
                 <TextBlock Text="Kanban Dashboard"
-                           FontSize="24"
-                           FontWeight="Bold"
+                           Style="{DynamicResource HeaderTextStyle}"
                            VerticalAlignment="Center"
-                           HorizontalAlignment="Left"
-                           Foreground="{DynamicResource PrimaryBrush}"/>
+                           HorizontalAlignment="Left"/>
 
                 <StackPanel Orientation="Horizontal" 
-                           HorizontalAlignment="Right" 
-                           VerticalAlignment="Center">
+                            HorizontalAlignment="Right" 
+                            VerticalAlignment="Center">
 
-                    <!-- Theme Toggle Button -->
-                    <ToggleButton x:Name="ThemeToggle"
-                                  Width="45" Height="45"
-                                  Margin="0,0,15,0"
-                                  IsChecked="{Binding IsDarkTheme, Mode=TwoWay}"
-                                  Checked="ThemeToggle_Checked"
-                                  Unchecked="ThemeToggle_Unchecked"
-                                  ToolTip="Toggle theme"
-                                  Style="{StaticResource MaterialDesignActionToggleButton}"
-                                  Background="Transparent"
-                                  BorderBrush="Transparent">
-                        <ToggleButton.Content>
-                            <Grid>
-                                <!-- Sun Icon for Light Mode (visible when NOT in dark mode) -->
-                                <TextBlock Text="☀"
-                                           FontSize="22"
-                                           HorizontalAlignment="Center"
-                                           VerticalAlignment="Center"
-                                           Foreground="{DynamicResource PrimaryBrush}"
-                                           Visibility="{Binding IsDarkTheme, Converter={StaticResource InverseBoolToVisibilityConverter}}"/>
+                    <Button x:Name="ThemeToggle"
+               Width="50" Height="50"
+               HorizontalAlignment="Right"
+               VerticalAlignment="Top"
+               Margin="0,0,15,0"
+               Click="ThemeToggle_Click"
+               ToolTip="Toggle theme"
+               Background="Transparent"
+               BorderThickness="2"
+               BorderBrush="{DynamicResource PrimaryBrush}"
+               Style="{StaticResource MaterialDesignFlatButton}">
+                        <Grid>
+                            <materialDesign:PackIcon x:Name="MoonIcon"
+                        Kind="WeatherNight"
+                        Width="21"
+                        Height="21"
+                        Foreground="{DynamicResource PrimaryBrush}"/>
 
-                                <!-- Moon Icon for Dark Mode (visible when in dark mode) -->
-                                <TextBlock Text="☾"
-                                           FontSize="22"
-                                           HorizontalAlignment="Center"
-                                           VerticalAlignment="Center"
-                                           Foreground="{DynamicResource PrimaryBrush}"
-                                           Visibility="{Binding IsDarkTheme, Converter={StaticResource BoolToVisibilityConverter}}"/>
-                            </Grid>
-                        </ToggleButton.Content>
-                    </ToggleButton>
+                            <materialDesign:PackIcon x:Name="SunIcon"
+                        Kind="WhiteBalanceSunny"
+                        Width="19"
+                        Height="19"
+                        Foreground="{DynamicResource PrimaryBrush}"
+                        Visibility="Collapsed"/>
 
-                    <!-- Logout Button -->
+                        </Grid>
+                    </Button>
+
                     <Button Content="Logout"
-                            Click="Logout_Click"
-                            Style="{StaticResource MaterialDesignOutlinedButton}"
-                            Background="{DynamicResource PrimaryBrush}"
-                            materialDesign:ButtonAssist.CornerRadius="20"
-                            Padding="20 5"
-                            Height="32"
-                            Foreground="{DynamicResource PrimaryBrush}"
-                            FontWeight="Bold"/>
+                            Click="Logout_Click"/>
                 </StackPanel>
             </Grid>
         </materialDesign:Card>
@@ -79,14 +62,18 @@
         <ScrollViewer DockPanel.Dock="Top" Margin="20 10 20 20">
             <StackPanel>
 
-                <materialDesign:Card
-                                     Padding="30"
-                                     materialDesign:ElevationAssist.Elevation="Dp2"
-                                     Background="#E6F2F8" Width="960">
-                    <TextBlock Text="Welcome to your Kanban board!"
-                               FontSize="18"
-                               HorizontalAlignment="Center"
-                               Foreground="{DynamicResource PrimaryBrush}"/>
+                <materialDesign:Card Style="{DynamicResource WelcomeCardStyle}">
+                    <StackPanel HorizontalAlignment="Center">
+                        <TextBlock Text="Welcome to your Kanban board!"
+                                   Style="{DynamicResource SubHeaderTextStyle}"
+                                   HorizontalAlignment="Center"
+                                   Foreground="White"/>
+                        <TextBlock Text="Organize your tasks efficiently"
+                                   Style="{DynamicResource CaptionTextStyle}"
+                                   HorizontalAlignment="Center"
+                                   Foreground="#E0E0E0"
+                                   Margin="0,5,0,0"/>
+                    </StackPanel>
                 </materialDesign:Card>
 
                 <StackPanel Orientation="Horizontal"
@@ -95,59 +82,54 @@
                     <TextBox Width="200"
                              Margin="0 10 10 0"
                              Text="{Binding NewBoardName, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
-                             materialDesign:HintAssist.Hint="New Board Name"
-                             Style="{StaticResource MaterialDesignFloatingHintTextBox}"/>
+                             materialDesign:HintAssist.Hint="New Board Name"/>
                     <Button Content="Create Board"
-                            Click="CreateBoard_Click"
-                            Style="{StaticResource MaterialDesignOutlinedButton}"
-                            Background="{DynamicResource PrimaryBrush}"
-                            Foreground="{DynamicResource ForegroundBrush}"
-                            FontWeight="Bold"
-                            materialDesign:ButtonAssist.CornerRadius="20"/>
+                            Click="CreateBoard_Click"/>
                 </StackPanel>
 
                 <ItemsControl ItemsSource="{Binding Boards}">
                     <ItemsControl.ItemTemplate>
                         <DataTemplate>
-                            <materialDesign:Card Background="#E6F2F8"
-                                                 BorderBrush="{DynamicResource ForegroundBrush}"
-                                                 BorderThickness="1"
-                                                 Margin="0 0 0 20"
-                                                 Padding="20"
-                                                 materialDesign:ElevationAssist.Elevation="Dp1">
+                            <materialDesign:Card Style="{DynamicResource BoardCardStyle}">
                                 <StackPanel>
                                     <DockPanel MouseLeftButtonDown="ToggleBoardExpand">
                                         <StackPanel DockPanel.Dock="Left" Width="800">
                                             <TextBlock Text="{Binding Name, StringFormat=Name: \{0\}}"
-                                                       FontWeight="Bold"
-                                                       FontSize="16"
-                                                       Foreground="{DynamicResource ForegroundBrush}" />
+                                                       Style="{StaticResource SubHeaderTextStyle}"/>
                                             <TextBlock Text="{Binding Owner, StringFormat=Owner: \{0\}}"
-                                                       FontSize="14"
-                                                       Foreground="{DynamicResource ForegroundBrush}" />
-                                            <TextBlock Text="{Binding Members, Converter={StaticResource MembersToStringConverter}}"
-                                                       FontSize="14"
-                                                       Foreground="{DynamicResource ForegroundBrush}" />
+                                                       Style="{StaticResource CaptionTextStyle}"
+                                                       Margin="0,2"/>
                                         </StackPanel>
+
                                         <StackPanel DockPanel.Dock="Right" Orientation="Horizontal" HorizontalAlignment="Right">
                                             <Button Content="❌"
+                                                    Style="{DynamicResource DeleteButtonStyle}"
                                                     Click="DeleteBoard_Click"
-                                                    CommandParameter="{Binding}"
-                                                    Style="{StaticResource MaterialDesignFlatButton}"
-                                                    Foreground="{DynamicResource PrimaryBrush}"/>
+                                                    CommandParameter="{Binding}"/>
                                             <TextBlock Text="▼"
                                                        FontSize="16"
-                                                       Visibility="{Binding IsExpanded, Converter={StaticResource BoolToVisibilityConverter}}"
-                                                       Foreground="{DynamicResource ForegroundBrush}"/>
+                                                       Foreground="{DynamicResource PrimaryBrush}"
+                                                       VerticalAlignment="Center"
+                                                       Margin="10,0,0,0"
+                                                       Visibility="{Binding IsExpanded, Converter={StaticResource BoolToVisibilityConverter}}"/>
                                             <TextBlock Text="▶"
                                                        FontSize="16"
-                                                       Visibility="{Binding IsExpanded, Converter={StaticResource InverseBoolToVisibilityConverter}}"
-                                                       Foreground="{DynamicResource ForegroundBrush}"/>
+                                                       Foreground="{DynamicResource PrimaryBrush}"
+                                                       VerticalAlignment="Center"
+                                                       Margin="10,0,0,0"
+                                                       Visibility="{Binding IsExpanded, Converter={StaticResource InverseBoolToVisibilityConverter}}"/>
                                         </StackPanel>
                                     </DockPanel>
 
+                                    <!-- Show members only when board is expanded -->
+                                    <TextBlock Text="{Binding Members, Converter={StaticResource MembersToStringConverter}}"
+                                               Style="{DynamicResource CaptionTextStyle}"
+                                               Margin="10,5,0,0"
+                                               Visibility="{Binding IsExpanded, Converter={StaticResource BoolToVisibilityConverter}}"/>
+
                                     <ScrollViewer Visibility="{Binding IsExpanded, Converter={StaticResource BoolToVisibilityConverter}}"
-                                                  HorizontalScrollBarVisibility="Auto">
+                                                  HorizontalScrollBarVisibility="Auto"
+                                                  Margin="0,10,0,0">
                                         <ItemsControl ItemsSource="{Binding Columns}">
                                             <ItemsControl.ItemsPanel>
                                                 <ItemsPanelTemplate>
@@ -156,28 +138,34 @@
                                             </ItemsControl.ItemsPanel>
                                             <ItemsControl.ItemTemplate>
                                                 <DataTemplate>
-                                                    <materialDesign:Card Background="white"
-                                                                         Margin="10 5"
-                                                                         Padding="10"
-                                                                         Width="300"
-                                                                         VerticalAlignment="Top"
-                                                                         BorderBrush="{DynamicResource PrimaryBrush}"
-                                                                         BorderThickness="1"
-                                                                         materialDesign:ElevationAssist.Elevation="Dp1">
+                                                    <materialDesign:Card Style="{DynamicResource ColumnCardStyle}">
                                                         <StackPanel>
-                                                            <TextBlock Text="{Binding Name, StringFormat=Column: \{0\}}"
-                                                                       FontWeight="Bold"
-                                                                       FontSize="14"
-                                                                       Foreground="{DynamicResource ForegroundBrush}"
-                                                                       MouseLeftButtonDown="ToggleColumnExpand"
-                                                                       Cursor="Hand"
-                                                                       IsHitTestVisible="True"
-                                                                       Margin="0 0 0 10"/>
+                                                            <DockPanel Margin="0 0 0 10">
+                                                                <TextBlock Text="{Binding Name}"
+                                                                           Style="{DynamicResource SubHeaderTextStyle}"
+                                                                           FontSize="16"
+                                                                           MouseLeftButtonDown="ToggleColumnExpand"
+                                                                           Cursor="Hand"
+                                                                           DockPanel.Dock="Left"/>
 
-                                                            <TextBlock FontSize="12"
-                                                                       Foreground="{DynamicResource PrimaryBrush}">
+                                                                <TextBlock Text="▼"
+                                                                           FontSize="12"
+                                                                           Foreground="{DynamicResource PrimaryBrush}"
+                                                                           VerticalAlignment="Center"
+                                                                           HorizontalAlignment="Right"
+                                                                           Visibility="{Binding IsExpanded, Converter={StaticResource BoolToVisibilityConverter}}"/>
+                                                                <TextBlock Text="▶"
+                                                                           FontSize="12"
+                                                                           Foreground="{DynamicResource PrimaryBrush}"
+                                                                           VerticalAlignment="Center"
+                                                                           HorizontalAlignment="Right"
+                                                                           Visibility="{Binding IsExpanded, Converter={StaticResource InverseBoolToVisibilityConverter}}"/>
+                                                            </DockPanel>
+
+                                                            <TextBlock Margin="0,0,0,10">
                                                                 <TextBlock.Style>
-                                                                    <Style TargetType="{x:Type TextBlock}">
+                                                                    <Style TargetType="TextBlock" BasedOn="{StaticResource CaptionTextStyle}">
+                                                                        <Setter Property="Foreground" Value="{DynamicResource PrimaryBrush}"/>
                                                                         <Setter Property="Text">
                                                                             <Setter.Value>
                                                                                 <MultiBinding StringFormat="Tasks: {0}/{1}">
@@ -205,23 +193,21 @@
                                                                           Visibility="{Binding IsExpanded, Converter={StaticResource BoolToVisibilityConverter}}">
                                                                 <ItemsControl.ItemTemplate>
                                                                     <DataTemplate>
-                                                                        <Border Background="#FFF9C4"
-                                                                                BorderBrush="{DynamicResource PrimaryBrush}"
-                                                                                BorderThickness="1"
-                                                                                CornerRadius="8"
-                                                                                Padding="10"
-                                                                                Margin="5"
-                                                                                Effect="{DynamicResource MaterialDesignShadowDepth1}">
+                                                                        <Border Style="{DynamicResource TaskCardStyle}">
                                                                             <StackPanel>
-                                                                                <TextBlock Text="{Binding Title, StringFormat=📌 \{0\}}"
-                                                                                           FontWeight="Bold"
-                                                                                           Foreground="{DynamicResource ForegroundBrush}"/>
-                                                                                <TextBlock Text="{Binding DueDate, StringFormat=📅 \{0:dd/MM/yyyy\}}"
-                                                                                           Foreground="{DynamicResource ForegroundBrush}"/>
-                                                                                <TextBlock Text="{Binding CreatedAt, StringFormat=🕓 \{0:dd/MM/yyyy\}}"
-                                                                                           Foreground="{DynamicResource ForegroundBrush}"/>
-                                                                                <TextBlock Text="{Binding Assignee, StringFormat=👤 \{0\}}"
-                                                                                           Foreground="{DynamicResource ForegroundBrush}"/>
+                                                                                <TextBlock Text="{Binding Title}"
+                                                                                           FontWeight="SemiBold"
+                                                                                           FontSize="14"
+                                                                                           Margin="0,0,0,5"/>
+                                                                                <TextBlock Text="{Binding DueDate, StringFormat=📅 Due: \{0:dd/MM/yyyy\}}"
+                                                                                           Style="{DynamicResource CaptionTextStyle}"
+                                                                                           Margin="0,2"/>
+                                                                                <TextBlock Text="{Binding CreatedAt, StringFormat=🕓 Created: \{0:dd/MM/yyyy\}}"
+                                                                                           Style="{DynamicResource CaptionTextStyle}"
+                                                                                           Margin="0,2"/>
+                                                                                <TextBlock Text="{Binding Assignee, StringFormat=👤 Assigned to: \{0\}}"
+                                                                                           Style="{DynamicResource CaptionTextStyle}"
+                                                                                           Margin="0,2"/>
                                                                             </StackPanel>
                                                                         </Border>
                                                                     </DataTemplate>

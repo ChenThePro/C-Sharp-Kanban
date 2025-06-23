@@ -1,54 +1,35 @@
 ﻿<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
-                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-                    xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes">
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
 
-    <!-- צבעים -->
-    <Color x:Key="PrimaryColor">#00ACC1</Color>
-    <!-- כחול ניאון -->
-    <Color x:Key="SecondaryColor">#80CBC4</Color>
-    <Color x:Key="BackgroundColor">#FFFFFF</Color>
-    <Color x:Key="ForegroundColor">#000000</Color>
+    <Color x:Key="PrimaryColor">#5C6BC0</Color>
+    <Color x:Key="PrimaryLightColor">#C5CAE9</Color>
+    <Color x:Key="PrimaryDarkColor">#303F9F</Color>
+    <Color x:Key="AccentColor">#FF8A65</Color>
 
-    <!-- מברשות -->
+    <Color x:Key="CardBackgroundColor">#FFFFFF</Color>
+    <Color x:Key="BackgroundColor">#FAFAFA</Color>
+    <Color x:Key="SurfaceColor">#F1F3F4</Color>
+
+    <Color x:Key="BorderColor">#E0E0E0</Color>
+
+    <Color x:Key="TextColor">#212121</Color>
+    <Color x:Key="TextSecondaryColor">#757575</Color>
+    <Color x:Key="ErrorColor">#E53935</Color>
+
     <SolidColorBrush x:Key="PrimaryBrush" Color="{StaticResource PrimaryColor}"/>
-    <SolidColorBrush x:Key="SecondaryBrush" Color="{StaticResource SecondaryColor}"/>
+    <SolidColorBrush x:Key="PrimaryLightBrush" Color="{StaticResource PrimaryLightColor}"/>
+    <SolidColorBrush x:Key="PrimaryDarkBrush" Color="{StaticResource PrimaryDarkColor}"/>
+    <SolidColorBrush x:Key="AccentBrush" Color="{StaticResource AccentColor}"/>
+
     <SolidColorBrush x:Key="BackgroundBrush" Color="{StaticResource BackgroundColor}"/>
-    <SolidColorBrush x:Key="ForegroundBrush" Color="{StaticResource ForegroundColor}"/>
+    <SolidColorBrush x:Key="CardBackgroundBrush" Color="{StaticResource CardBackgroundColor}"/>
+    <SolidColorBrush x:Key="SurfaceBrush" Color="{StaticResource SurfaceColor}"/>
 
-    <!-- טקסט -->
-    <Style TargetType="TextBlock">
-        <Setter Property="Foreground" Value="{StaticResource ForegroundBrush}"/>
-    </Style>
+    <SolidColorBrush x:Key="BorderBrush" Color="{StaticResource BorderColor}"/>
+    <SolidColorBrush x:Key="DividerBrush" Color="#DDD"/>
 
-    <!-- כפתור -->
-    <Style TargetType="Button" BasedOn="{StaticResource MaterialDesignButton}">
-        <Setter Property="Foreground" Value="White"/>
-        <Setter Property="Background" Value="{StaticResource PrimaryBrush}"/>
-        <Setter Property="materialDesign:ButtonAssist.CornerRadius" Value="8"/>
-    </Style>
+    <SolidColorBrush x:Key="ForegroundBrush" Color="{StaticResource TextColor}"/>
+    <SolidColorBrush x:Key="TextSecondaryBrush" Color="{StaticResource TextSecondaryColor}"/>
+    <SolidColorBrush x:Key="ErrorBrush" Color="{StaticResource ErrorColor}"/>
 
-    <!-- תיבת טקסט -->
-    <Style TargetType="TextBox" BasedOn="{StaticResource MaterialDesignOutlinedTextBox}">
-        <Setter Property="Background" Value="#FAFAFA"/>
-        <Setter Property="Foreground" Value="{StaticResource ForegroundBrush}"/>
-        <Setter Property="CaretBrush" Value="{StaticResource ForegroundBrush}"/>
-    </Style>
-
-    <!-- תיבת סיסמה -->
-    <Style TargetType="PasswordBox" BasedOn="{StaticResource MaterialDesignOutlinedPasswordBox}">
-        <Setter Property="Background" Value="#FAFAFA"/>
-        <Setter Property="Foreground" Value="{StaticResource ForegroundBrush}"/>
-        <Setter Property="CaretBrush" Value="{StaticResource ForegroundBrush}"/>
-    </Style>
-
-    <!-- כרטיסים -->
-    <Style TargetType="materialDesign:Card">
-        <Setter Property="Background" Value="{StaticResource BackgroundBrush}"/>
-    </Style>
-
-    <!-- חלונות -->
-    <Style TargetType="Window" x:Key="CustomWindowStyle">
-        <Setter Property="Background" Value="{StaticResource BackgroundBrush}"/>
-        <Setter Property="Foreground" Value="{StaticResource ForegroundBrush}"/>
-    </Style>
 </ResourceDictionary>

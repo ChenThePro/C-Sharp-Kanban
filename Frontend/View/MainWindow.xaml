@@ -3,169 +3,172 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:local="clr-namespace:Frontend.View"
         xmlns:vm="clr-namespace:Frontend.ViewModel"
+        xmlns:u="clr-namespace:Frontend.Utils"
         xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
         Title="Welcome to Kanban"
-        Height="800" Width="1000"
+        Height="825" Width="1000"
         WindowStartupLocation="CenterScreen"
-        Style="{StaticResource MaterialDesignWindow}"
-        Background="{DynamicResource BackgroundBrush}">
+        Background="{DynamicResource BackgroundBrush}"
+        Foreground="{DynamicResource ForegroundBrush}">
+
+    <Window.Resources>
+        <u:MathConverter x:Key="MathConverter"/>
+    </Window.Resources>
 
     <Grid>
-        <ToggleButton x:Name="ThemeToggle"
-                      Width="151" Height="114"
-                      HorizontalAlignment="Right"
-                      VerticalAlignment="Top"
-                      Margin="0,-18,-37,0"
-                      IsChecked="{Binding IsDarkTheme, Mode=TwoWay}"
-                      Checked="ThemeToggle_Checked"
-                      Unchecked="ThemeToggle_Unchecked"
-                      ToolTip="Toggle theme"
-                      Style="{StaticResource MaterialDesignActionToggleButton}"
-                      Background="Transparent"
-                      BorderBrush="Transparent">
-            <ToggleButton.Content>
-                <Grid>
-                    <!-- Sun Icon for Light Mode (visible when NOT in dark mode) -->
-                    <TextBlock Text="☀"
-                               FontSize="24"
-                               HorizontalAlignment="Center"
-                               VerticalAlignment="Center"
-                               Foreground="{DynamicResource PrimaryBrush}"
-                               Visibility="{Binding IsDarkTheme, Converter={StaticResource InverseBoolToVisibilityConverter}}"/>
+        <Button x:Name="ThemeToggle"
+                Width="50" Height="50"
+                HorizontalAlignment="Right"
+                VerticalAlignment="Top"
+                Margin="20,20,20,0"
+                Click="ThemeToggle_Click"
+                ToolTip="Toggle theme"
+                Background="Transparent"
+                BorderThickness="2"
+                BorderBrush="{DynamicResource PrimaryBrush}"
+                Style="{StaticResource MaterialDesignFlatButton}">
+            <Grid>
+                <materialDesign:PackIcon x:Name="MoonIcon"
+                         Kind="WeatherNight"
+                         Width="21"
+                         Height="21"
+                         Foreground="{DynamicResource PrimaryBrush}"/>
 
-                    <!-- Moon Icon for Dark Mode (visible when in dark mode) -->
-                    <TextBlock Text="☾"
-                               FontSize="24"
-                               HorizontalAlignment="Center"
-                               VerticalAlignment="Center"
-                               Foreground="{DynamicResource PrimaryBrush}"
-                               Visibility="{Binding IsDarkTheme, Converter={StaticResource BoolToVisibilityConverter}}"/>
-                </Grid>
-            </ToggleButton.Content>
-        </ToggleButton>
+                <materialDesign:PackIcon x:Name="SunIcon"
+                         Kind="WhiteBalanceSunny"
+                         Width="19"
+                         Height="19"
+                         Foreground="{DynamicResource PrimaryBrush}"
+                         Visibility="Collapsed"/>
 
-        <materialDesign:Card
-                             Background="{DynamicResource BackgroundBrush}"
-                             Margin="55,51,55,51"
-                             Padding="40"
-                             BorderBrush="{DynamicResource ForegroundBrush}"
-                             BorderThickness="1"
-                             materialDesign:ElevationAssist.Elevation="Dp3">
+            </Grid>
+        </Button>
 
-            <TabControl Background="Transparent" FontSize="14" BorderThickness="0">
+        <materialDesign:Card Style="{DynamicResource WelcomeCardStyle}"
+                             VerticalAlignment="Top"
+                             HorizontalAlignment="Center"
+                             Margin="50,40,50,0"
+                             MaxWidth="900">
+            <StackPanel HorizontalAlignment="Center">
+                <TextBlock Text="🎯 Kanban Board Manager"
+                           FontSize="32"
+                           FontWeight="Bold"
+                           HorizontalAlignment="Center"
+                           Foreground="White"
+                           Margin="0,0,0,10"/>
+                <TextBlock Text="Streamline your workflow with our powerful task management system"
+                           FontSize="16"
+                           HorizontalAlignment="Center"
+                           Foreground="#E0E0E0"
+                           TextAlignment="Center"
+                           TextWrapping="Wrap"/>
+            </StackPanel>
+        </materialDesign:Card>
+
+        <materialDesign:Card Style="{DynamicResource HighlightCardStyle}"
+                             Margin="50,200,50,50"
+                             MinWidth="700"
+                             MinHeight="400"
+                             MaxWidth="800"
+                             HorizontalAlignment="Center"
+                             VerticalAlignment="Top">
+
+            <TabControl Background="Transparent" TabStripPlacement="Top">
                 <TabControl.Resources>
                     <Style TargetType="TabItem" BasedOn="{StaticResource MaterialDesignTabItem}">
-                        <Setter Property="Template">
-                            <Setter.Value>
-                                <ControlTemplate TargetType="TabItem">
-                                    <Grid>
-                                        <Border Background="Transparent"
-                            BorderThickness="{TemplateBinding BorderThickness}"
-                            BorderBrush="{TemplateBinding BorderBrush}">
-                                            <ContentPresenter x:Name="ContentSite"
-                                          VerticalAlignment="Center"
-                                          HorizontalAlignment="Center"
-                                          ContentSource="Header"
-                                          RecognizesAccessKey="True"
-                                          Margin="{TemplateBinding Padding}" />
-                                        </Border>
-                                        <Border x:Name="SelectedIndicator"
-                            Height="2"
-                            VerticalAlignment="Bottom"
-                            Background="Transparent" />
-                                    </Grid>
-                                    <ControlTemplate.Triggers>
-                                        <Trigger Property="IsSelected" Value="True">
-                                            <Setter TargetName="ContentSite" Property="TextElement.Foreground" Value="{DynamicResource PrimaryBrush}"/>
-                                            <Setter TargetName="SelectedIndicator" Property="Background" Value="{DynamicResource PrimaryBrush}"/>
-                                        </Trigger>
-                                        <Trigger Property="IsMouseOver" Value="True">
-                                            <Setter TargetName="ContentSite" Property="TextElement.Foreground" Value="{DynamicResource SecondaryBrush}"/>
-                                        </Trigger>
-                                    </ControlTemplate.Triggers>
-                                </ControlTemplate>
-                            </Setter.Value>
-                        </Setter>
-                        <Setter Property="Padding" Value="15,8"/>
-                        <Setter Property="Foreground" Value="{DynamicResource ForegroundBrush}"/>
-                        <Setter Property="Background" Value="Transparent"/>
-                        <Setter Property="BorderBrush" Value="Transparent"/>
-                        <Setter Property="BorderThickness" Value="0"/>
+                        <Setter Property="Width" Value="{Binding ActualWidth, RelativeSource={RelativeSource AncestorType=TabPanel}, Converter={StaticResource MathConverter}, ConverterParameter=(@VALUE/2)}"/>
+                        <Setter Property="HorizontalContentAlignment" Value="Center"/>
+                        <Setter Property="FontSize" Value="16"/>
+                        <Setter Property="FontWeight" Value="SemiBold"/>
+                        <Setter Property="Padding" Value="24,12"/>
                     </Style>
                 </TabControl.Resources>
 
                 <TabItem Header="Sign In">
-                    <StackPanel Margin="30" VerticalAlignment="Center">
+                    <StackPanel Margin="60,40" MinWidth="500">
                         <TextBlock Text="Welcome Back"
-                                   FontSize="26"
-                                   FontWeight="Bold"
-                                   Margin="0 0 0 30"
+                                   Style="{DynamicResource HeaderTextStyle}"
+                                   FontSize="28"
                                    HorizontalAlignment="Center"
-                                   Foreground="{DynamicResource PrimaryBrush}"/>
+                                   Margin="0,0,0,30"/>
 
-                        <TextBox Margin="0 10"
-                                 Style="{StaticResource MaterialDesignFloatingHintTextBox}"
-                                 materialDesign:HintAssist.Hint="Email"
+                        <TextBox Margin="0,15"
+                                 materialDesign:HintAssist.Hint="Email Address"
                                  materialDesign:HintAssist.IsFloating="True"
-                                 Text="{Binding Email, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+                                 Text="{Binding Email, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                                 FontSize="14"/>
 
-                        <Grid Margin="0 10" x:Name="SignInPasswordGrid" />
+                        <Grid Margin="0,15" x:Name="SignInPasswordGrid">
+                        </Grid>
 
                         <Button x:Name="ForgotPasswordButton"
                                 Content="Forgot Password?"
+                                Style="{DynamicResource LinkButtonStyle}"
                                 Click="ForgotPassword_Click"
                                 Visibility="Collapsed"
-                                Style="{StaticResource MaterialDesignFlatButton}"
                                 HorizontalAlignment="Center"
-                                Margin="0 10 0 0"
-                                Foreground="{DynamicResource PrimaryBrush}"/>
+                                Margin="0,10"/>
 
                         <Button Content="Sign In"
+                                Style="{DynamicResource PrimaryButtonStyle}"
                                 Click="SignIn_Click"
-                                Margin="0 30"
+                                Margin="0,30,0,0"
                                 HorizontalAlignment="Center"
-                                Width="150" Height="45"
-                                Background="{DynamicResource PrimaryBrush}"
-                                Foreground="{DynamicResource ForegroundBrush}"
-                                FontWeight="Bold"
-                                FontSize="16"
-                                Style="{StaticResource MaterialDesignRaisedButton}"
-                                materialDesign:ButtonAssist.CornerRadius="20"/>
+                                MinWidth="200"
+                                Height="45"/>
+
+                        <TextBlock Text="Don't have an account? Sign up to get started!"
+                                   Style="{DynamicResource CaptionTextStyle}"
+                                   HorizontalAlignment="Center"
+                                   TextAlignment="Center"
+                                   TextWrapping="Wrap"
+                                   Margin="0,20,0,0"/>
                     </StackPanel>
                 </TabItem>
 
                 <TabItem Header="Sign Up">
-                    <StackPanel Margin="30" VerticalAlignment="Center">
-                        <TextBlock Text="Create an Account"
-                                   FontSize="26"
-                                   FontWeight="Bold"
-                                   Margin="0 0 0 30"
+                    <StackPanel Margin="60,40" MinWidth="500">
+                        <TextBlock Text="Create Account"
+                                   Style="{DynamicResource HeaderTextStyle}"
+                                   FontSize="28"
                                    HorizontalAlignment="Center"
-                                   Foreground="{DynamicResource ForegroundBrush}"/>
+                                   Margin="0,0,0,30"/>
 
-                        <TextBox Margin="0 10"
-                                 Style="{StaticResource MaterialDesignFloatingHintTextBox}"
-                                 materialDesign:HintAssist.Hint="Email"
+                        <TextBox Margin="0,15"
+                                 materialDesign:HintAssist.Hint="Email Address"
                                  materialDesign:HintAssist.IsFloating="True"
-                                 Text="{Binding Email, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+                                 Text="{Binding Email, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                                 FontSize="14"/>
 
-                        <Grid Margin="0 10" x:Name="SignUpPasswordGrid" />
-                        <Grid Margin="0 10" x:Name="ConfirmPasswordGrid" />
+                        <Grid Margin="0,15" x:Name="SignUpPasswordGrid">
+                        </Grid>
 
-                        <Button Content="Sign Up"
+                        <Grid Margin="0,15" x:Name="ConfirmPasswordGrid">
+                        </Grid>
+
+                        <Button Content="Create Account"
+                                Style="{DynamicResource PrimaryButtonStyle}"
                                 Click="SignUp_Click"
-                                Margin="0 30"
+                                Margin="0,30,0,0"
                                 HorizontalAlignment="Center"
-                                Width="150" Height="45"
-                                Background="{DynamicResource PrimaryBrush}"
-                                Foreground="{DynamicResource ForegroundBrush}"
-                                FontWeight="Bold"
-                                FontSize="16"
-                                Style="{StaticResource MaterialDesignRaisedButton}"
-                                materialDesign:ButtonAssist.CornerRadius="20"/>
+                                MinWidth="200"
+                                Height="45"/>
+
+                        <TextBlock Text="Already have an account? Sign in instead!"
+                                   Style="{DynamicResource CaptionTextStyle}"
+                                   HorizontalAlignment="Center"
+                                   TextAlignment="Center"
+                                   TextWrapping="Wrap"
+                                   Margin="0,20,0,0"/>
                     </StackPanel>
                 </TabItem>
             </TabControl>
         </materialDesign:Card>
+
+        <TextBlock Text="© 2025 Kanban Board Manager - Organize. Prioritize. Achieve."
+                   Style="{DynamicResource CaptionTextStyle}"
+                   HorizontalAlignment="Center"
+                   VerticalAlignment="Bottom"
+                   Margin="0,0,0,20"/>
     </Grid>
 </Window>

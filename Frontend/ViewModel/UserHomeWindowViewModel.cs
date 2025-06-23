@@ -13,6 +13,7 @@ namespace Frontend.ViewModel
         public string NewBoardName { get => _newBoardName; set { _newBoardName = value; RaisePropertyChanged(nameof(NewBoardName)); } }
         public string Message { get; set; }
         public string Status { get; set; }
+        public bool IsDarkTheme { get; set; }
         public ObservableCollection<BoardModel> Boards => _user.Boards;
 
         private readonly UserModel _user;
@@ -24,6 +25,7 @@ namespace Frontend.ViewModel
             Message = string.Empty;
             Status = string.Empty;
             _user = (UserModel)Application.Current.Properties["CurrentUser"]!;
+            IsDarkTheme = _user.IsDark;
             _controller = ControllerFactory.Instance.BoardController;
         }
 
