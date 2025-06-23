@@ -51,8 +51,8 @@ namespace Frontend.View
                 {
                     Text = currentValue,
                     Style = (Style)FindResource("MaterialDesignFloatingHintTextBox"),
-                    Foreground = Brushes.Black,
-                    CaretBrush = Brushes.Black,
+                    Foreground = (Brush)TryFindResource("ForegroundBrush"),
+                    CaretBrush = (Brush)TryFindResource("PrimaryBrush"),
                     VerticalContentAlignment = VerticalAlignment.Center
                 };
                 HintAssist.SetHint(textBox, hintText);
@@ -70,8 +70,8 @@ namespace Frontend.View
                 {
                     Password = currentValue,
                     Style = (Style)FindResource("MaterialDesignFloatingHintPasswordBox"),
-                    Foreground = Brushes.Black,
-                    CaretBrush = Brushes.Black,
+                    Foreground = (Brush)TryFindResource("ForegroundBrush"),
+                    CaretBrush = (Brush)TryFindResource("PrimaryBrush"),
                     VerticalContentAlignment = VerticalAlignment.Center
                 };
                 HintAssist.SetHint(passwordBox, hintText);
