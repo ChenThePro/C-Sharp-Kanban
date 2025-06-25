@@ -12,11 +12,8 @@
                 <ResourceDictionary Source="Themes/Light.xaml" />
                 <ResourceDictionary Source="Themes/UIComponents.xaml"/>
             </ResourceDictionary.MergedDictionaries>
-
-           
             <utils:MembersToStringConverter x:Key="MembersToStringConverter"/>
-            <utils:BoolToVisibilityConverter x:Key="BoolToVisibilityConverter"/>
-            <utils:InverseBoolToVisibilityConverter x:Key="InverseBoolToVisibilityConverter"/>
+            <utils:VisibilityConverter x:Key="VisibilityConverter"/>
         </ResourceDictionary>
     </Application.Resources>
 </Application>
