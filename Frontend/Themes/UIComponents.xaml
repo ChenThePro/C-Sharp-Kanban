@@ -2,7 +2,7 @@
                     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
                     xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes">
 
-    <Style TargetType="Window">
+    <Style x:Key="BaseWindowStyle" TargetType="Window">
         <Setter Property="Background" Value="{DynamicResource BackgroundBrush}"/>
         <Setter Property="Foreground" Value="{DynamicResource ForegroundBrush}"/>
     </Style>
@@ -12,8 +12,25 @@
         <Setter Property="FontFamily" Value="Segoe UI"/>
     </Style>
 
+    <Style x:Key="HeaderTextStyle" TargetType="TextBlock" BasedOn="{StaticResource {x:Type TextBlock}}">
+        <Setter Property="FontSize" Value="26"/>
+        <Setter Property="FontWeight" Value="Bold"/>
+        <Setter Property="HorizontalAlignment" Value="Center"/>
+        <Setter Property="Margin" Value="0,0,0,30"/>
+    </Style>
+
+    <Style x:Key="SubHeaderTextStyle" TargetType="TextBlock" BasedOn="{StaticResource {x:Type TextBlock}}">
+        <Setter Property="FontSize" Value="18"/>
+        <Setter Property="FontWeight" Value="SemiBold"/>
+    </Style>
+
+    <Style x:Key="CaptionTextStyle" TargetType="TextBlock" BasedOn="{StaticResource {x:Type TextBlock}}">
+        <Setter Property="FontSize" Value="12"/>
+        <Setter Property="Foreground" Value="{DynamicResource TextSecondaryBrush}"/>
+    </Style>
+
     <Style TargetType="Button" BasedOn="{StaticResource MaterialDesignRaisedButton}">
-        <Setter Property="Foreground" Value="White"/>
+        <Setter Property="Foreground" Value="{DynamicResource ForegroundBrush}"/>
         <Setter Property="Background" Value="{DynamicResource AccentBrush}"/>
         <Setter Property="FontWeight" Value="Bold"/>
         <Setter Property="FontSize" Value="16"/>
@@ -28,23 +45,11 @@
                 <Setter Property="Background" Value="{DynamicResource PrimaryLightBrush}"/>
                 <Setter Property="materialDesign:ElevationAssist.Elevation" Value="Dp4"/>
             </Trigger>
-            <Trigger Property="IsPressed" Value="True">
-                <Setter Property="Background" Value="{DynamicResource PrimaryDarkBrush}"/>
-            </Trigger>
-        </Style.Triggers>
-    </Style>
-
-    <Style x:Key="PrimaryButtonStyle" TargetType="Button" BasedOn="{StaticResource {x:Type Button}}">
-        <Setter Property="Background" Value="{DynamicResource PrimaryBrush}"/>
-        <Style.Triggers>
-            <Trigger Property="IsMouseOver" Value="True">
-                <Setter Property="Background" Value="{DynamicResource PrimaryLightBrush}"/>
-            </Trigger>
         </Style.Triggers>
     </Style>
 
     <Style x:Key="DeleteButtonStyle" TargetType="Button" BasedOn="{StaticResource MaterialDesignFlatButton}">
-        <Setter Property="Foreground" Value="{DynamicResource ErrorBrush}"/>
+        <Setter Property="Foreground" Value="{DynamicResource ForegroundBrush}"/>
         <Setter Property="Background" Value="Transparent"/>
         <Setter Property="FontSize" Value="16"/>
         <Setter Property="Width" Value="30"/>
@@ -52,11 +57,6 @@
         <Setter Property="Padding" Value="0"/>
         <Setter Property="Margin" Value="5,0"/>
         <Setter Property="materialDesign:ButtonAssist.CornerRadius" Value="15"/>
-        <Style.Triggers>
-            <Trigger Property="IsMouseOver" Value="True">
-                <Setter Property="Background" Value="Transparent"/>
-            </Trigger>
-        </Style.Triggers>
     </Style>
 
     <Style x:Key="LinkButtonStyle" TargetType="Button" BasedOn="{StaticResource MaterialDesignFlatButton}">
@@ -68,20 +68,32 @@
         <Style.Triggers>
             <Trigger Property="IsMouseOver" Value="True">
                 <Setter Property="Foreground" Value="{DynamicResource PrimaryLightBrush}"/>
-                <Setter Property="Background" Value="Transparent"/>
             </Trigger>
         </Style.Triggers>
     </Style>
 
-    <Style x:Key="ThemeToggleStyle" TargetType="ToggleButton" BasedOn="{StaticResource MaterialDesignActionToggleButton}">
+    <Style x:Key="ThemeToggleButtonStyle" TargetType="Button" BasedOn="{StaticResource MaterialDesignFlatButton}">
+        <Setter Property="Width" Value="50"/>
+        <Setter Property="Height" Value="50"/>
         <Setter Property="Background" Value="Transparent"/>
-        <Setter Property="BorderBrush" Value="Transparent"/>
-        <Setter Property="Foreground" Value="{DynamicResource PrimaryBrush}"/>
-        <Style.Triggers>
-            <Trigger Property="IsMouseOver" Value="True">
-                <Setter Property="Background" Value="Transparent"/>
-            </Trigger>
-        </Style.Triggers>
+        <Setter Property="BorderThickness" Value="2"/>
+        <Setter Property="BorderBrush" Value="{DynamicResource PrimaryBrush}"/>
+        <Setter Property="ToolTip" Value="Toggle theme"/>
+    </Style>
+
+    <Style TargetType="ToolTip">
+        <Setter Property="Background" Value="{DynamicResource PrimaryBrush}"/>
+        <Setter Property="Foreground" Value="{DynamicResource AccentBrush}"/>
+        <Setter Property="BorderBrush" Value="{DynamicResource PrimaryBrush}"/>
+        <Setter Property="BorderThickness" Value="1"/>
+        <Setter Property="Padding" Value="8,4"/>
+        <Setter Property="FontSize" Value="12"/>
+        <Setter Property="Placement" Value="Mouse"/>
+        <Setter Property="Effect">
+            <Setter.Value>
+                <DropShadowEffect Color="Black" BlurRadius="8" ShadowDepth="2"/>
+            </Setter.Value>
+        </Setter>
     </Style>
 
     <Style TargetType="TextBox" BasedOn="{StaticResource MaterialDesignFloatingHintTextBox}">
@@ -112,7 +124,6 @@
         <Setter Property="materialDesign:ElevationAssist.Elevation" Value="Dp4"/>
         <Setter Property="Margin" Value="20,20,20,10"/>
         <Setter Property="Padding" Value="20"/>
-        <Setter Property="BorderBrush" Value="{DynamicResource BorderBrush}"/>
         <Setter Property="BorderThickness" Value="0,0,0,1"/>
     </Style>
 
@@ -131,12 +142,9 @@
     </Style>
 
     <Style x:Key="BoardCardStyle" TargetType="materialDesign:Card" BasedOn="{StaticResource {x:Type materialDesign:Card}}">
-        <Setter Property="Background" Value="{DynamicResource CardBackgroundBrush}"/>
         <Setter Property="materialDesign:ElevationAssist.Elevation" Value="Dp1"/>
         <Setter Property="Margin" Value="0,0,0,20"/>
         <Setter Property="Padding" Value="20"/>
-        <Setter Property="BorderBrush" Value="{DynamicResource BorderBrush}"/>
-        <Setter Property="BorderThickness" Value="1"/>
         <Style.Triggers>
             <Trigger Property="IsMouseOver" Value="True">
                 <Setter Property="materialDesign:ElevationAssist.Elevation" Value="Dp3"/>
@@ -149,7 +157,6 @@
         <Setter Property="Background" Value="{DynamicResource SurfaceBrush}"/>
         <Setter Property="BorderBrush" Value="{DynamicResource PrimaryBrush}"/>
         <Setter Property="BorderThickness" Value="0,3,0,0"/>
-        <Setter Property="materialDesign:ElevationAssist.Elevation" Value="Dp2"/>
         <Setter Property="Margin" Value="10,5"/>
         <Setter Property="Padding" Value="15"/>
         <Setter Property="Width" Value="300"/>
@@ -159,6 +166,20 @@
                 <Setter Property="materialDesign:ElevationAssist.Elevation" Value="Dp4"/>
             </Trigger>
         </Style.Triggers>
+    </Style>
+
+    <Style x:Key="HighlightCardStyle" TargetType="materialDesign:Card" BasedOn="{StaticResource {x:Type materialDesign:Card}}">
+        <Setter Property="Background">
+            <Setter.Value>
+                <LinearGradientBrush StartPoint="0,0" EndPoint="1,0">
+                    <GradientStop Color="{DynamicResource CardBackgroundColor}" Offset="0"/>
+                    <GradientStop Color="Transparent" Offset="1"/>
+                </LinearGradientBrush>
+            </Setter.Value>
+        </Setter>
+        <Setter Property="BorderBrush" Value="{DynamicResource PrimaryBrush}"/>
+        <Setter Property="BorderThickness" Value="2"/>
+        <Setter Property="materialDesign:ElevationAssist.Elevation" Value="Dp4"/>
     </Style>
 
     <Style x:Key="TaskCardStyle" TargetType="Border">
@@ -185,20 +206,6 @@
         </Style.Triggers>
     </Style>
 
-    <Style x:Key="HighlightCardStyle" TargetType="materialDesign:Card" BasedOn="{StaticResource {x:Type materialDesign:Card}}">
-        <Setter Property="Background">
-            <Setter.Value>
-                <LinearGradientBrush StartPoint="0,0" EndPoint="1,0">
-                    <GradientStop Color="{DynamicResource CardBackgroundColor}" Offset="0"/>
-                    <GradientStop Color="Transparent" Offset="1"/>
-                </LinearGradientBrush>
-            </Setter.Value>
-        </Setter>
-        <Setter Property="BorderBrush" Value="{DynamicResource PrimaryBrush}"/>
-        <Setter Property="BorderThickness" Value="2"/>
-        <Setter Property="materialDesign:ElevationAssist.Elevation" Value="Dp4"/>
-    </Style>
-
     <Style TargetType="TabControl">
         <Setter Property="Background" Value="Transparent"/>
         <Setter Property="BorderThickness" Value="0"/>
@@ -209,15 +216,12 @@
         <Setter Property="Padding" Value="15,8"/>
         <Setter Property="Foreground" Value="{DynamicResource ForegroundBrush}"/>
         <Setter Property="Background" Value="Transparent"/>
-        <Setter Property="BorderBrush" Value="Transparent"/>
         <Setter Property="BorderThickness" Value="0"/>
         <Setter Property="Template">
             <Setter.Value>
                 <ControlTemplate TargetType="TabItem">
                     <Grid>
-                        <Border Background="Transparent"
-                                BorderThickness="{TemplateBinding BorderThickness}"
-                                BorderBrush="{TemplateBinding BorderBrush}">
+                        <Border Background="Transparent">
                             <ContentPresenter x:Name="ContentSite"
                                               VerticalAlignment="Center"
                                               HorizontalAlignment="Center"
@@ -244,39 +248,16 @@
         </Setter>
     </Style>
 
-    <Style x:Key="HeaderTextStyle" TargetType="TextBlock">
-        <Setter Property="FontSize" Value="26"/>
-        <Setter Property="FontWeight" Value="Bold"/>
-        <Setter Property="Foreground" Value="{DynamicResource ForegroundBrush}"/>
-        <Setter Property="HorizontalAlignment" Value="Center"/>
-        <Setter Property="Margin" Value="0,0,0,30"/>
-    </Style>
-
-    <Style x:Key="SubHeaderTextStyle" TargetType="TextBlock">
-        <Setter Property="FontSize" Value="18"/>
-        <Setter Property="FontWeight" Value="SemiBold"/>
-        <Setter Property="Foreground" Value="{DynamicResource ForegroundBrush}"/>
-    </Style>
-
-    <Style x:Key="CaptionTextStyle" TargetType="TextBlock">
-        <Setter Property="FontSize" Value="12"/>
-        <Setter Property="Foreground" Value="{DynamicResource TextSecondaryBrush}"/>
-    </Style>
-
-    <Style TargetType="ScrollBar" x:Key="HorizontalScrollBar" BasedOn="{x:Null}">
+    <Style x:Key="HorizontalScrollBar" TargetType="ScrollBar">
         <Setter Property="Height" Value="12"/>
         <Setter Property="Orientation" Value="Horizontal"/>
         <Setter Property="Template">
             <Setter.Value>
                 <ControlTemplate TargetType="ScrollBar">
                     <Grid Background="{DynamicResource PrimaryLightBrush}" Height="12">
-                        <Track Name="PART_Track"
-                           IsDirectionReversed="False"
-                           Focusable="False">
+                        <Track Name="PART_Track" IsDirectionReversed="False" Focusable="False">
                             <Track.Thumb>
-                                <Thumb Background="{DynamicResource PrimaryBrush}"
-                                   Height="12"
-                                   Margin="1,0"/>
+                                <Thumb Background="{DynamicResource PrimaryBrush}" Height="12" Margin="1,0"/>
                             </Track.Thumb>
                             <Track.IncreaseRepeatButton>
                                 <RepeatButton Width="0" IsTabStop="False"/>

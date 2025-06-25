@@ -16,9 +16,7 @@ namespace Frontend.View
     {
         private readonly MainWindowViewModel _viewModel;
 
-        private bool _isSignInPasswordVisible = false;
-        private bool _isSignUpPasswordVisible = false;
-        private bool _isConfirmPasswordVisible = false;
+        private bool _isSignInPasswordVisible, _isSignUpPasswordVisible, _isConfirmPasswordVisible;
 
         public MainWindow()
         {
@@ -98,7 +96,6 @@ namespace Frontend.View
                         passwordBox.Foreground = foreground;
                         passwordBox.CaretBrush = caret;
                         break;
-
                     case TextBox textBox:
                         textBox.Foreground = foreground;
                         textBox.CaretBrush = caret;
