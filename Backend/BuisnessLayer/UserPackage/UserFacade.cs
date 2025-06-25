@@ -11,7 +11,6 @@ namespace IntroSE.Kanban.Backend.BuisnessLayer.UserPackage
     internal class UserFacade
     {
         private static readonly ILog Log = LogManager.GetLogger(MethodBase.GetCurrentMethod().DeclaringType);
-
         internal readonly Dictionary<string, UserBL> _emails;
 
         internal UserFacade()
