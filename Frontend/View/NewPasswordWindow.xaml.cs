@@ -13,7 +13,7 @@ namespace Frontend.View
     public partial class NewPasswordWindow : Window
     {
         private readonly NewPasswordWindowViewModel _viewModel;
-        private bool _isNewPasswordVisible = false;
+        private bool _isNewPasswordVisible;
 
         public NewPasswordWindow(string email)
         {
@@ -57,6 +57,16 @@ namespace Frontend.View
                 };
                 HintAssist.SetHint(textBox, hintText);
                 HintAssist.SetIsFloating(textBox, true);
+                textBox.GotFocus += (s, e) =>
+                {
+                    var accent = TryFindResource("BorderBrush") as Brush;
+                    TextFieldAssist.SetUnderlineBrush(textBox, accent!);
+                };
+                textBox.LostFocus += (s, e) =>
+                {
+                    var primary = TryFindResource("PrimaryBrush") as Brush;
+                    TextFieldAssist.SetUnderlineBrush(textBox, primary!);
+                };
                 textBox.TextChanged += (s, e) =>
                 {
                     _viewModel.NewPassword = textBox.Text;
@@ -76,6 +86,16 @@ namespace Frontend.View
                 };
                 HintAssist.SetHint(passwordBox, hintText);
                 HintAssist.SetIsFloating(passwordBox, true);
+                passwordBox.GotFocus += (s, e) =>
+                {
+                    var accent = TryFindResource("BorderBrush") as Brush;
+                    TextFieldAssist.SetUnderlineBrush(passwordBox, accent!);
+                };
+                passwordBox.LostFocus += (s, e) =>
+                {
+                    var primary = TryFindResource("PrimaryBrush") as Brush;
+                    TextFieldAssist.SetUnderlineBrush(passwordBox, primary!);
+                };
                 passwordBox.PasswordChanged += changedHandler;
                 grid.Children.Add(passwordBox);
                 AddEyeToggle(grid, toggleHandler, false);
@@ -99,7 +119,6 @@ namespace Frontend.View
                 Style = (Style)FindResource("MaterialDesignToolButton")
             };
             RippleAssist.SetFeedback(toggleButton, Brushes.Transparent);
-
             PackIconMaterial icon = new()
             {
                 Kind = isVisible ? PackIconMaterialKind.EyeOff : PackIconMaterialKind.Eye,
