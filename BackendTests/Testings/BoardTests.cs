@@ -1,4 +1,4 @@
-using System.Collections.Immutable;
+﻿using System.Collections.Immutable;
 using IntroSE.Kanban.Backend.ServiceLayer;
 
 namespace IntroSE.Kanban.BackendTests.Testings
@@ -18,7 +18,7 @@ namespace IntroSE.Kanban.BackendTests.Testings
             return json.Contains("\"ErrorMessage\":null");
         }
 
-        public bool CreateBoardWithTheSameNmaeForDifferentUsers()
+        public bool CreateBoardWithTheSameNameForDifferentUsers()
         {
             _factory.GetUserService().Login(EMAIL2, PASSWORD);
             string json = _factory.GetBoardService().CreateBoard(EMAIL2, BOARDNAME1);
@@ -64,13 +64,13 @@ namespace IntroSE.Kanban.BackendTests.Testings
 
         public bool CheckUserBoardIdList()
         {
-            string json = _factory.GetBoardService().GetUserBoards(EMAIL2);
+            string json = _factory.GetBoardService().GetUserBoardsAsId(EMAIL2);
             return json.Contains("\"ErrorMessage\":null");
         }
         public bool CheckUserBoardIdList_userWithoutBoards()
         {
             _factory.GetUserService().Register("empty@gmail.com", "Empty1");
-            string json = _factory.GetBoardService().GetUserBoards("empty@gmail.com");
+            string json = _factory.GetBoardService().GetUserBoardsAsId("empty@gmail.com");
             return json.Contains("\"ErrorMessage\":null");
         }
 
@@ -78,7 +78,7 @@ namespace IntroSE.Kanban.BackendTests.Testings
         {
             _factory = serviceFactory;
             Console.WriteLine("🔹 CreateBoardWithValidValues: " + CreateBoardWithValidValues());
-            Console.WriteLine("🔹 CreateBoardWithTheSameNmaeForDifferentUsers: " + CreateBoardWithTheSameNmaeForDifferentUsers());
+            Console.WriteLine("🔹 CreateBoardWithTheSameNmaeForDifferentUsers: " + CreateBoardWithTheSameNameForDifferentUsers());
             Console.WriteLine("🔹 CreateBoardWithOccupiedName: " + CreateBoardWithOccupiedName());
             Console.WriteLine("🔹 CreateBoard_CaseInsensitiveName: " + CreateBoard_CaseInsensitiveName());
             Console.WriteLine("🔹 DeleteBoard: " + DeleteBoard());

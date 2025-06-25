@@ -15,6 +15,15 @@ namespace IntroSE.Kanban.Backend.ServiceLayer
             _boardFacade = boardFacade;
         }
 
+        private string ToResponseJson(string errorMessage = null, object returnValue = null) =>
+            JsonSerializer.Serialize(new Response(errorMessage, returnValue));
+
+        private List<ColumnSL> ConvertColumns(BoardBL board) =>
+            board.Columns.Select(c => new ColumnSL(c.Name, c.Limit, ConvertTasks(c.Tasks))).ToList();
+
+        private List<TaskSL> ConvertTasks(List<TaskBL> tasks) =>
+            tasks.Select(t => new TaskSL(t.Title, t.Description, t.DueDate, t.CreatedAt, t.Assignee)).ToList();
+
         /// <summary>
         /// Creates a new board for a user.
         /// </summary>
@@ -31,12 +40,18 @@ namespace IntroSE.Kanban.Backend.ServiceLayer
         {
             try
             {
-                BoardBL board = _boardFacade.CreateBoard(email, boardName);
-                return JsonSerializer.Serialize(new Response(null, null));
+                _boardFacade.CreateBoard(email, boardName);
+                List<ColumnSL> lst = new()
+                {
+                    new("backlog", -1, new List<TaskSL>()),
+                    new("in progress", -1, new List<TaskSL>()),
+                    new("done", -1, new List<TaskSL>())
+                };
+                return ToResponseJson(null, new BoardSL(email, boardName, new List<string>{email}, lst));
             }
             catch (Exception ex)
             {
-                return JsonSerializer.Serialize(new Response(ex.Message, null));
+                return ToResponseJson(ex.Message);
             }
         }
 
@@ -55,11 +70,11 @@ namespace IntroSE.Kanban.Backend.ServiceLayer
             try
             {
                 _boardFacade.DeleteBoard(email, boardName);
-                return JsonSerializer.Serialize(new Response(null, null));
+                return ToResponseJson();
             }
             catch (Exception ex)
             {
-                return JsonSerializer.Serialize(new Response(ex.Message, null));
+                return ToResponseJson(ex.Message);
             }
         }
 
@@ -67,7 +82,7 @@ namespace IntroSE.Kanban.Backend.ServiceLayer
         /// Sets a task limit for a specific column in a board.
         /// </summary>
         /// <param name="boardName">The name of the board.</param>
-        /// <param name="column">The name of the column to limit.</param>
+        /// <param name="columnOrdinal">The name of the column to limit.</param>
         /// <param name="limit">The new limit for the column (must be non-negative).</param>
         /// <param name="email">The user's email.</param>
         /// <returns>An empty Response indicating success or failure.</returns>
@@ -81,11 +96,11 @@ namespace IntroSE.Kanban.Backend.ServiceLayer
             try
             {
                 _boardFacade.LimitColumn(email, boardName, columnOrdinal, limit);
-                return JsonSerializer.Serialize(new Response(null, null));
+                return ToResponseJson();
             }
             catch (Exception ex)
             {
-                return JsonSerializer.Serialize(new Response(ex.Message, null));
+                return ToResponseJson(ex.Message);
             }
         }
 
@@ -101,16 +116,17 @@ namespace IntroSE.Kanban.Backend.ServiceLayer
         /// <exception cref="KeyNotFoundException">If the board does not exist or is not accessible by the user.</exception>
         /// <precondition>The user must own the board and the column must exist.</precondition>
         /// <postcondition>A list of tasks in the specified column is returned.</postcondition>
-        public string GetColumn(string email, string boardName, int columnOrdinal)
+        public string GetColumnTasks(string email, string boardName, int columnOrdinal)
         {
             try
             {
-                List<TaskSL> lst = _boardFacade.GetColumn(email, boardName, columnOrdinal).Select(task => new TaskSL(task.Title, task.DueDate, task.Description, task.CreatedAt, task.Id)).ToList();
-                return JsonSerializer.Serialize(new Response(null, lst));
+                List<TaskSL> tasks = _boardFacade.GetColumnTasks(email, boardName, columnOrdinal)
+                    .Select(t => new TaskSL(t.Title, t.Description, t.DueDate, t.CreatedAt, t.Assignee)).ToList();
+                return ToResponseJson(null, tasks);
             }
             catch (Exception ex)
             {
-                return JsonSerializer.Serialize(new Response(ex.Message, null));
+                return ToResponseJson(ex.Message);
             }
         }
 
@@ -131,11 +147,11 @@ namespace IntroSE.Kanban.Backend.ServiceLayer
             try
             {
                 int limit = _boardFacade.GetColumnLimit(email, boardName, columnOrdinal);
-                return JsonSerializer.Serialize(new Response(null, limit));
+                return ToResponseJson(null, limit);
             }
             catch (Exception ex)
             {
-                return JsonSerializer.Serialize(new Response(ex.Message, null));
+                return ToResponseJson(ex.Message);
             }
         }
 
@@ -156,11 +172,11 @@ namespace IntroSE.Kanban.Backend.ServiceLayer
             try
             {
                 string name = _boardFacade.GetColumnName(email, boardName, columnOrdinal);
-                return JsonSerializer.Serialize(new Response(null, name));
+                return ToResponseJson(null, name);
             }
             catch (Exception ex)
             {
-                return JsonSerializer.Serialize(new Response(ex.Message, null));
+                return ToResponseJson(ex.Message);
             }
         }
 
@@ -177,12 +193,13 @@ namespace IntroSE.Kanban.Backend.ServiceLayer
         {
             try
             {
-                List<TaskSL> lst = _boardFacade.InProgressTasks(email).Select(task => new TaskSL(task.Title, task.DueDate, task.Description, task.CreatedAt, task.Id)).ToList();
-                return JsonSerializer.Serialize(new Response(null, lst));
+                List<TaskSL> tasks = _boardFacade.InProgressTasks(email)
+                    .Select(t => new TaskSL(t.Title, t.Description, t.DueDate, t.CreatedAt, t.Assignee)).ToList();
+                return ToResponseJson(null, tasks);
             }
             catch (Exception ex)
             {
-                return JsonSerializer.Serialize(new Response(ex.Message, null));
+                return ToResponseJson(ex.Message);
             }
         }
 
@@ -196,30 +213,12 @@ namespace IntroSE.Kanban.Backend.ServiceLayer
         {
             try
             {
-                _boardFacade.JoinBoard(email, boardID);
-                return JsonSerializer.Serialize(new Response(null, null));
+                BoardBL board = _boardFacade.JoinBoard(email, boardID);
+                return ToResponseJson(null, new BoardSL(board.Owner, board.Name, board.Members, ConvertColumns(board)));
             }
             catch (Exception ex)
             {
-                return JsonSerializer.Serialize(new Response(ex.Message, null));
-            }
-        }
-
-        /// <summary>
-        /// returns a list of IDs of all user's boards.
-        /// </summary>
-        /// <param name="email">The email of the user.</param>
-        /// <returns>Response containing a list of board names.</returns>
-        public string GetUserBoards(string email)
-        {
-            try
-            {
-                List<int> boardsID = _boardFacade.GetUserBoards(email);
-                return JsonSerializer.Serialize(new Response(null, boardsID));
-            }
-            catch (Exception ex)
-            {
-                return JsonSerializer.Serialize(new Response(ex.Message, null));
+                return ToResponseJson(ex.Message);
             }
         }
 
@@ -234,29 +233,47 @@ namespace IntroSE.Kanban.Backend.ServiceLayer
             try
             {
                 _boardFacade.LeaveBoard(email, boardID);
-                return JsonSerializer.Serialize(new Response(null, null));
+                return ToResponseJson();
             }
             catch (Exception ex)
             {
-                return JsonSerializer.Serialize(new Response(ex.Message, null));
+                return ToResponseJson(ex.Message);
             }
         }
 
         /// <summary>
         /// Gets the name of a board by its ID.
         /// </summary>
-        /// <param name="boardId">The ID of the board.</param>
+        /// <param name="boardID">The ID of the board.</param>
         /// <returns>Response containing the board name.</returns>
         public string GetBoardName(int boardID)
         {
             try
             {
                 string boardName = _boardFacade.GetBoardName(boardID);
-                return JsonSerializer.Serialize(new Response(null, boardName));
+                return ToResponseJson(null, boardName);
             }
             catch (Exception ex)
             {
-                return JsonSerializer.Serialize(new Response(ex.Message, null));
+                return ToResponseJson(ex.Message);
+            }
+        }
+
+        /// <summary>
+        /// returns a list of IDs of all user's boards.
+        /// </summary>
+        /// <param name="email">The email of the user.</param>
+        /// <returns>Response containing a list of board Ids.</returns>
+        public string GetUserBoardsAsId(string email)
+        {
+            try
+            {
+                List<int> boardIds = _boardFacade.GetUserBoardsAsId(email);
+                return ToResponseJson(null, boardIds);
+            }
+            catch (Exception ex)
+            {
+                return ToResponseJson(ex.Message);
             }
         }
 
@@ -272,37 +289,59 @@ namespace IntroSE.Kanban.Backend.ServiceLayer
             try
             {
                 _boardFacade.TransferOwnership(currentOwnerEmail, newOwnerEmail, boardName);
-                return JsonSerializer.Serialize(new Response(null, null));
+                return ToResponseJson();
             }
             catch (Exception ex)
             {
-                return JsonSerializer.Serialize(new Response(ex.Message, null));
+                return ToResponseJson(ex.Message);
             }
         }
 
+        /// <summary>
+        /// Loads all data from DataBase to the system
+        /// </summary>
+        /// <returns>Response indicating success or failure</returns>
         public string LoadData()
         {
             try
             {
                 _boardFacade.LoadData();
-                return JsonSerializer.Serialize(new Response(null, null));
+                return ToResponseJson();
             }
             catch (Exception ex)
             {
-                return JsonSerializer.Serialize(new Response(ex.Message, null));
+                return ToResponseJson(ex.Message);
             }
 
         }
+
+        /// <summary>
+        /// Loads all data from DataBase to the system
+        /// </summary>
+        /// <returns>Response indicating success or failure</returns>
         public string DeleteData()
         {
             try
             {
                 _boardFacade.DeleteData();
-                return JsonSerializer.Serialize(new Response(null, null));
+                return ToResponseJson();
             }
             catch (Exception ex)
             {
-                return JsonSerializer.Serialize(new Response(ex.Message, null));
+                return ToResponseJson(ex.Message);
+            }
+        }
+
+        public string DeleteRAM()
+        {
+            try
+            {
+                _boardFacade.DeleteRAM();
+                return ToResponseJson();
+            }
+            catch (Exception ex)
+            {
+                return ToResponseJson(ex.Message);
             }
         }
     }

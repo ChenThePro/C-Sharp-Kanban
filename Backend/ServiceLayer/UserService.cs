@@ -1,5 +1,8 @@
 using System;
+using System.Collections.Generic;
+using System.Linq;
 using System.Text.Json;
+using IntroSE.Kanban.Backend.BuisnessLayer.BoardPackage;
 using IntroSE.Kanban.Backend.BuisnessLayer.UserPackage;
 
 namespace IntroSE.Kanban.Backend.ServiceLayer
@@ -8,14 +11,19 @@ namespace IntroSE.Kanban.Backend.ServiceLayer
     {
         private readonly UserFacade _userFacade;
 
-        /// <summary>
-        /// Constructs a new UserService with the given UserFacade.
-        /// </summary>
-        /// <param name="userFacade">The facade to handle user-related operations.</param>
         internal UserService(UserFacade userFacade)
         {
             _userFacade = userFacade;
         }
+
+        private string ToJsonResponse(string error = null, object data = null) =>
+            JsonSerializer.Serialize(new Response(error, data));
+
+        private List<ColumnSL> ConvertColumns(BoardBL board) =>
+            board.Columns.Select(c => new ColumnSL(c.Name, c.Limit, ConvertTasks(c.Tasks))).ToList();
+
+        private List<TaskSL> ConvertTasks(List<TaskBL> tasks) =>
+            tasks.Select(t => new TaskSL(t.Title, t.Description, t.DueDate, t.CreatedAt, t.Assignee)).ToList();
 
         /// <summary>
         /// Attempts to log in a user with the provided credentials.
@@ -32,11 +40,12 @@ namespace IntroSE.Kanban.Backend.ServiceLayer
             try
             {
                 UserBL user = _userFacade.Login(email, password);
-                return JsonSerializer.Serialize(new Response(null, email));
+                List<BoardSL> boards = user.Boards.Select(b => new BoardSL(b.Owner, b.Name, b.Members, ConvertColumns(b))).ToList();
+                return ToJsonResponse(null, new UserSL(email, password, boards, user.UserDTO.IsDark));
             }
             catch (Exception ex)
             {
-                return JsonSerializer.Serialize(new Response(ex.Message, null));
+                return ToJsonResponse(ex.Message);
             }
         }
 
@@ -56,12 +65,11 @@ namespace IntroSE.Kanban.Backend.ServiceLayer
             try
             {
                 UserBL user = _userFacade.Register(email, password);
-                return JsonSerializer.Serialize(new Response(null, null));
+                return ToJsonResponse(null, new UserSL(email, password, new List<BoardSL>(), user.UserDTO.IsDark));
             }
             catch (Exception ex)
             {
-                Console.WriteLine(ex.Message);
-                return JsonSerializer.Serialize(new Response(ex.Message, null));
+                return ToJsonResponse(ex.Message);
             }
         }
 
@@ -79,11 +87,50 @@ namespace IntroSE.Kanban.Backend.ServiceLayer
             try
             {
                 _userFacade.Logout(email);
-                return JsonSerializer.Serialize(new Response(null, null));
+                return ToJsonResponse();
             }
             catch (Exception ex)
             {
-                return JsonSerializer.Serialize(new Response(ex.Message, null));
+                return ToJsonResponse(ex.Message);
+            }
+        }
+
+        public string ResetPassword(string email, string newPassword)
+        {
+            try
+            {
+                _userFacade.ResetPassword(email, newPassword);
+                return ToJsonResponse();
+            }
+            catch (Exception ex)
+            {
+                return ToJsonResponse(ex.Message);
+            }
+        }
+
+        public string AuthenticateUser(string email)
+        {
+            try
+            {
+                _userFacade.AuthenticateUser(email);
+                return ToJsonResponse();
+            }
+            catch (Exception ex)
+            {
+                return ToJsonResponse(ex.Message);
+            }
+        }
+
+        public string ChangeTheme(string email)
+        {
+            try
+            {
+                _userFacade.ChangeTheme(email);
+                return ToJsonResponse();
+            }
+            catch (Exception ex)
+            {
+                return ToJsonResponse(ex.Message);
             }
         }
     }

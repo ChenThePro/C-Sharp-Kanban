@@ -1,25 +1,18 @@
-<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <OutputType>Library</OutputType>
-    <TargetFramework>net6.0</TargetFramework>
+      <OutputType>Library</OutputType>
+      <TargetFramework>net6.0</TargetFramework>
 	  <RootNamespace>IntroSE.Kanban.Backend</RootNamespace>
 	  <AssemblyName>IntroSE.Kanban.Backend</AssemblyName>
   </PropertyGroup>
-
+	
   <ItemGroup>
-    <None Remove="log4net.config" />
+      <Content Include="log4net.config">
+          <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+      </Content>
+	  <PackageReference Include="log4net" Version="3.1.0" />
+	  <PackageReference Include="Microsoft.Data.Sqlite.Core" Version="9.0.5" />
   </ItemGroup>
 
-  <ItemGroup>
-    <Content Include="log4net.config">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-  </ItemGroup>
-
-  <ItemGroup>
-    <PackageReference Include="log4net" Version="3.0.4" />
-    <PackageReference Include="Microsoft.Data.Sqlite.Core" Version="9.0.5" />
-    <PackageReference Include="System.Data.SQLite.Linq" Version="1.0.119" />
-  </ItemGroup>
 </Project>

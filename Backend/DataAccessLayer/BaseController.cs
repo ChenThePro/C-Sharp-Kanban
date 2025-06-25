@@ -16,149 +16,95 @@ namespace IntroSE.Kanban.Backend.DataAccessLayer
 
         protected BaseController(string tableName)
         {
-            string path = Path.GetFullPath(Path.Combine(Directory.GetCurrentDirectory(), "kanban.db"));
-            _connectionString = $"Data Source={path};";
+            string dbPath = Path.GetFullPath(Path.Combine(Directory.GetCurrentDirectory(), "kanban.db"));
+            _connectionString = $"Data Source={dbPath};";
             _tableName = tableName;
         }
 
-        internal bool Insert(TDTO dto)
+        internal void Insert(TDTO dto)
         {
-            var columns = dto.GetColumnNames();
-            var values = dto.GetColumnValues();
-            var columnList = string.Join(", ", columns);
-            var paramList = string.Join(", ", columns.Select(c => $"@{c}"));
-            using var connection = new SqliteConnection(_connectionString);
-            using var command = connection.CreateCommand();
-            command.CommandText = $"INSERT INTO {_tableName} ({columnList}) VALUES ({paramList});";
-            for (int i = 0; i < columns.Length; i++)
-                command.Parameters.AddWithValue($"@{columns[i]}", values[i] ?? DBNull.Value);
-            try
-            {
-                connection.Open();
-                if (command.ExecuteNonQuery() > 0)
+            string[] columns = dto.GetColumnNames();
+            object[] values = dto.GetColumnValues();
+            string columnList = string.Join(", ", columns);
+            string paramList = string.Join(", ", columns.Select(c => $"@{c}"));
+            ExecuteQuery(
+                $"INSERT INTO {_tableName} ({columnList}) VALUES ({paramList});",
+                command =>
                 {
-                    Log.Info($"Insert succeeded for table {_tableName}.");
-                    return true;
-                }
-                return false;
-            }
-            catch (Exception ex)
-            {
-                Log.Error($"Insert failed for table {_tableName}.", ex);
-                return false;
-            }
-        }
-
-        internal bool Delete(string keyColumn, object key)
-        {
-            using var connection = new SqliteConnection(_connectionString);
-            using var command = connection.CreateCommand();
-            command.CommandText = $"DELETE FROM {_tableName} WHERE {keyColumn} = @Key;";
-            command.Parameters.AddWithValue("@Key", key);
-            try
-            {
-                connection.Open();
-                if (command.ExecuteNonQuery() > 0)
-                {
-                    Log.Info($"Delete succeeded on {_tableName} for key {key}.");
-                    return true;
-                }
-                return false;
-            }
-            catch (Exception ex)
-            {
-                Log.Error($"Delete failed on {_tableName} for key {key}.", ex);
-                return false;
-            }
-        }
-
-        internal bool Update(string keyColumn, object key, string column, object newValue)
-        {
-            using var connection = new SqliteConnection(_connectionString);
-            using var command = connection.CreateCommand();
-            command.CommandText = $"UPDATE {_tableName} SET {column} = @Value WHERE {keyColumn} = @Key;";
-            command.Parameters.AddWithValue("@Value", newValue ?? DBNull.Value);
-            command.Parameters.AddWithValue("@Key", key);
-            try
-            {
-                connection.Open();
-                if (command.ExecuteNonQuery() > 0)
-                {
-                    Log.Info($"Update succeeded on {_tableName} for key {key}.");
-                    return true;
-                }
-                return false;
-            }
-            catch (Exception ex)
-            {
-                Log.Error($"Update failed on {_tableName} for key {key}.", ex);
-                return false;
-            }
+                    for (int i = 0; i < columns.Length; i++)
+                        command.Parameters.AddWithValue($"@{columns[i]}", values[i] ?? DBNull.Value);
+                },
+                "Insert");
         }
 
         internal List<TDTO> SelectAll()
         {
             List<TDTO> results = new();
-            using var connection = new SqliteConnection(_connectionString);
-            using var command = connection.CreateCommand();
-            command.CommandText = $"SELECT * FROM {_tableName};";
             try
             {
+                using SqliteConnection connection = new(_connectionString);
+                using SqliteCommand command = connection.CreateCommand();
+                command.CommandText = $"SELECT * FROM {_tableName};";
                 connection.Open();
-                using var reader = command.ExecuteReader();
+                using SqliteDataReader reader = command.ExecuteReader();
                 while (reader.Read())
                     results.Add(ConvertReaderToDTO(reader));
+                Log.Info($"SelectAll succeeded on {_tableName}, {results.Count} records loaded.");
             }
             catch (Exception ex)
             {
-                Log.Error($"Select failed on {_tableName}.", ex);
+                Log.Error(ex.Message);
             }
-            Log.Info($"Select succeeded on {_tableName}.");
             return results;
         }
 
-        internal bool DeleteAll()
-        {
-            using var connection = new SqliteConnection(_connectionString);
-            using var command = connection.CreateCommand();
-            command.CommandText = $"DELETE FROM {_tableName};";
-            try
-            {
-                connection.Open();
-                int rowsAffected = command.ExecuteNonQuery();
-                Log.Info($"DeleteAll succeeded on {_tableName}. {rowsAffected} rows deleted.");
-                return true;
-            }
-            catch (Exception ex)
-            {
-                Log.Error($"DeleteAll failed on {_tableName}.", ex);
-                return false;
-            }
-        }
+        internal void DeleteAll() =>
+            ExecuteQuery(
+                $"DELETE FROM {_tableName};",
+                command => { },
+                "DeleteAll");
 
-        internal bool DeleteAllAndResetAutoIncrement()
+        internal void DeleteAllAndResetAutoIncrement()
         {
-            using var connection = new SqliteConnection(_connectionString);
             try
             {
+                using SqliteConnection connection = new(_connectionString);
                 connection.Open();
-                using var transaction = connection.BeginTransaction();
-                using var deleteCommand = connection.CreateCommand();
+                using SqliteTransaction transaction = connection.BeginTransaction();
+                using SqliteCommand deleteCommand = connection.CreateCommand();
                 deleteCommand.CommandText = $"DELETE FROM {_tableName};";
                 deleteCommand.Transaction = transaction;
-                int rowsAffected = deleteCommand.ExecuteNonQuery();
-                using var resetCommand = connection.CreateCommand();
+                int rows = deleteCommand.ExecuteNonQuery();
+                using SqliteCommand resetCommand = connection.CreateCommand();
                 resetCommand.CommandText = $"DELETE FROM sqlite_sequence WHERE name = '{_tableName}';";
                 resetCommand.Transaction = transaction;
                 resetCommand.ExecuteNonQuery();
                 transaction.Commit();
-                Log.Info($"DeleteAllAndResetAutoIncrement succeeded on {_tableName}. {rowsAffected} rows deleted and auto-increment reset.");
-                return true;
+                Log.Info($"All rows deleted and autoincrement reset on {_tableName}. Rows affected: {rows}");
             }
             catch (Exception ex)
             {
-                Log.Error($"DeleteAllAndResetAutoIncrement failed on {_tableName}.", ex);
-                return false;
+                Log.Error(ex.Message);
+            }
+        }
+
+        protected void ExecuteQuery(string sql, Action<SqliteCommand> parameterAction, string operationName)
+        {
+            try
+            {
+                using SqliteConnection connection = new(_connectionString);
+                using SqliteCommand command = connection.CreateCommand();
+                command.CommandText = sql;
+                parameterAction(command);
+                connection.Open();
+                int result = command.ExecuteNonQuery();
+                if (result > 0)
+                    Log.Info($"{operationName} succeeded on {_tableName}. Rows affected: {result}");
+                else Log.Warn($"{operationName} on {_tableName} affected 0 rows");
+            }
+            catch (Exception ex)
+            {
+                Log.Error(ex.Message);
             }
         }
 

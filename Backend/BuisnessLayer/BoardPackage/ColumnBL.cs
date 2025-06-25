@@ -8,93 +8,76 @@ namespace IntroSE.Kanban.Backend.BuisnessLayer.BoardPackage
     internal class ColumnBL
     {
         private static readonly ILog Log = LogManager.GetLogger(MethodBase.GetCurrentMethod().DeclaringType);
-        private readonly string _name;
-        private int _limit;
-        private readonly List<TaskBL> _tasks;
+
+        internal readonly string Name;
+        internal int Limit;
+        internal readonly List<TaskBL> Tasks;
 
         internal ColumnBL(int num, int limit, List<TaskBL> tasks)
         {
-            _name = num switch
+            Name = num switch
             {
                 0 => "backlog",
                 1 => "in progress",
                 2 => "done",
-                _ => throw new NotImplementedException("Will never reach here"),
+                _ => throw new ArgumentOutOfRangeException(nameof(num), "Invalid column index")
             };
-            _limit = limit;
-            _tasks = tasks;
+            Limit = limit;
+            Tasks = tasks;
         }
 
-        internal void Add(string email, TaskBL task)
+        internal void AddTask(string email, TaskBL task)
         {
-            if (_limit != -1 && _limit == _tasks.Count)
+            if (Limit != -1 && Tasks.Count >= Limit)
             {
-                Log.Error("Add a task will exceed column's limit.");
-                throw new InvalidOperationException("Add a task will exceed column's limit.");
+                Log.Error("Adding task exceeds column limit.");
+                throw new InvalidOperationException("Adding task exceeds column limit.");
             }
-            Log.Info("Task added succesfully for " + email + ".");
-            _tasks.Add(task);
+            Tasks.Add(task);
+            Log.Info($"Task added successfully by {email} to '{Name}' column.");
         }
 
-        internal void Delete(string email, TaskBL task)
+        internal void DeleteTask(string email, TaskBL task)
         {
-            _tasks.Remove(task);
-            Log.Info("Task removed succesfully " + email + ".");
+            Tasks.Remove(task);
+            Log.Info($"Task removed successfully by {email} from '{Name}' column.");
         }
 
         internal void UpdateTask(string email, int taskID, DateTime? dueDate, string title, string description)
         {
             TaskBL task = GetTaskById(taskID);
-            if (task == null)
-            {
-                Log.Error("Task doensn't exist.");
-                throw new KeyNotFoundException("Task doensn't exist.");
-            }
+            TaskExists(task, taskID);
             task.Update(email, dueDate, title, description);
         }
 
-        internal TaskBL GetTaskById(int taskID)
-        {
-            foreach (TaskBL task in _tasks)
-                if (task.Id == taskID)
-                    return task;
-            return null;
-        }
+        internal TaskBL GetTaskById(int taskID) => 
+            Tasks.Find(task => task.Id == taskID);
 
         internal void LimitColumn(string email, int limit)
         {
-            if (limit != -1 && limit < _tasks.Count)
+            if (limit != -1 && limit < Tasks.Count)
             {
-                Log.Error("Limit lower than current tasks in " + _name + ".");
-                throw new InvalidOperationException("Limit lower than current tasks in " + _name + ".");
+                Log.Error($"New limit {limit} is less than current task count {Tasks.Count}.");
+                throw new InvalidOperationException($"New limit {limit} is less than current task count {Tasks.Count}.");
             }
-            _limit = limit;
-        }
-
-        internal List<TaskBL> GetTasks()
-        {
-            return _tasks;
-        }
-
-        internal int GetLimit()
-        {
-            return _limit;
-        }
-
-        internal string GetName()
-        {
-            return _name;
+            Limit = limit;
+            Log.Info($"Column '{Name}' limit set to {limit} by {email}.");
         }
 
         internal void AssignTask(string email, int taskID, string emailAssignee)
         {
             TaskBL task = GetTaskById(taskID);
+            TaskExists(task, taskID);
+            task.Assign(email, emailAssignee);
+        }
+
+        internal void TaskExists(TaskBL task, int taskID)
+        {
             if (task == null)
             {
-                Log.Error("Task id " + taskID + " for " + emailAssignee + " doesn't exist in " + _name);
-                throw new KeyNotFoundException("Task id " + taskID + " for " + emailAssignee + " doesn't exist in " + _name);
+                Log.Error($"Task ID {taskID} not found in column '{Name}'.");
+                throw new KeyNotFoundException($"Task ID {taskID} not found in column '{Name}'.");
             }
-            task.AssignTask(email, emailAssignee);
         }
     }
 }

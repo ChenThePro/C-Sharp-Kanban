@@ -2,6 +2,7 @@ using IntroSE.Kanban.Backend.DataAccessLayer.DTOs;
 using log4net;
 using System;
 using System.Collections.Generic;
+using System.Net.Mail;
 using System.Reflection;
 using System.Text.RegularExpressions;
 
@@ -11,38 +12,85 @@ namespace IntroSE.Kanban.Backend.BuisnessLayer.UserPackage
     {
         private static readonly ILog Log = LogManager.GetLogger(MethodBase.GetCurrentMethod().DeclaringType);
         internal readonly Dictionary<string, UserBL> _emails;
-        private readonly Regex PasswordCharRegex;
 
-        /// <summary>
-        /// Initializes a new instance of the <see cref="UserFacade"/> class.
-        /// </summary>
         internal UserFacade()
         {
-            _emails = new Dictionary<string, UserBL>();
-            PasswordCharRegex = new Regex(@"^(?=.*[a-zA-Z])(?=.*\d)[a-zA-Z0-9!@#$%^&*()_+\-=\[\]{};':""\\|,.<>/?~` ]+$");
+            _emails = new(StringComparer.OrdinalIgnoreCase);
+        }
+
+        internal void AuthenticateUser(string email)
+        {
+            AuthenticateString(email, "Email");
+            if (!_emails.ContainsKey(email))
+            {
+                Log.Error(email + " doesn't exist in the system.");
+                throw new KeyNotFoundException(email + " doesn't exist in the system.");
+            }
+        }
+
+        internal UserBL Login(string email, string password)
+        {
+            AuthenticateUser(email);
+            return _emails[email].Login(password);
+        }
+
+        internal void Logout(string email)
+        {
+            AuthenticateUser(email);
+            _emails[email].Logout();
+        }
+
+        internal UserBL Register(string email, string password)
+        {
+            ValidateEmail(email);
+            ValidatePassword(password);
+            UserBL newUser = new(email, password);
+            _emails[email] = newUser;
+            Log.Info($"New user registered: {email}");
+            return newUser;
+        }
+
+        internal UserBL GetUser(string email) => 
+            _emails[email];
+
+        internal void LoadData()
+        {
+            foreach (UserDTO dto in new UserDTO().SelectAll())
+                _emails[dto.Email] = new(dto);
+            Log.Info("All users loaded from persistent storage.");
+        }
+
+        private bool IsValidEmail(string email)
+        {
+            try
+            {
+                MailAddress mailAddress = new(email);
+                return mailAddress.Address == email;
+            }
+            catch
+            {
+                return false;
+            }
         }
 
         private void ValidateEmail(string email)
         {
-            if (string.IsNullOrWhiteSpace(email))
-            {
-                Log.Error("Email cannot be empty");
-                throw new ArgumentNullException("Email cannot be empty");
-            }
+            AuthenticateString(email, "Email");
             if (_emails.ContainsKey(email))
             {
-                Log.Error("Email already exists.");
-                throw new InvalidOperationException("Email already exists.");
+                Log.Error(email + " already exists.");
+                throw new InvalidOperationException(email + " already exists.");
             }
-            if (!Regex.IsMatch(email, @"^[^@\s]+@[^@\s]+\.[^@\s]+$"))
+            if (!IsValidEmail(email))
             {
-                Log.Error("Email format is not valid.");
-                throw new FormatException("Email format is not valid.");
+                Log.Error("Invalid email format.");
+                throw new FormatException("Invalid email format.");
             }
         }
 
-        private void VaildatePassword(string password)
+        private void ValidatePassword(string password)
         {
+            AuthenticateString(password, "Password");
             if (password.Length < 6 || password.Length > 20)
             {
                 Log.Error("Password must be between 6 and 20 characters.");
@@ -65,79 +113,28 @@ namespace IntroSE.Kanban.Backend.BuisnessLayer.UserPackage
             }
         }
 
-        internal void AuthenticateUser(string email)
+        private void AuthenticateString(string value, string name)
         {
-            if (!_emails.ContainsKey(email))
+            if (string.IsNullOrWhiteSpace(value))
             {
-                Log.Error("Email doesn't exist.");
-                throw new KeyNotFoundException("Email doesn't exist.");
+                Log.Error($"{name} cannot be null or empty.");
+                throw new ArgumentNullException($"{name} cannot be null or empty.");
             }
         }
 
-        /// <summary>
-        /// Attempts to log in a user with the provided email and password.
-        /// </summary>
-        /// <param name="email">The user's email address.</param>
-        /// <param name="password">The user's password.</param>
-        /// <returns>The <see cref="UserBL"/> instance representing the logged-in user.</returns>
-        /// <exception cref="KeyNotFoundException">Thrown if the email does not exist.</exception>
-        /// <exception cref="UnauthorizedAccessException">Thrown if the password is incorrect.</exception>
-        /// <precondition>User must exist in the system.</precondition>
-        /// <postcondition>User is marked as logged in if credentials are valid.</postcondition>
-        internal UserBL Login(string email, string password)
+        internal void ResetPassword(string email, string newPassword)
         {
             AuthenticateUser(email);
-            return _emails[email].Login(password);
+            ValidatePassword(newPassword);
+            UserBL user = _emails[email];
+            user.Password = newPassword;
         }
 
-        /// <summary>
-        /// Logs out the user associated with the given email.
-        /// </summary>
-        /// <param name="email">The user's email address.</param>
-        /// <exception cref="KeyNotFoundException">Thrown if the email does not exist.</exception>
-        /// <exception cref="InvalidOperationException">Thrown if the user is already logged out.</exception>
-        /// <precondition>User must be currently logged in.</precondition>
-        /// <postcondition>User is marked as logged out.</postcondition>
-        internal void Logout(string email)
+        internal void ChangeTheme(string email)
         {
             AuthenticateUser(email);
-            _emails[email].Logout();
-        }
-
-        /// <summary>
-        /// Registers a new user with the provided email and password.
-        /// </summary>
-        /// <param name="email">The desired email address.</param>
-        /// <param name="password">The desired password.</param>
-        /// <returns>The newly created <see cref="UserBL"/> instance.</returns>
-        /// <exception cref="InvalidOperationException">Thrown if the email already exists.</exception>
-        /// <exception cref="FormatException">Thrown if the email format is invalid.</exception>
-        /// <exception cref="ArgumentException">Thrown if the password does not meet complexity requirements.</exception>
-        /// <precondition>Email must be unique and valid. Password must meet complexity rules.</precondition>
-        /// <postcondition>User is added to the system and marked as logged in.</postcondition>
-        internal UserBL Register(string email, string password)
-        {
-            ValidateEmail(email);
-            VaildatePassword(password);
-            UserBL newUser = new UserBL(email, password);
-            _emails[email] = newUser;
-            Log.Info("New user " + email + " created.");
-            return newUser;
-        }
-
-        internal UserBL GetUser(string email)
-        {
-            return _emails[email];
-        }
-        public void LoadData()
-        {
-            List<UserDTO> users = new UserDTO().SelectAll();
-            UserBL user;
-            foreach (UserDTO userDTO in users)
-            {
-                user = new UserBL(userDTO);
-                _emails.Add(user.Email, user);
-            }
+            UserBL user = _emails[email];
+            user.ChangeTheme();
         }
     }
 }

@@ -4,74 +4,56 @@ namespace IntroSE.Kanban.Backend.DataAccessLayer.DTOs
 {
     internal class BoardUserDTO : IDTO
     {
-        internal const string BOARD_ID_COLUMN_NAME = "id";
-        internal const string BOARD_USER_EMAIL_COLUMN_NAME = "email";
+        private const string ID = "id", EMAIL = "email";
+
         private int _id;
         private string _email;
-        private readonly BoardUserController _controller;
 
         internal int Id
         {
             get => _id;
-            set { _controller.Update(BOARD_ID_COLUMN_NAME, _id, BOARD_USER_EMAIL_COLUMN_NAME, _email, BOARD_ID_COLUMN_NAME,
-                value); _id = value; }
+            set { Update(ID, value); _id = value; }
         }
 
         internal string Email
         {
             get => _email;
-            set { _controller.Update(BOARD_ID_COLUMN_NAME, _id, BOARD_USER_EMAIL_COLUMN_NAME, _email, 
-                BOARD_USER_EMAIL_COLUMN_NAME, value); _email = value; }
+            set { Update(EMAIL, value); _email = value; }
         }
+
+        private readonly BoardUserController _controller;
 
         internal BoardUserDTO(int id, string email)
         {
             _id = id;
             _email = email;
-            _controller = new BoardUserController();
+            _controller = new();
         }
 
-        internal BoardUserDTO()
-        {
-            _controller = new BoardUserController();
-        }
-
-        public BoardUserDTO(int id)
+        internal BoardUserDTO(int id)
         {
             _id = id;
+            _controller = new();
         }
 
-        public BoardUserDTO(string email)
+        internal BoardUserDTO(string email)
         {
             _email = email;
+            _controller = new();
         }
 
-        internal void Insert()
-        {
-            _controller.Insert(this);
-        }
+        internal void Insert() => _controller.Insert(this);
 
-        internal void Delete()
-        {
-            _controller.Delete(BOARD_ID_COLUMN_NAME, _id, BOARD_USER_EMAIL_COLUMN_NAME, _email);
-        }
+        internal void Delete() => _controller.Delete(ID, _id, EMAIL, _email);
 
-        internal List<BoardUserDTO> SelectAll()
-        {
-            return _controller.SelectAll();
-        }
+        internal List<string> GetParticipants() => _controller.GetParticipants(ID, _id);
 
-        internal List<string> GetParticipants()
-        {
-            return _controller.GetParticipants(BOARD_ID_COLUMN_NAME, _id);
-        }
+        internal List<int> GetBoards() => _controller.GetBoards(EMAIL, _email);
 
-        internal List<int> GetBoards()
-        {
-            return _controller.GetBoards(BOARD_USER_EMAIL_COLUMN_NAME, _email);
-        }
+        public void Update(string column, object value) => 
+            _controller.Update(ID, _id, EMAIL, _email, column, value);
 
-        public string[] GetColumnNames() => new[] { BOARD_ID_COLUMN_NAME, BOARD_USER_EMAIL_COLUMN_NAME };
+        public string[] GetColumnNames() => new[] { ID, EMAIL };
         
         public object[] GetColumnValues() => new object[] { _id, _email };
     }

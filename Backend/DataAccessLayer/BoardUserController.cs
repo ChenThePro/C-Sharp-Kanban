@@ -5,101 +5,52 @@ using System.Collections.Generic;
 
 namespace IntroSE.Kanban.Backend.DataAccessLayer
 {
-    internal class BoardUserController : BaseController<BoardUserDTO>
+    internal class BoardUserController : CompositeKeyController<BoardUserDTO>
     {
 
         internal BoardUserController() : base("BoardsUsers") { }
 
-        internal bool Delete(string keyColumn1, object key1, string keyColumn2, object key2)
-        {
-            using var connection = new SqliteConnection(_connectionString);
-            using var command = connection.CreateCommand();
-            command.CommandText = $"DELETE FROM {_tableName} WHERE {keyColumn1} = @Key1 AND {keyColumn2} = @Key2;";
-            command.Parameters.AddWithValue("@Key1", key1);
-            command.Parameters.AddWithValue("@Key2", key2);
-            try
-            {
-                connection.Open();
-                if (command.ExecuteNonQuery() > 0)
-                {
-                    Log.Info($"Delete succeeded on {_tableName} for keys {key1}, {key2}.");
-                    return true;
-                }
-                return false;
-            }
-            catch (Exception ex)
-            {
-                Log.Error($"Delete failed on {_tableName} for keys {key1}, {key2}.", ex);
-                return false;
-            }
-        }
-
-        internal bool Update(string keyColumn1, object key1, string keyColumn2, object key2, string column, object newValue)
-        {
-            using var connection = new SqliteConnection(_connectionString);
-            using var command = connection.CreateCommand();
-            command.CommandText = $"UPDATE {_tableName} SET {column} = @Value WHERE {keyColumn1} = @Key1 AND {keyColumn2} = @Key2;";
-            command.Parameters.AddWithValue("@Value", newValue);
-            command.Parameters.AddWithValue("@Key1", key1);
-            command.Parameters.AddWithValue("@Key2", key2);
-            try
-            {
-                connection.Open();
-                if (command.ExecuteNonQuery() > 0)
-                {
-                    Log.Info($"Update succeeded on {_tableName} for keys {key1}, {key2}.");
-                    return true;
-                }
-                return false;
-            }
-            catch (Exception ex)
-            {
-                Log.Error($"Update failed on {_tableName} for keys {key1}, {key2}.", ex);
-                return false;
-            }
-        }
-
         internal List<string> GetParticipants(string keyColumn, int key)
         {
             List<string> results = new();
-            using var connection = new SqliteConnection(_connectionString);
-            using var command = connection.CreateCommand();
-            command.CommandText = $"SELECT * FROM {_tableName} WHERE {keyColumn} = @key;";
-            command.Parameters.AddWithValue("@key", key);
             try
             {
+                using SqliteConnection connection = new(_connectionString);
+                using SqliteCommand command = connection.CreateCommand();
+                command.CommandText = $"SELECT * FROM {_tableName} WHERE {keyColumn} = @key;";
+                command.Parameters.AddWithValue("@key", key);
                 connection.Open();
-                using var reader = command.ExecuteReader();
+                using SqliteDataReader reader = command.ExecuteReader();
                 while (reader.Read())
                     results.Add(reader.GetString(1));
+                Log.Info($"Select succeeded on {_tableName}.");
             }
             catch (Exception ex)
             {
-                Log.Error($"Select failed on {_tableName}.", ex);
+                Log.Error(ex.Message);
             }
-            Log.Info($"Select succeeded on {_tableName}.");
             return results;
         }
 
         internal List<int> GetBoards(string keyColumn, string key)
         {
             List<int> results = new();
-            using var connection = new SqliteConnection(_connectionString);
-            using var command = connection.CreateCommand();
-            command.CommandText = $"SELECT * FROM {_tableName} WHERE {keyColumn} = @key;";
-            command.Parameters.AddWithValue("@key", key);
             try
             {
+                using SqliteConnection connection = new(_connectionString);
+                using SqliteCommand command = connection.CreateCommand();
+                command.CommandText = $"SELECT * FROM {_tableName} WHERE {keyColumn} = @key;";
+                command.Parameters.AddWithValue("@key", key);
                 connection.Open();
-                using var reader = command.ExecuteReader();
+                using SqliteDataReader reader = command.ExecuteReader();
                 while (reader.Read())
                     results.Add(reader.GetInt32(0));
+                Log.Info($"Select succeeded on {_tableName}.");
             }
             catch (Exception ex)
             {
-                Log.Error($"Select failed on {_tableName}.", ex);
+                Log.Error(ex.Message);
             }
-            Log.Info($"Select succeeded on {_tableName}.");
             return results;
         }
 

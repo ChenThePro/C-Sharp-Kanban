@@ -3,6 +3,7 @@ using IntroSE.Kanban.Backend.DataAccessLayer.DTOs;
 using log4net;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Reflection;
 
 namespace IntroSE.Kanban.Backend.BuisnessLayer.UserPackage
@@ -10,113 +11,134 @@ namespace IntroSE.Kanban.Backend.BuisnessLayer.UserPackage
     internal class UserBL
     {
         private static readonly ILog Log = LogManager.GetLogger(MethodBase.GetCurrentMethod().DeclaringType);
-        internal string Email;
-        private string _password;
-        internal bool LoggedIn;
-        private readonly List<BoardBL> _boards;
-        private readonly UserDTO _userDTO;
+
+        private string _email, _password;
+        private bool _loggedIn;
+
+        internal string Email { 
+            get => _email; 
+            private set { _email = value; UserDTO.Email = value; } 
+        }
+
+        internal string Password { 
+            get => _password; 
+            set { _password = value; UserDTO.Password = value; } 
+        }
+
+        internal bool LoggedIn { 
+            get => _loggedIn; 
+            private set { _loggedIn = value; UserDTO.LoggedIn = value; } 
+        }
+
+        internal List<BoardBL> Boards { get; init; }
+
+        internal readonly UserDTO UserDTO;
 
         internal UserBL(string email, string password)
         {
-            Email = email;
-            LoggedIn = true;
+            _email = email;
             _password = password;
-            _boards = new List<BoardBL>();
-            _userDTO = new UserDTO(email, password, LoggedIn);
-            _userDTO.Insert();
+            _loggedIn = true;
+            Boards = new();
+            UserDTO = new(_email, _password, _loggedIn, false);
+            UserDTO.Insert();
+            Log.Info($"User created and logged in: {_email}");
         }
 
-        public UserBL(UserDTO userDTO)
+        internal UserBL(UserDTO userDTO)
         {
-            Email = userDTO.Email;
+            _email = userDTO.Email;
             _password = userDTO.Password;
-            LoggedIn = userDTO.LoggedIn;
-            _boards = new List<BoardBL>();
+            _loggedIn = userDTO.LoggedIn;
+            UserDTO = userDTO;
+            Boards = new();
             List<int> boardIds = new BoardUserDTO(Email).GetBoards();
-            List<BoardDTO> boards = new BoardDTO().SelectAll().FindAll(board => boardIds.Contains(board.Id));
-            foreach (BoardDTO boardDTO in boards)
-                _boards.Add(new BoardBL(boardDTO));
-            _userDTO = userDTO;
+            List<BoardDTO> allBoards = new BoardDTO().SelectAll();
+            foreach (BoardDTO boardDTO in allBoards.Where(board => boardIds.Contains(board.Id)))
+                Boards.Add(new BoardBL(boardDTO));
+            Log.Info($"User loaded from database: {_email}");
         }
 
         internal UserBL Login(string password)
         {
             if (_password != password)
             {
-                Log.Error("Password incorrect.");
+                Log.Error("Incorrect password.");
                 throw new UnauthorizedAccessException("Password incorrect.");
             }
-            if (LoggedIn)
+            if (_loggedIn)
             {
-                Log.Error("Already logged in");
-                throw new InvalidOperationException("Already logged in.");
+                Log.Error("User already logged in.");
+                throw new InvalidOperationException("User is already logged in.");
             }
             LoggedIn = true;
-            _userDTO.LoggedIn = LoggedIn;
-            Log.Info("User logged in successfully.");
+            Log.Info($"User logged in: {_email}");
             return this;
         }
 
         internal void Logout()
         {
-            if (!LoggedIn)
+            if (!_loggedIn)
             {
-                Log.Error("User not logged in.");
-                throw new InvalidOperationException("User not logged in.");
+                Log.Error("Attempted logout while not logged in.");
+                throw new InvalidOperationException("Attempted logout while not logged in.");
             }
             LoggedIn = false;
-            _userDTO.LoggedIn = LoggedIn;
-            Log.Info("User logged out.");
+            Log.Info($"User logged out: {_email}");
         }
 
         internal BoardBL GetBoard(string boardName)
         {
-            foreach (BoardBL board in _boards)
-                if (board.Name.ToLower() == boardName.ToLower())
-                    return board;
-            Log.Error("Boardname doesn't exist in user.");
-            throw new KeyNotFoundException("Boardname doesn't exist in user.");
+            BoardBL board = Boards.FirstOrDefault(b => b.Name.Equals(boardName, StringComparison.OrdinalIgnoreCase));
+            if (board == null)
+            {
+                Log.Error($"Board '{boardName}' not found for user '{_email}'.");
+                throw new KeyNotFoundException($"Board '{boardName}' not found for user '{_email}'.");
+            }
+            return board;
         }
 
-        internal bool BoardExists(string boardName)
+        internal void CheckCreateBoard(string boardName)
         {
-            foreach (BoardBL board in _boards)
-                if (board.Name.ToLower() == boardName.ToLower())
-                {
-                    Log.Error("A board with the given name already exists.");
-                    throw new InvalidOperationException("A board with the given name already exists.");
-                }
-            return true;
+            bool exists = Boards.Any(b => b.Name.Equals(boardName, StringComparison.OrdinalIgnoreCase));
+            if (exists)
+            {
+                Log.Error($"Board '{boardName}' already exists for user '{_email}'.");
+                throw new InvalidOperationException($"Board '{boardName}' already exists for user '{_email}'.");
+            }
         }
 
         internal void CreateBoard(BoardBL board)
         {
-            _boards.Add(board);
+            Boards.Add(board);
+            Log.Info($"Board '{board.Name}' added to user '{_email}'.");
         }
 
         internal void DeleteBoard(string boardName)
         {
-            _boards.Remove(GetBoard(boardName));
+            BoardBL board = GetBoard(boardName);
+            RemoveBoard(board);
         }
 
-        internal List<TaskBL> InProgressTasks()
+        internal List<TaskBL> InProgressTasks() =>
+            Boards.SelectMany(board => board.GetColumnTasks(1)).Where(task => task.Assignee == _email).ToList();
+
+        internal List<int> GetBoardsAsId() =>
+            Boards.Select(board => board.Id).ToList();
+
+        internal void LeaveBoard(BoardBL board) => RemoveBoard(board);
+
+        private void RemoveBoard(BoardBL board)
         {
-            List<TaskBL> lst = new List<TaskBL>();
-            foreach (BoardBL board in _boards)
-                lst.AddRange(board.GetColumn(1));
-            return lst.FindAll(task => task.Assignee == Email); ;
-        }
-        internal List<int> GetUserBoards(string email)
-        {
-            List<int> boardsID = new List<int>();
-            foreach(BoardBL board in _boards)
-                boardsID.Add(board.Id);
-            return boardsID;
+            Boards.Remove(board);
+            Log.Info($"Board '{board.Name}' removed from user '{_email}'.");
         }
 
-        internal void LeaveBoard(BoardBL board)
+        internal void ChangeTheme()
         {
-            _boards.Remove(board);  
+            if (!LoggedIn)
+                throw new InvalidOperationException("User must be logged in to change theme.");
+            UserDTO.IsDark = !UserDTO.IsDark;
         }
     }
 }
