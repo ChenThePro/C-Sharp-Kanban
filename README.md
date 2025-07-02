@@ -1,6 +1,20 @@
 # 🧱 Kanban Board Management System
 
-## 📖 Overview
+## 🧭 Table of Contents
+
+- [Introduction](#-introduction)
+- [Features](#-features)
+- [Project Structure](#-project-structure)
+- [Testing Strategy](#-testing-strategy)
+- [Technologies Used](#-technologies-used)
+- [How to Run](#-how-to-run)
+- [Database Location](#-database-location)
+- [Contributors](#-contributors)
+- [License](#-license)
+
+---
+
+## 📖 Introduction
 
 A full-stack Kanban Board Management System developed in C# using the N-tier architecture, MVVM design pattern, and WPF for GUI. The application supports user registration, login, board and task management, and is backed by a persistent SQLite database. Logging, input validation, and error handling ensure system robustness. Development spanned multiple milestones, culminating in a fully functional and testable project.
 
@@ -103,17 +117,6 @@ Solution/
 - **Testing:** NUnit
 - **Logging:** log4net
 - **Version Control:** Git + GitHub (GitHub Classroom)
-
----
-
-## 📝 Sample Data
-
-On startup, the system loads the following default data:
-
-- **User:** `mail@mail.com` / `Password1`
-- **Boards:**
-  - `board1` — has 3 tasks (1 per column)
-  - `board2` — empty
 
 ---
 
